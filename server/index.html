@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ESRI Angular</title>
+    
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!--    For Spinner -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- ESRI style -->
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+    
+    <!-- Custom Style     -->
+    <link rel="stylesheet" type="text/css" href="style/Measurement.css" />
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+    
+
+    <body style="max-height:100vh; width:100vw; background-color: #719971" ng-app="angularESRI">
+        <div class="row" style="height:6vh; width:100vw; ">
+            <h3 style=" margin:5px; padding:12px 0 10px 40px; color:white"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Sanitary Sewer GIS 
+  <small style="color:white">Suffolk County DPW</small></h3>
+
+        </div>
+        <div style="height:94vh; width:100vw" ui-view></div>
+
+        <!-- BOOTSTRAP jQuery -->
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        
+        <script src="https://js.arcgis.com/3.16/"></script>
+
+        <!-- ANGULAR -->
+        <script type="text/javascript" src="../node_modules/angular/angular.js"></script>
+        <script type="text/javascript" src="../node_modules/angular-esri-map/dist/angular-esri-map.js"></script>
+        <script type="text/javascript" src="../node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+        
+        <!-- App -->
+        <script type="text/javascript" src="app.js"></script>
+        <script type="text/javascript" src="map.controller.js"></script>
+    </body>
+
+</html>
