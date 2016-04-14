@@ -45,35 +45,34 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 		 }
 	 ]
 
-
+	 $scope.layer1 = null;
 
     // sewerDistricts.relId = [5, 6];
     // sewerOutlines.relId = [4]
 
 
 	$scope.onMapLoad = function(map) {
-		console.log('loaded')
 		esriLoader.require([
 
 		    'esri/toolbars/draw',
-                'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol',
+                'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', "esri/symbols/SimpleFillSymbol",
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
                 'esri/graphic',
-                'esri/Color',
+                'esri/Color', "esri/renderers/SimpleRenderer",
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
-                "esri/config",
+                "esri/config", "esri/dijit/Legend"
             ], function(
                 Draw,
-                SimpleMarkerSymbol, SimpleLineSymbol,
+                SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,
                 Graphic,
-                Color,
+                Color, SimpleRenderer,
                 Print, dom,
                 Measurement,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
-                config
+                config, Legend
             ) {
 
 
@@ -84,55 +83,114 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 		        }, dom.byId("printButton"));
 		        printer.startup();	
 
+
+		    $scope.renderNow = function(){
+
+			    var visibleLayers = map.getLayersVisibleAtScale();
+                $scope.layer1 = visibleLayers[1];
+                console.log($scope.layer1.renderer.symbol.color)
+                $scope.clicked++
+                var symbol = new SimpleFillSymbol().setColor(new Color([100,255,100,0.5]));
+                var renderer = new SimpleRenderer(symbol);
+                $scope.layer1.setRenderer(renderer)
+                $scope.layer1.redraw();
+                console.log($scope.layer1.renderer.symbol.color)
+                
+		      }
+
 		    // Measure 
 
 
 		    //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
-			esriConfig.defaults.io.proxyUrl = "/proxy/";
-			esriConfig.defaults.io.alwaysUseProxy = false;
+			// esriConfig.defaults.io.proxyUrl = "/proxy/";
+			// esriConfig.defaults.io.alwaysUseProxy = false;
+	
 
-		    var measureLine = new Draw(map);
-		    map.disableMapNavigation();
-		    // measureLine.on("draw-end", lang.hitch(map, getAreaAndLength));
-		    measureLine.active(Draw.FREEHAND_POLYLINE);
+			var measureLine;
+			function initMeasureToolbar(mapObj) {
+				console.log("measure loaded")
+				var lengthParams = new esri.tasks.LengthsParameters();
+                map = mapObj;
+                measureLine = new Draw(map);
+                measureLine.on('draw-end', function(e) {
+                    $scope.$apply(function() {
+                        addMeasureGraphic(e);
+                        lengthParams.polylines = [e.geometry];
+						lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
+						lengthParams.geodesic = true;
 
-		    // var geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-      // geometryService.on("areas-and-lengths-complete", outputAreaAndLength);
+						geometryService.lengths(lengthParams);
+
+                    });
+                });
+
+                // set the active tool once a button is clicked
+                $scope.activateMeasureTool = activateMeasureTool;
+            }
+
+            
+
+		    var mLineSymbol = new CartographicLineSymbol(
+                            CartographicLineSymbol.STYLE_SOLID,
+                            new Color([255, 10, 10]), 2,
+                            CartographicLineSymbol.CAP_ROUND,
+                            CartographicLineSymbol.JOIN_MITER, 2
+                    );
 
 
-		   //  var mLineSymbol = new CartographicLineSymbol(
-     //                        CartographicLineSymbol.STYLE_SOLID,
-     //                        new Color([255, 10, 10]), 2,
-     //                        CartographicLineSymbol.CAP_ROUND,
-     //                        CartographicLineSymbol.JOIN_MITER, 2
-     //                );
+		    function activateMeasureTool(tool) {
+		    		console.log('active')
+                    map.disableMapNavigation();
+                    measureLine.activate('polyline');
+                }
 
-     //        function getAreaAndLength(evtObj) {
-			  //     var map = this,
-			  //         geometry = evtObj.geometry;
-			  //     map.graphics.clear();
-			      
-			  //     var graphic = map.graphics.add(new Graphic(geometry, new SimpleFillSymbol()));
-			      
-			  //     //setup the parameters for the areas and lengths operation
-			  //     var areasAndLengthParams = new AreasAndLengthsParameters();
-			  //     areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
-			  //     areasAndLengthParams.areaUnit = GeometryService.UNIT_ACRES;
-			  //     areasAndLengthParams.calculationType = "geodesic";
 
-			  //     geometryService.simplify([geometry], function(simplifiedGeometries) {
-			  //       areasAndLengthParams.polygons = simplifiedGeometries;
-			  //       geometryService.areasAndLengths(areasAndLengthParams);
-			  //     });
-			  //   }
+            initMeasureToolbar(map);
 
-			  //   function outputAreaAndLength(evtObj) {
-			  //     var result = evtObj.result;
-			  //     console.log(json.stringify(result));
-			  //   }
-			  // });                 
 
+             function addMeasureGraphic(evt) {
+                    //deactivate the toolbar and clear existing graphics
+                    measureLine.deactivate();
+                    map.enableMapNavigation();
+
+                    // figure out which symbol to use
+                    var symbol;
+                    if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
+                        symbol = markerSymbol;
+                    } else if (evt.geometry.type === 'line' || evt.geometry.type === 'polyline') {
+                        symbol = mLineSymbol;
+                    } else {
+                        symbol = fillSymbol;
+                    }
+
+                    map.graphics.add(new Graphic(evt.geometry, symbol));
+                    console.log(map.graphics)
+                }
+
+				var geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+				geometryService.on("lengths-complete", function(e){
+					console.log(map.graphics)
+            		map.graphics.remove(map.graphics.graphics[map.graphics.graphics.length-1])
+            })
+
+			// function getAreaAndLength(evtObj) {
+		 //      var map = this,
+		 //          geometry = evtObj.geometry;
+		 //      map.graphics.clear();
+		      
+		 //      var graphic = map.graphics.add(new Graphic(geometry, new SimpleFillSymbol()));
+		      
+		 //      //setup the parameters for the areas and lengths operation
+		 //      var areasAndLengthParams = new AreasAndLengthsParameters();
+		 //      areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
+		 //      areasAndLengthParams.areaUnit = GeometryService.UNIT_ACRES;
+		 //      areasAndLengthParams.calculationType = "geodesic";
+		 //      geometryService.simplify([geometry], function(simplifiedGeometries) {
+		 //        areasAndLengthParams.polygons = simplifiedGeometries;
+		 //        geometryService.areasAndLengths(areasAndLengthParams);
+		 //      });
+		 //    }
 
 
 			 var tb;
@@ -205,6 +263,7 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                 }
                  // bind the toolbar to the map
                 initToolbar(map);
+
 			}
 	)}
 })
