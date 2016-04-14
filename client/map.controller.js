@@ -95,7 +95,8 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                 $scope.layer1.setRenderer(renderer)
                 $scope.layer1.redraw();
                 console.log($scope.layer1.renderer.symbol.color)
-                
+                $scope.$digest();
+
 		      }
 
 		    // Measure 

@@ -1,7 +1,8 @@
 <esri-map id="map" map-options="map.options" load="onMapLoad" basemap="{{map.basemap}}">
     <esri-feature-layer ng-repeat="layer in layers" url="{{layer.url}}"></esri-feature-layer>
     <div style="position:absolute; right:20px; top:10px; z-Index:999;">
-        <!-- <div esri-legend target-id="legend"></div>  -->
+        <div esri-legend target-id="legend"></div>
+    <div id="legend"></div>
         <!-- <div id="titlePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:false, open:false">
             <div id="measurementDiv"></div>
             <span style="font-size:smaller;padding:5px 5px;">Press <b>CTRL</b> to enable snapping.</span>
