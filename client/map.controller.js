@@ -106,6 +106,12 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
 			// esriConfig.defaults.io.alwaysUseProxy = false;
+
+
+
+			//to do 
+
+			//Create new legend Create unique rendering class
 	
 
 			var measureLine;
