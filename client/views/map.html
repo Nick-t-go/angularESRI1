@@ -1,3 +1,24 @@
+<div class="navbar">
+    <div class="navContainer">
+        <h3 style=" margin:5px; padding:12px 0 10px 10px; color:white">
+            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+            Sanitary Sewer GIS 
+            <small style="color:white">Suffolk County DPW</small>
+        </h3>
+        <div class="btn-group nav-menu" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle nav-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="glyphicon glyphicon-menu-hamburger"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a href="#">Bookmarks</a></li>
+              <li><a href="#">Backgrounds</a></li>
+              <li><a href="#">Draw</a></li>
+              <li><a href="#">Measure</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <esri-map id="map" map-options="map.options" load="onMapLoad" basemap="{{map.basemap}}">
     <esri-feature-layer ng-repeat="layer in layers" url="{{layer.url}}"></esri-feature-layer>
     <div style="position:absolute; right:20px; top:10px; z-Index:999;">

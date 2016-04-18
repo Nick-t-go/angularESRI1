@@ -2,3 +2,42 @@
 	height: 100%;
 	width: 100%;
 }
+
+.navbar {
+	border-color: rgb(155, 193, 156);
+    background-color: rgb(155, 193, 156);
+    right: 47px;
+	margin: 15px;
+	min-height: 64px
+	border-top: none;
+	border-bottom: none;
+	top: 0;
+	border-width: 0 0 1px;
+	position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    border: 1px solid transparent;
+    display: block;
+}
+.navContainer{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.nav-menu{
+	margin-right: 10px;
+}
+
+.nav-button {
+	border: solid 2px rgb(155, 193, 156);
+	border-radius: 90%;
+}
+
+.esriSimpleSliderTL {
+    top: 100px;
+    }
+
