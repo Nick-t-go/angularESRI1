@@ -22,28 +22,28 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 	        {name: "osm"}]
 	        
 
-	$scope.layers = [
-		 {
-		 	name: 'sewerOutlines',
-		  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
-		 },
-		 {
-		 	name: 'sewerDistricts',
-		  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9'
-		 },
-		 {
-		 	name: 'sewerSheets',
-		  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7'
-		 },
-		 {
-		 	name: 'sewerOutlines',
-		  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
-		 },
-		 {
-		 	name: 'sewerMains',
-		  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2'
-		 }
-	 ]
+	// $scope.layers = [
+	// 	 {
+	// 	 	name: 'sewerOutlines',
+	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
+	// 	 },
+	// 	 {
+	// 	 	name: 'sewerDistricts',
+	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9'
+	// 	 },
+	// 	 {
+	// 	 	name: 'sewerSheets',
+	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7'
+	// 	 },
+	// 	 {
+	// 	 	name: 'sewerOutlines',
+	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
+	// 	 },
+	// 	 {
+	// 	 	name: 'sewerMains',
+	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2'
+	// 	 }
+	//  ]
 
 	 $scope.layer1 = null;
 
@@ -115,8 +115,9 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 	
 
 			var measureLine;
+			$scope.resultLength = 0;
+
 			function initMeasureToolbar(mapObj) {
-				console.log("measure loaded")
 				var lengthParams = new esri.tasks.LengthsParameters();
                 map = mapObj;
                 measureLine = new Draw(map);
@@ -126,9 +127,11 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                         lengthParams.polylines = [e.geometry];
 						lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
 						lengthParams.geodesic = true;
-
-						geometryService.lengths(lengthParams);
-
+						geometryService.lengths(lengthParams)
+						.then(function(result){
+							$scope.resultLength = (result.lengths[0])
+							$scope.$digest;
+						});
                     });
                 });
 
@@ -147,7 +150,6 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 
 
 		    function activateMeasureTool(tool) {
-		    		console.log('active')
                     map.disableMapNavigation();
                     measureLine.activate('polyline');
                 }
@@ -160,7 +162,6 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                     //deactivate the toolbar and clear existing graphics
                     measureLine.deactivate();
                     map.enableMapNavigation();
-
                     // figure out which symbol to use
                     var symbol;
                     if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
@@ -170,14 +171,11 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                     } else {
                         symbol = fillSymbol;
                     }
-
                     map.graphics.add(new Graphic(evt.geometry, symbol));
                     console.log(map.graphics)
                 }
-
 				var geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 				geometryService.on("lengths-complete", function(e){
-					console.log(map.graphics)
             		map.graphics.remove(map.graphics.graphics[map.graphics.graphics.length-1])
             })
 

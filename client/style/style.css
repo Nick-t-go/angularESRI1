@@ -41,3 +41,13 @@
     top: 100px;
     }
 
+.panel-container {
+	position: fixed;
+    top: 80px;
+    right: 15px;
+    max-width: 350px;
+    z-index: 1030;
+    font-weight: 300;
+    font-size: 17px;
+    letter-spacing: .03em;
+}
