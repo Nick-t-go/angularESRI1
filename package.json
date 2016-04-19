@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "angular": "^1.5.3",
+    "angular-cookies": "^1.5.5",
     "angular-esri-map": "^1.1.4",
     "angular-ui-router": "^0.2.18",
     "bootstrap": "^3.3.6",

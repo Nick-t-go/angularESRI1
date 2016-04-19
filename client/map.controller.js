@@ -1,4 +1,5 @@
-app.controller('MapCtrl', function($scope, esriLoader) {
+
+app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 
 	$scope.map = {
 	            options: {
@@ -62,7 +63,7 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
-                "esri/config", "esri/dijit/Legend"
+                "esri/config", "esri/dijit/Legend", "esri/geometry/Extent"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -72,7 +73,7 @@ app.controller('MapCtrl', function($scope, esriLoader) {
                 Print, dom,
                 Measurement,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
-                config, Legend
+                config, Legend, Extent
             ) {
 
 
@@ -99,6 +100,41 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 
 		      }
 
+			if (!$cookies.getObject('test') || $cookies.getObject('test').length === 0){
+				var bookmarks = [
+					{
+						name: "LI",
+						extent: new Extent(map.extent)
+					}
+					]
+				
+				 $cookies.putObject('test', bookmarks)
+				}
+				else{
+					$scope.bookmarks = $cookies.getObject('test')
+					$scope.bookmarks.forEach(function(bookmark){
+						bookmark.extent = new Extent(bookmark.extent)
+					})
+		      		
+				}
+
+
+		      $scope.extentFinder = function(){
+		      	$scope.testExtent = map.extent
+		      	$scope.bookmarks.push({name:$scope.newBookmarkName, extent: map.extent})
+		      	$scope.newBookmarkName = "";
+				$cookies.putObject('test', $scope.bookmarks);
+		      }
+
+		      $scope.removeBookmark = function(index){
+		      	$scope.bookmarks.splice(index, 1);
+		      	$cookies.putObject('test', $scope.bookmarks);
+		      }
+
+		      $scope.zoomToExtent = function(newExtent){
+		      	map.setExtent(newExtent);
+		      }
+
 		    // Measure 
 
 
@@ -117,7 +153,7 @@ app.controller('MapCtrl', function($scope, esriLoader) {
 			var measureLine;
 			$scope.resultLength = 0;
 
-			function initMeasureToolbar(mapObj) {
+			function initMeasureToolbar(mapObj) {  
 				var lengthParams = new esri.tasks.LengthsParameters();
                 map = mapObj;
                 measureLine = new Draw(map);

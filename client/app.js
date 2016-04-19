@@ -1,6 +1,6 @@
 'use strict';
 
-window.app = angular.module('angularESRI', ['ui.router', 'esri.map' ]);
+window.app = angular.module('angularESRI', ['ui.router', 'esri.map','ngCookies' ]);
 
 app.config(function($urlRouterProvider, $stateProvider){
     $stateProvider
