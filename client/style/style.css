@@ -41,6 +41,21 @@
     top: 100px;
     }
 
+.legendButton {
+	position:fixed;
+	top: 175px;
+	left: 20px;
+	z-index: 30;
+	text-align: center;
+    border: 1px solid #57585A;
+    background-color: #FFF;
+    color: #4C4C4C;
+    border-radius: 5px;
+    min-height: 32px !important;
+    min-width: 32px !important;
+
+}    
+
 .panel-container {
 	position: fixed;
     top: 80px;

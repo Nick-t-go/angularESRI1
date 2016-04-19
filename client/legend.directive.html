@@ -1,0 +1,15 @@
+<div class="container" id="legend">
+	<div class="row">
+		<h4 class="legend-title">Legend</h4> 
+	</div>
+	<div class="row">
+		<ul  ng-repeat="layer in mapLayers">
+			<li> <label><input type="checkbox" ng-model="layer.visible"
+			ng-change="removeFromMap(layer)">{{layer.name}}</label></li>
+			<li class="legend-field" ng-if="layer.tblField">{{layer.tblField}}</li>
+				<ul class="legend-list" ng-repeat="field in layer.fields">
+					<li class="legend-field"><div ng-class="layer.type" ng-style="{'backgroundColor': field.color}"></div><span ng-hide="field.name === 'default'">{{field.name}}</span></li>
+				</ul>
+		</ul>
+	</div>
+</div> 

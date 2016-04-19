@@ -19,6 +19,8 @@
     </div>
 </div>
 
+<button class="legendButton" ng-click="showLayers()"><span class="glyphicon glyphicon-th-list"></span></button>
+
 <div class="panel-container">
     <div class="panel-group" id="accordion">
         <div class="panel panel-default">
@@ -122,14 +124,27 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#print">
+        Print</a>
+      </h4>
+            </div>
+            <div id="print" class="panel-collapse collapse">
+                <div class="panel-body">
+                	<div id="printButton"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 
 
 <esri-map id="map" map-options="map.options" load="onMapLoad" basemap="{{map.basemap}}">
-    <esri-feature-layer ng-repeat="layer in layers" url="{{layer.url}}"></esri-feature-layer>
-    <div style="position:absolute; right:20px; top:10px; z-Index:999;">
+    <esri-feature-layer ng-repeat="layer in layers" url="{{layer.url}}" layer-options="layer.options"></esri-feature-layer>
+    <div style="position:absolute; left:20px; bottom:10px; z-Index:999;">
         <div esri-legend target-id="legend"></div>
     <div id="legend"></div>
         <!-- <div id="titlePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:false, open:false">
@@ -138,12 +153,12 @@
         </div> -->
     </div>
 </esri-map>
-<p>Based on <a href="https://developers.arcgis.com/javascript/jssamples/map_simple.html">this sample</a>.</p>
+<!-- <p>Based on <a href="https://developers.arcgis.com/javascript/jssamples/map_simple.html">this sample</a>.</p>
 <p>Documentation:
     <a href="./docs/#/api/esri.map.directive:esriMap">esri-map</a>
 </p>
 <div id="printButton"></div>
-<button ng-click="renderNow()">Activate Measure</button>
+<button ng-click="renderNow()">Activate Measure</button> -->
 
 
 

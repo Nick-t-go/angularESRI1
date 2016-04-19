@@ -23,28 +23,82 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 	        {name: "osm"}]
 	        
 
-	// $scope.layers = [
-	// 	 {
-	// 	 	name: 'sewerOutlines',
-	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
-	// 	 },
-	// 	 {
-	// 	 	name: 'sewerDistricts',
-	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9'
-	// 	 },
-	// 	 {
-	// 	 	name: 'sewerSheets',
-	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7'
-	// 	 },
-	// 	 {
-	// 	 	name: 'sewerOutlines',
-	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8'
-	// 	 },
-	// 	 {
-	// 	 	name: 'sewerMains',
-	// 	  	url: 'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2'
-	// 	 }
-	//  ]
+	$scope.layers = [
+		 {
+		 	name: 'sewerOutlines',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
+		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
+		  	options: {
+		  		id:"Outlines",
+		  		style: {
+		  			type: "polygon",
+		  			fields: "",
+		  			tblField: 
+		  			{
+		  				name: 'default',
+		  				color: '#FF4500',
+		  				weight: 2,
+		  				opactiy:1
+		  			},
+		  		}
+		  	}
+		 },
+		 {
+		 	name: 'sewerDistricts',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
+		  	options: {
+		  		id:"Districts",
+		  		style: {
+		  			type: "polygon",
+		  			fields: "",
+		  			tblField: 
+		  			{
+		  				name: 'default',
+		  				color: '#4169e1',
+		  				weight: 2,
+		  				opactiy:1
+		  			},
+		  		}
+		  	}
+		 },
+		 {
+		 	name: 'sewerSheets',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
+		  	options: {
+		  		id:"Sheets",
+		  		style: {
+		  			type: "polygon",
+		  			fields: "",
+		  			tblField: 
+		  			{
+		  				name: 'default',
+		  				color: '#5B7CBA',
+		  				weight: 2,
+		  				opactiy: .85,
+		  				fillOpacity: 0.5
+		  			},
+		  		}
+		  	}
+		 },
+		 {
+		 	name: 'sewerMains',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
+		  	options: {
+		  		id:"Mains",
+		  		style: {
+		  			type: "polyline",
+		  			fields: "",
+		  			tblField: 
+		  			{
+		  				name: 'default',
+		  				color: '#5B7CBA',
+		  				weight: 2,
+		  				opactiy: 0.85
+		  			},
+		  		}
+		  	}
+		 }
+	 ]
 
 	 $scope.layer1 = null;
 
@@ -100,6 +154,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 
 		      }
 
+
+
 			if (!$cookies.getObject('test') || $cookies.getObject('test').length === 0){
 				var bookmarks = [
 					{
@@ -148,7 +204,23 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			//to do 
 
 			//Create new legend Create unique rendering class
-	
+			$scope.showLayers = function(){
+				$scope.layers.forEach(function(layer){
+					var singleLayer = map.getLayer(layer.options.id)
+					console.log(singleLayer)
+					if (singleLayer.types.length > 0){
+						singleLayer.renderer.infos.forEach(function(subLayer){
+							var label = subLayer.label;
+							var symbol = subLayer.symbol.()
+						})
+					}
+					singleLayer.style = (singleLayer.renderer.getSymbol())
+					var fillColor = singleLayer.style.getFill()
+					var outlineColor = singleLayer.style.getStroke();
+					var outlineTrueColor = outlineColor.color.toRgba()
+					console.log(singleLayer.style, fillColor, outlineColor, outlineTrueColor)
+				})
+			}
 
 			var measureLine;
 			$scope.resultLength = 0;
