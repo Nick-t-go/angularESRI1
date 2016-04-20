@@ -42,7 +42,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
 		  	visible: true,
 		  	options: {
-		  		id:"Districts"
+		  		id:"Districts",
+		  		outFields: ['SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -122,7 +123,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
-                "esri/config", "esri/dijit/Legend", "esri/geometry/Extent"
+                "esri/config", "esri/dijit/Legend", "esri/geometry/Extent", "esri/InfoTemplate" 
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -132,7 +133,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 Print, dom,
                 Measurement,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
-                config, Legend, Extent
+                config, Legend, Extent, InfoTemplate
             ) {
 
 
@@ -205,12 +206,18 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			// esriConfig.defaults.io.alwaysUseProxy = false;
 
 			$scope.change = function(){
-    			console.log(map.getLayer(userSelectedLayer.options.id))
+    			map.getLayer($scope.userSelectedLayer.options.id).infoTemplate = infoTemplate;
+    			console.log(map.getLayer($scope.userSelectedLayer.options.id))
     		}
 	
 
+    		var infoTemplate = new InfoTemplate();
+			infoTemplate.setTitle("${SdLongName}");
+			infoTemplate.setContent("<info-template></info-template");
 			//to do 
-
+			$scope.testFunction = function(){
+				console.log('test1')
+			}	
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
