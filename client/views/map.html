@@ -137,6 +137,25 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#select">
+        Select & View records</a>
+      </h4>
+            </div>
+            <div id="select" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div id="selectFormDiv">
+                        <form name="myForm">
+                            <label for="selectForm">Choose Selectable Layer:</label>
+                            <select name="selectForm" id="selectForm" ng-options="layer as layer.name for layer in layers" ng-model="userSelectedLayer" ng-change="change()">
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

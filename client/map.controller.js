@@ -92,7 +92,6 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 
 	 $scope.layers.forEach(function(layer){
 	 	$scope.layersOn.push({url:layer.url, options:layer.options})
-	 	console.log(layer.options.id)
 	 })
 
 	 $scope.toggleLayer = function (layer) {
@@ -100,21 +99,17 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
             for(var j = 0; j < $scope.layersOn.length; j++){
             	if ($scope.layersOn[j].url === layer.url){
 	                $scope.layersOn.splice(j, 1);
-	                console.log('splice')
+
 	                push = false;
 	                break;
 	            }
 	        }
             if(push === true){
                 $scope.layersOn.push({url:layer.url, options:layer.options});
-                console.log('push')
             }
-            
-            console.log('Selected layers: ' + $scope.layersOn);
         };
 
     
-
 
 	$scope.onMapLoad = function(map) {
 		esriLoader.require([
@@ -209,7 +204,10 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
 			// esriConfig.defaults.io.alwaysUseProxy = false;
 
-
+			$scope.change = function(){
+    			console.log(map.getLayer(userSelectedLayer.options.id))
+    		}
+	
 
 			//to do 
 
