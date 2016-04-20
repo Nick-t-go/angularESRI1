@@ -236,17 +236,19 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 						})
 					}
 					else if(layer.style.type === 'point'){
-						if(singleLayer.renderer.defaultsymbol.type === "picturemarkersymbol"){
+						console.log(singleLayer.renderer)
+						if(singleLayer.renderer.defaultSymbol.type === "picturemarkersymbol"){
 							var defaultImage = singleLayer.renderer.defaultSymbol.url
-							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"')"})
-						for(var k = 0; k< singleLayer.renderer.values; k++){
+							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"') no-repeat center"})
+						}
+						console.log('here')
+						for(var k = 0; k < singleLayer.renderer.values.length; k++){
 							var fieldSymbol = singleLayer.renderer._symbols[singleLayer.renderer.values[k]];
+							console.log(fieldSymbol)
 							if(fieldSymbol.symbol.type === "picturemarkersymbol"){
 								var fieldImage = fieldSymbol.symbol.url;
-								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+defaultImage+"')"})
+								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+fieldImage+"') no-repeat center"})
 							}
-
-
 						}	
 					}
 					else{

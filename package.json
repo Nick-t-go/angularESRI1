@@ -8,7 +8,9 @@
     "angular-cookies": "^1.5.5",
     "angular-esri-map": "^1.1.4",
     "angular-ui-router": "^0.2.18",
+    "body-parser": "^1.15.0",
     "bootstrap": "^3.3.6",
+    "express": "^4.13.4",
     "nodemon": "^1.9.1"
   },
   "devDependencies": {},

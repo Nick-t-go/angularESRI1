@@ -8,7 +8,7 @@
 			ng-change="toggleLayer(layer)">{{layer.name}}</label></li>
 			<li class="legend-field" ng-if="layer.style.typeIdField">{{layer.style.typeIdField}}</li>
 				<ul class="legend-list" ng-repeat="field in layer.style.tblField">
-					<li class="legend-field"><div ng-class="layer.style.type" ng-style="{'backgroundColor': field.fill, 'border-color': field.outline}"></div><span ng-hide="field.name === 'default'">{{field.name}}</span></li>
+					<li class="legend-field"><div ng-class="layer.style.type" ng-style="{'background': field.fill, 'border-color': field.outline}"></div><span ng-hide="field.name === 'default'">{{field.name}}</span></li>
 				</ul>
 		</ul>
 	</div>
