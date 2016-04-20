@@ -1,8 +1,8 @@
-app.directive('legend', function () {
+app.directive('legendBox', function () {
 
     return {
         restrict: 'E',
-        templateUrl: '/app/legend.directive.html',
+        templateUrl: 'views/legend.directive.html',
         scope: false,
         resolve: function($scope){
         	$scope.digest()

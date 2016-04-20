@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<button class="legendButton" ng-click="showLayers()"><span class="glyphicon glyphicon-th-list"></span></button>
+<button class="legendButton" ng-click="showLegend()"><span class="glyphicon glyphicon-th-list"></span></button>
 
 <div class="panel-container">
     <div class="panel-group" id="accordion">
@@ -140,25 +140,10 @@
     </div>
 </div>
 
-
+<legend-box ng-show="legendVisible"></legend-box>
 
 <esri-map id="map" map-options="map.options" load="onMapLoad" basemap="{{map.basemap}}">
-    <esri-feature-layer ng-repeat="layer in layers" url="{{layer.url}}" layer-options="layer.options"></esri-feature-layer>
+    <esri-feature-layer ng-repeat="layer in layersOn" url="{{layer.url}}" layer-options="layer.options"></esri-feature-layer>
     <div style="position:absolute; left:20px; bottom:10px; z-Index:999;">
-        <div esri-legend target-id="legend"></div>
-    <div id="legend"></div>
-        <!-- <div id="titlePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:false, open:false">
-            <div id="measurementDiv"></div>
-            <span style="font-size:smaller;padding:5px 5px;">Press <b>CTRL</b> to enable snapping.</span>
-        </div> -->
     </div>
 </esri-map>
-<!-- <p>Based on <a href="https://developers.arcgis.com/javascript/jssamples/map_simple.html">this sample</a>.</p>
-<p>Documentation:
-    <a href="./docs/#/api/esri.map.directive:esriMap">esri-map</a>
-</p>
-<div id="printButton"></div>
-<button ng-click="renderNow()">Activate Measure</button> -->
-
-
-

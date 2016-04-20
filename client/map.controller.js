@@ -28,6 +28,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		 	name: 'sewerOutlines',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
+		  	visible: true,
 		  	options: {
 		  		id:"Outlines"
 		  	},
@@ -39,6 +40,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		 {
 		 	name: 'sewerDistricts',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
+		  	visible: true,
 		  	options: {
 		  		id:"Districts"
 		  	},
@@ -47,21 +49,23 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 	  			tblField: []
 	  		}
 		 },
-		 {
-		 	name: 'sewerSheets',
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
-		  	options: {
-		  		id:"Sheets",
+		 // {
+		 // 	name: 'sewerSheets',
+		 //  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
+		 //  	visible: true,
+		 //  	options: {
+		 //  		id:"Sheets",
 		  		
-		  	},
-		  	style: {
-	  			type: "polygon",
-	  			tblField: []
-	  		}
-		 },
+		 //  	},
+		 //  	style: {
+	  // 			type: "polygon",
+	  // 			tblField: []
+	  // 		}
+		 // },
 		 {
 		 	name: 'sewerMains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
+		  	visible: true,
 		  	options: {
 		  		id:"Mains"
 		  	},
@@ -69,13 +73,47 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 	  			type: "polyline",
 	  			tblField: []
 	  		}
+		 },
+		 {
+		 	name: 'manholes',
+		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
+		 	visible: true,
+		 	options: {
+		 		id:"Manholes"
+		 	},
+		 	style: {
+	  			type: "point",
+	  			tblField: []
+	  		}
 		 }
 	 ]
 
-	 $scope.layer1 = null;
+	 $scope.layersOn = [];
 
-    // sewerDistricts.relId = [5, 6];
-    // sewerOutlines.relId = [4]
+	 $scope.layers.forEach(function(layer){
+	 	$scope.layersOn.push({url:layer.url, options:layer.options})
+	 	console.log(layer.options.id)
+	 })
+
+	 $scope.toggleLayer = function (layer) {
+	 		var push = true;
+            for(var j = 0; j < $scope.layersOn.length; j++){
+            	if ($scope.layersOn[j].url === layer.url){
+	                $scope.layersOn.splice(j, 1);
+	                console.log('splice')
+	                push = false;
+	                break;
+	            }
+	        }
+            if(push === true){
+                $scope.layersOn.push({url:layer.url, options:layer.options});
+                console.log('push')
+            }
+            
+            console.log('Selected layers: ' + $scope.layersOn);
+        };
+
+    
 
 
 	$scope.onMapLoad = function(map) {
@@ -176,35 +214,60 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			//to do 
 
 			//Create new legend Create unique rendering class
-			$scope.showLayers = function(){
+			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
 					var singleLayer = map.getLayer(layer.options.id)
 					if (singleLayer.types.length > 0 && layer.style.type == 'polygon'){
 						for(var i = 0; i < singleLayer.types.length; i++){
 							var layerColors = singleLayer.renderer._symbols[i].symbol
-							var fillColor = layerColors.getStroke();
-							var outlineColor = layerColors.getFill();
+							var fillColor = layerColors.getStroke().toCss(true);
+							var outlineColor = layerColors.getFill().toCss(true);
 							layer.style.typeIdField = singleLayer.typeIdField
 							layer.style.tblField.push({name: singleLayer.renderer._symbols[i].label, fill: fillColor, outline: outlineColor})
 						}
 					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
-						console.log(singleLayer)
+						console.log(singleLayer.visible)
 						singleLayer.renderer.infos.forEach(function(subLayer){
 							var name = subLayer.label;
-							var color = subLayer.symbol.color.toRgba();
+							var color = subLayer.symbol.color.toCss(true);
 							layer.style.typeIdField = singleLayer.typeIdField
-							layer.style.tblField.push({name:name,color: color})
+							layer.style.tblField.push({name:name, fill: color})
 						})
 					}
+					else if(layer.style.type === 'point'){
+						if(singleLayer.renderer.defaultsymbol.type === "picturemarkersymbol"){
+							var defaultImage = singleLayer.renderer.defaultSymbol.url
+							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"')"})
+						for(var k = 0; k< singleLayer.renderer.values; k++){
+							var fieldSymbol = singleLayer.renderer._symbols[singleLayer.renderer.values[k]];
+							if(fieldSymbol.symbol.type === "picturemarkersymbol"){
+								var fieldImage = fieldSymbol.symbol.url;
+								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+defaultImage+"')"})
+							}
+
+
+						}	
+					}
 					else{
+						console.log(singleLayer)
 						var layerColors = singleLayer.renderer.getSymbol();
-						var fillColor = layerColors.getFill().toRgba();
-						var outlineColor = layerColors.getStroke().color.toRgba();
+						var fillColor = layerColors.getFill().toCss(true);
+						var outlineColor = layerColors.getStroke().color.toCss(true);
 						layer.style.tblField.push({name:'default', fill: fillColor, outline: outlineColor})
 					}
 				})
 				console.log($scope.layers)
+			}
+
+			var doneOnce = false;
+			$scope.legendVisible = false;
+			$scope.showLegend = function(){
+				$scope.legendVisible = !$scope.legendVisible;
+				if(doneOnce === false){
+					$scope.styleInit();
+					doneOnce = true;
+				}
 			}
 
 			var measureLine;

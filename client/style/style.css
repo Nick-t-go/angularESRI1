@@ -42,7 +42,7 @@
     }
 
 .legendButton {
-	position:fixed;
+	position:absolute;
 	top: 175px;
 	left: 20px;
 	z-index: 30;
