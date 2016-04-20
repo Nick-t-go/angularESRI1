@@ -29,74 +29,46 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	options: {
-		  		id:"Outlines",
-		  		style: {
-		  			type: "polygon",
-		  			fields: "",
-		  			tblField: 
-		  			{
-		  				name: 'default',
-		  				color: '#FF4500',
-		  				weight: 2,
-		  				opactiy:1
-		  			},
-		  		}
-		  	}
+		  		id:"Outlines"
+		  	},
+		  	style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
 		 },
 		 {
 		 	name: 'sewerDistricts',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
 		  	options: {
-		  		id:"Districts",
-		  		style: {
-		  			type: "polygon",
-		  			fields: "",
-		  			tblField: 
-		  			{
-		  				name: 'default',
-		  				color: '#4169e1',
-		  				weight: 2,
-		  				opactiy:1
-		  			},
-		  		}
-		  	}
+		  		id:"Districts"
+		  	},
+		  	style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
 		 },
 		 {
 		 	name: 'sewerSheets',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
 		  	options: {
 		  		id:"Sheets",
-		  		style: {
-		  			type: "polygon",
-		  			fields: "",
-		  			tblField: 
-		  			{
-		  				name: 'default',
-		  				color: '#5B7CBA',
-		  				weight: 2,
-		  				opactiy: .85,
-		  				fillOpacity: 0.5
-		  			},
-		  		}
-		  	}
+		  		
+		  	},
+		  	style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
 		 },
 		 {
 		 	name: 'sewerMains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	options: {
-		  		id:"Mains",
-		  		style: {
-		  			type: "polyline",
-		  			fields: "",
-		  			tblField: 
-		  			{
-		  				name: 'default',
-		  				color: '#5B7CBA',
-		  				weight: 2,
-		  				opactiy: 0.85
-		  			},
-		  		}
-		  	}
+		  		id:"Mains"
+		  	},
+	  		style: {
+	  			type: "polyline",
+	  			tblField: []
+	  		}
 		 }
 	 ]
 
@@ -207,19 +179,32 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			$scope.showLayers = function(){
 				$scope.layers.forEach(function(layer){
 					var singleLayer = map.getLayer(layer.options.id)
-					console.log(singleLayer)
-					if (singleLayer.types.length > 0){
+					if (singleLayer.types.length > 0 && layer.style.type == 'polygon'){
+						for(var i = 0; i < singleLayer.types.length; i++){
+							var layerColors = singleLayer.renderer._symbols[i].symbol
+							var fillColor = layerColors.getStroke();
+							var outlineColor = layerColors.getFill();
+							layer.style.typeIdField = singleLayer.typeIdField
+							layer.style.tblField.push({name: singleLayer.renderer._symbols[i].label, fill: fillColor, outline: outlineColor})
+						}
+					}
+					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
+						console.log(singleLayer)
 						singleLayer.renderer.infos.forEach(function(subLayer){
-							var label = subLayer.label;
-							var symbol = subLayer.symbol.()
+							var name = subLayer.label;
+							var color = subLayer.symbol.color.toRgba();
+							layer.style.typeIdField = singleLayer.typeIdField
+							layer.style.tblField.push({name:name,color: color})
 						})
 					}
-					singleLayer.style = (singleLayer.renderer.getSymbol())
-					var fillColor = singleLayer.style.getFill()
-					var outlineColor = singleLayer.style.getStroke();
-					var outlineTrueColor = outlineColor.color.toRgba()
-					console.log(singleLayer.style, fillColor, outlineColor, outlineTrueColor)
+					else{
+						var layerColors = singleLayer.renderer.getSymbol();
+						var fillColor = layerColors.getFill().toRgba();
+						var outlineColor = layerColors.getStroke().color.toRgba();
+						layer.style.tblField.push({name:'default', fill: fillColor, outline: outlineColor})
+					}
 				})
+				console.log($scope.layers)
 			}
 
 			var measureLine;
