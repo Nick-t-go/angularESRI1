@@ -121,7 +121,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 'esri/graphic',
                 'esri/Color', "esri/renderers/SimpleRenderer",
                 "esri/dijit/Print", "dojo/dom",
-                "esri/dijit/Measurement",
+                "esri/dijit/Measurement", "esri/tasks/query",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
                 "esri/config", "esri/dijit/Legend", "esri/geometry/Extent", "esri/InfoTemplate" 
             ], function(
@@ -131,7 +131,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 Graphic,
                 Color, SimpleRenderer,
                 Print, dom,
-                Measurement,
+                Measurement, Query,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
                 config, Legend, Extent, InfoTemplate
             ) {
@@ -143,6 +143,10 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
 		        }, dom.byId("printButton"));
 		        printer.startup();	
+
+
+
+	        initSelectToolbar()    
 
 
 		    $scope.renderNow = function(){
@@ -204,16 +208,38 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
 			// esriConfig.defaults.io.alwaysUseProxy = false;
+			var selectionToolbar;
+		    $scope.newSelection;    
+		    function initSelectToolbar () {
+	            selectionToolbar = new Draw(map);
+	            var selectQuery = new Query();
+
+	            selectionToolbar.on("DrawEnd", function (geometry) {
+		            selectionToolbar.deactivate();
+		            selectQuery.geometry = geometry;
+		            $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
+		            $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
+		            $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;
+		            if($scope.outFields.indexOf('OBJECTID')<0){
+		            		$scope.outFields.unshift('OBJECTID');
+		            	}
+		            console.log( $scope.newSelectedFeatures, $scope.outFields)
+
+		          });
+	        }
 
 			$scope.change = function(){
-    			map.getLayer($scope.userSelectedLayer.options.id).infoTemplate = infoTemplate;
-    			console.log(map.getLayer($scope.userSelectedLayer.options.id))
+    			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id)
+    		}
+
+    		$scope.selectByExtent = function(){
+    			selectionToolbar.activate(Draw.EXTENT)
     		}
 	
 
-    		var infoTemplate = new InfoTemplate();
-			infoTemplate.setTitle("${SdLongName}");
-			infoTemplate.setContent("<info-template></info-template");
+   //  		var infoTemplate = new InfoTemplate();
+			// infoTemplate.setTitle("${SdLongName}");
+			// infoTemplate.setContent("<info-template></info-template");
 			//to do 
 			$scope.testFunction = function(){
 				console.log('test1')
