@@ -25,4 +25,6 @@ th {
 }
 
 .bottom-row:hover {
+	background-color: 	#FF4500;
+	color: white;
 }

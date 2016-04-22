@@ -1,8 +1,8 @@
-app.directive('infoTemplate', function () {
+app.directive('relatedDocs', function () {
 
     return {
         restrict: 'E',
-        templateUrl: 'views/infoTemplate.directive.html',
+        templateUrl: 'views/relatedDocs.directive.html',
         scope: false,
         resolve: function($scope){
         	$scope.digest()

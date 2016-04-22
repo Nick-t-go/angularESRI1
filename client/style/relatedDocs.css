@@ -1,0 +1,8 @@
+#related-docs{
+	bottom: 0px;
+	right: 0px;
+	position: fixed;
+	z-index: 100;
+	min-height: 250px;
+	background: white;
+}

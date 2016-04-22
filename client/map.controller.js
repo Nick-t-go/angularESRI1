@@ -210,7 +210,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		      $scope.zoomToExtent = function(newExtent){
 		      	map.setExtent(newExtent);
 		      }
-
+		     $scope.relationshipStore = {};
 		    // Measure 
 
 
@@ -220,47 +220,43 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			// esriConfig.defaults.io.alwaysUseProxy = false;
 			var selectionToolbar;
 		    $scope.newSelection;    
-		    function initSelectToolbar () {
-	            selectionToolbar = new Draw(map);
-	            var selectQuery = new Query();
+		    function initSelectToolbar() {
+			    selectionToolbar = new Draw(map);
+			    var selectQuery = new Query();
 
-	            selectionToolbar.on("DrawEnd", function (geometry) {
-		            selectionToolbar.deactivate();
-		            selectQuery.geometry = geometry;
-		            $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
-		            $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
-		            $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;
-		            $scope.relationshipStore = [];
+			    selectionToolbar.on("DrawEnd", function(geometry) {
+			        selectionToolbar.deactivate();
+			        selectQuery.geometry = geometry;
+			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
+			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
+			        $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;
+			        
+			        $scope.showBottom = true;
+			        if ($scope.newSelection.relationships.length > 0) {
+			            $scope.newSelection.relationships.forEach(function(relationship) {
+			                //Define Query Params
+			                var relatedQuery = new RelationshipQuery();
+			                relatedQuery.outFields = ["*"];
+			                relatedQuery.relationshipId = relationship.id;
+			                relatedQuery.objectIds = $scope.newSelectedFeatures.map(function(feature) {
+			                    return feature.attributes['OBJECTID']
+			                })
+			                //Make Query
+			                $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
+			                	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
+			                    $scope.relationshipStore[relName] = relatedRecords;
+			                    console.log(relatedRecords)
+			                    console.log($scope.relationshipStore[relName])
+			                    console.log(relationship.name)
+			                    console.log("Hey Now")
+			                })
+			            })
+			        }
+			        console.log($scope.relationshipStore);
+			        $scope.$digest();
+			    });
+			}
 
-		            // if($scope.outFields.indexOf('OBJECTID')<0){
-		            // 		$scope.outFields.unshift('OBJECTID');
-		            // 	}
-		            $scope.showBottom = true;
-		            if($scope.newSelection.relationships.length > 0){
-		            	$scope.newSelection.relationships.forEach(function(relationship){
-		            		var relatedQuery = new RelationshipQuery();
-				            relatedQuery.outFields = ["*"];
-				            relatedQuery.relationshipId = relationship.id;
-				            relatedQuery.objectIds = $scope.newSelectedFeatures.map(function(feature){
-				            	return feature.attributes['OBJECTID']
-				            })
-				            $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords){
-				            	if($scope.relationshipStore.length === 0){
-				            		$scope.relationshipStore = relatedRecords;
-				            	}else{
-				            		relatedQuery.objectIds.forEach(function(id){
-				            			var features = relatedRecords[id].features
-				            			$scope.relationshipStore[id] ? $scope.relationshipStore[id].features.push(features) : $scope.relationshipStore[id] = relatedRecords[id];
-				            		})
-				            	}
-				            	console.log($scope.relationshipStore);
-				            })
-				        })
-		            }	
-		            $scope.$digest();
-
-		          });
-	        }
 
 			$scope.change = function(){
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id)
@@ -272,13 +268,20 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 measurement.setTool("distance", false);
                 measurement.setTool("location", false);
     			selectionToolbar.activate(Draw.EXTENT)
+    			$scope.relationshipStore = {};
     		}
 	
 
-   //  		var infoTemplate = new InfoTemplate();
-			// infoTemplate.setTitle("${SdLongName}");
-			// infoTemplate.setContent("<info-template></info-template");
-			//to do 
+ 			$scope.checkRecords = function(id){
+ 				$scope.objIdOfInterest = id;
+ 				$scope.featuresById = [];
+ 				$scope.relationshipClasses = Object.keys($scope.relationshipStore);
+ 				console.log($scope.relationshipClasses)
+ 				$scope.relationshipClasses.forEach(function(tblHeader){
+ 					$scope.relationshipStore[tblHeader][id] ? $scope.featuresById.push( $scope.relationshipStore[tblHeader][id] ) : console.log("none")
+ 				});
+ 				console.log($scope.featuresById);
+ 			}
 			
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
@@ -339,45 +342,6 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 				}
 			}
 
-			// var measureLine;
-			// $scope.resultLength = 0;
-
-			// function initMeasureToolbar(mapObj) {  
-			// 	var lengthParams = new esri.tasks.LengthsParameters();
-   //              map = mapObj;
-   //              measureLine = new Draw(map);
-   //              measureLine.on('draw-end', function(e) {
-   //                  $scope.$apply(function() {
-   //                      addMeasureGraphic(e);
-   //                      lengthParams.polylines = [e.geometry];
-			// 			lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
-			// 			lengthParams.geodesic = true;
-			// 			geometryService.lengths(lengthParams)
-			// 			.then(function(result){
-			// 				$scope.resultLength = (result.lengths[0])
-			// 				$scope.$digest;
-			// 			});
-   //                  });
-   //              });
-
-   //              // set the active tool once a button is clicked
-   //              $scope.activateMeasureTool = activateMeasureTool;
-   //          }
-
-            
-
-		 //    var mLineSymbol = new CartographicLineSymbol(
-   //                          CartographicLineSymbol.STYLE_SOLID,
-   //                          new Color([255, 10, 10]), 2,
-   //                          CartographicLineSymbol.CAP_ROUND,
-   //                          CartographicLineSymbol.JOIN_MITER, 2
-   //                  );
-
-
-		 //    function activateMeasureTool(tool) {
-   //                  map.disableMapNavigation();
-   //                  measureLine.activate('polyline');
-   //              }
 
 
             var measurement = new Measurement({
@@ -410,25 +374,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
             		map.graphics.remove(map.graphics.graphics[map.graphics.graphics.length-1])
             })
 
-			// function getAreaAndLength(evtObj) {
-		 //      var map = this,
-		 //          geometry = evtObj.geometry;
-		 //      map.graphics.clear();
-		      
-		 //      var graphic = map.graphics.add(new Graphic(geometry, new SimpleFillSymbol()));
-		      
-		 //      //setup the parameters for the areas and lengths operation
-		 //      var areasAndLengthParams = new AreasAndLengthsParameters();
-		 //      areasAndLengthParams.lengthUnit = GeometryService.UNIT_FOOT;
-		 //      areasAndLengthParams.areaUnit = GeometryService.UNIT_ACRES;
-		 //      areasAndLengthParams.calculationType = "geodesic";
-		 //      geometryService.simplify([geometry], function(simplifiedGeometries) {
-		 //        areasAndLengthParams.polygons = simplifiedGeometries;
-		 //        geometryService.areasAndLengths(areasAndLengthParams);
-		 //      });
-		 //    }
-
-
+		
 			 var tb;
 
                 // markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
