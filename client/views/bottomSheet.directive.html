@@ -6,7 +6,6 @@
         </tr>
       </thead>
         <tr ng-repeat="item in newSelectedFeatures">
-
           <td ng-repeat="field in outFields track by $index" data-title="{{field}}" sortable="{{field}}">{{item.attributes[field]}}</td>
         </tr>
       </table>

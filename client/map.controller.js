@@ -21,7 +21,27 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 	        {name: "national-geographic"},
 	        {name: "terrain"},
 	        {name: "osm"}]
-	        
+
+	$scope.tools = {
+		About: false,
+		Measure:false, 
+		Bookmarks:false, 
+		"Background Gallery": false, 
+		Draw: false,
+		Print:false,
+		"Select & View": false
+		} 
+
+	$scope.testFunction = function(tool){
+		console.log(tool)
+	}
+	
+
+	$scope.toggleTools = function (tool) {
+	 		if( $scope.tools[tool] === false ){
+	 			$scope.tools[tool]=true;
+	 		}
+        };       
 
 	$scope.layers = [
 		 {
@@ -30,7 +50,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
 		  	options: {
-		  		id:"Outlines"
+		  		id:"Outlines",
+		  		outFields: ['PkContractOutlineID', 'SDShortName', 'ContractNumber']
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -68,7 +89,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
 		  	options: {
-		  		id:"Mains"
+		  		id:"Mains",
+		  		outFields: ['FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
 		  	},
 	  		style: {
 	  			type: "polyline",
@@ -80,7 +102,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
 		 	visible: true,
 		 	options: {
-		 		id:"Manholes"
+		 		id:"Manholes",
+		 		outFields: ["MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality']
 		 	},
 		 	style: {
 	  			type: "point",
@@ -223,7 +246,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		            if($scope.outFields.indexOf('OBJECTID')<0){
 		            		$scope.outFields.unshift('OBJECTID');
 		            	}
-		            console.log( $scope.newSelectedFeatures, $scope.outFields)
+		            $scope.$digest();
 
 		          });
 	        }
@@ -241,9 +264,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			// infoTemplate.setTitle("${SdLongName}");
 			// infoTemplate.setContent("<info-template></info-template");
 			//to do 
-			$scope.testFunction = function(){
-				console.log('test1')
-			}	
+			
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){

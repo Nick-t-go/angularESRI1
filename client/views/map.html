@@ -10,10 +10,7 @@
               <span class="glyphicon glyphicon-menu-hamburger"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
-              <li><a href="#">Bookmarks</a></li>
-              <li><a href="#">Backgrounds</a></li>
-              <li><a href="#">Draw</a></li>
-              <li><a href="#">Measure</a></li>
+              <li><a ng-repeat="(key, value) in tools" ng-click="toggleTools(key)">{{key}}</a></li>
             </ul>
         </div>
     </div>
@@ -23,7 +20,7 @@
 
 <div class="panel-container">
     <div class="panel-group" id="accordion">
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools.About">
             <div class="panel-heading">
                 <h4 class="panel-title">
 					<a data-toggle="collapse" data-parent="#accordion" href="#about">
@@ -34,7 +31,7 @@
                 <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools.Bookmarks">
             <div class="panel-heading">
                 <h4 class="panel-title">
 		        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
@@ -62,7 +59,7 @@
                 </div>
             </div>
         </div>
-     <div class="panel panel-default">
+     <div class="panel panel-default" ng-show="tools['Background Gallery']">
     <div class="panel-heading">
         <h4 class="panel-title">
 		        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
@@ -81,7 +78,7 @@
     </div>
 
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools.Draw">
             <div class="panel-heading">
                 <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
@@ -110,7 +107,7 @@
 </div></div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools.Measure">
             <div class="panel-heading">
                 <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
@@ -124,7 +121,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools.Print">
             <div class="panel-heading">
                 <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#print">
@@ -137,7 +134,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="tools['Select & View']">
             <div class="panel-heading">
                 <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#select">
