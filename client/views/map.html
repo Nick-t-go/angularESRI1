@@ -22,10 +22,13 @@
     <div class="panel-group" id="accordion">
         <div class="panel panel-default" ng-show="tools.About">
             <div class="panel-heading">
-                <h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#about">
-					About</a>
-				</h4>
+                <h4 class="panel-title pull-left">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#about">
+                    About</a>
+                </h4>
+                <div class="panel-button pull-right">
+                    <span ng-click="tools.About=false" class="glyphicon glyphicon-remove-circle"></span>
+                </div>
             </div>
             <div id="about" class="panel-collapse collapse in">
                 <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
@@ -33,130 +36,146 @@
         </div>
         <div class="panel panel-default" ng-show="tools.Bookmarks">
             <div class="panel-heading">
-                <h4 class="panel-title">
-		        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-		        Bookmarks</a>
-		      </h4>
+                <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                Bookmarks</a>
+              </h4>
+              <div class="panel-button pull-right">
+                    <span ng-click="tools.Bookmarks=false" class="glyphicon glyphicon-remove-circle"></span>
+                </div>
             </div>
             <div id="collapse1" class="panel-collapse collapse">
                 <div class="panel-body">
-                <div class="row">
-				  <div class="col-lg-12">
-				    <div class="input-group">
-				      <span class="input-group-btn">
-				        <button class="btn btn-default" type="button" ng-click="extentFinder()">Add</button>
-				      </span>
-				      <input type="text" class="form-control" ng-model="newBookmarkName"placeholder="New Bookmark name...">
-				    </div><!-- /input-group -->
-				  </div><!-- /.col-lg-6 -->
-				</div>  
-                	<ul>
-                		<li style="margin:5px" ng-repeat="bookmark in bookmarks">
-                			<span ng-click="zoomToExtent(bookmark.extent)">{{bookmark.name}}</span>
-                			<span ng-click="removeBookmark($index)" class="pull-right glyphicon glyphicon-remove">
-                		</li>
-                	</ul>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="extentFinder()">Add</button>
+                      </span>
+                                <input type="text" class="form-control" ng-model="newBookmarkName" placeholder="New Bookmark name...">
+                            </div>
+                            <!-- /input-group -->
+                        </div>
+                        <!-- /.col-lg-6 -->
+                    </div>
+                    <ul>
+                        <li style="margin:5px" ng-repeat="bookmark in bookmarks">
+                            <span ng-click="zoomToExtent(bookmark.extent)">{{bookmark.name}}</span>
+                            <span ng-click="removeBookmark($index)" class="pull-right glyphicon glyphicon-remove">
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
      <div class="panel panel-default" ng-show="tools['Background Gallery']">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-		        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-		        Background Gallery</a>
-		      </h4>
-    </div>
-    <div id="collapse2" class="panel-collapse collapse">
-        <div class="panel-body">
-            <form name="basemap">
-                <label for="basemapSelect"> Basemap: </label>
-                <select name="basemapSelect" id="basemapSelect" ng-model="map.basemap">
-                    <option ng-repeat="option in basemapOptions" value="{{option.name}}">{{option.name}}</option>
-                </select>
-            </form>
+        <div class="panel-heading">
+            <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Background Gallery</a>
+            </h4>
+            <div class="panel-button pull-right">
+                <span ng-click="tools['Background Gallery']=false" class="glyphicon glyphicon-remove-circle"></span>
+            </div>
+        </div>
+        <div id="collapse2" class="panel-collapse collapse">
+            <div class="panel-body">
+                <form name="basemap">
+                    <label for="basemapSelect"> Basemap: </label>
+                    <select name="basemapSelect" id="basemapSelect" ng-model="map.basemap">
+                        <option ng-repeat="option in basemapOptions" value="{{option.name}}">{{option.name}}</option>
+                    </select>
+                </form>
+            </div>
         </div>
     </div>
-
-        </div>
         <div class="panel panel-default" ng-show="tools.Draw">
             <div class="panel-heading">
-                <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-        Draw</a>
-      </h4>
+                <h4 class="panel-title pull-left">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Draw</a>
+                </h4>
+                <div class="panel-button pull-right">
+                    <span ng-click="tools.Draw=false" class="glyphicon glyphicon-remove-circle"></span>
+                </div>
             </div>
             <div id="collapse3" class="panel-collapse collapse">
                 <div class="panel-body"><div class="btn-group primary">
-    <button type="button" class="btn btn-primary dropdown-toggle primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary dropdown-toggle primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Pick a Shape <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li><a ng-click="activateDrawTool('Point')">Point</a></li>
-        <li><a ng-click="activateDrawTool('Multipoint')">Multipoint</a></li>
-        <li><a ng-click="activateDrawTool('Line')">Line</a></li>
-        <li><a ng-click="activateDrawTool('Polyline')">Polyline</a></li>
-        <li><a ng-click="activateDrawTool('FreehandPolyline')">Freehand Polyline</a></li>
-        <li role="separator" class="Shapes"></li>
-        <li><a ng-click="activateDrawTool('Triangle')">Triangle</a></li>
-        <li><a ng-click="activateDrawTool('Extent')">Rectangle</a></li>
-        <li><a ng-click="activateDrawTool('Circle')">Circle</a></li>
-        <li><a ng-click="activateDrawTool('Ellipse')">Ellipse</a></li>
-        <li><a ng-click="activateDrawTool('Polygon')">Polygon</a></li>
-        <li><a ng-click="activateDrawTool('FreehandPolygon')">Freehand Polygon</a></li>
-    </ul>
-</div></div>
-            </div>
-        </div>
-        <div class="panel panel-default" ng-show="tools.Measure">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
-        Measure</a>
-      </h4>
-            </div>
-            <div id="collapse4" class="panel-collapse collapse">
-                <div class="panel-body">
-                <button ng-click="activateMeasureTool()">Start Measure</button>
-                <p ng-show="resultLength>0">{{resultLength}} Meters</p>
+                    </button>
+                            <ul class="dropdown-menu">
+                                <li><a ng-click="activateDrawTool('Point')">Point</a></li>
+                                <li><a ng-click="activateDrawTool('Multipoint')">Multipoint</a></li>
+                                <li><a ng-click="activateDrawTool('Line')">Line</a></li>
+                                <li><a ng-click="activateDrawTool('Polyline')">Polyline</a></li>
+                                <li><a ng-click="activateDrawTool('FreehandPolyline')">Freehand Polyline</a></li>
+                                <li role="separator" class="Shapes"></li>
+                                <li><a ng-click="activateDrawTool('Triangle')">Triangle</a></li>
+                                <li><a ng-click="activateDrawTool('Extent')">Rectangle</a></li>
+                                <li><a ng-click="activateDrawTool('Circle')">Circle</a></li>
+                                <li><a ng-click="activateDrawTool('Ellipse')">Ellipse</a></li>
+                                <li><a ng-click="activateDrawTool('Polygon')">Polygon</a></li>
+                                <li><a ng-click="activateDrawTool('FreehandPolygon')">Freehand Polygon</a></li>
+                            </ul>
                 </div>
             </div>
         </div>
-        <div class="panel panel-default" ng-show="tools.Print">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#print">
-        Print</a>
-      </h4>
-            </div>
-            <div id="print" class="panel-collapse collapse">
-                <div class="panel-body">
-                	<div id="printButton"></div>
-                </div>
+    </div>
+    <div class="panel panel-default" ng-show="tools.Measure">
+        <div class="panel-heading">
+            <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Measure</a>
+            </h4>
+            <div class="panel-button pull-right">
+                <span ng-click="tools.Measure=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
-        <div class="panel panel-default" ng-show="tools['Select & View']">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#select">
-        Select & View records</a>
-      </h4>
+        <div id="collapse4" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div id="measurementDiv"></div>
             </div>
-            <div id="select" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div id="selectFormDiv">
-                        <form name="myForm">
-                            <label for="selectForm">Choose Selectable Layer:</label>
-                            <select name="selectForm" id="selectForm" ng-options="layer as layer.name for layer in layers" ng-model="userSelectedLayer" ng-change="change()">
-                            </select>
-                        </form>
-                    </div>
-                    <button  class="panel-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-unchecked"></span></button>
-                    <button  class="panel-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-hand-up"></span></button>
+            
+        </div>
+    </div>
+    <div class="panel panel-default" ng-show="tools.Print">
+        <div class="panel-heading">
+            <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#print">Print</a>
+            </h4>
+            <div class="panel-button pull-right">
+                <span ng-click="tools.Print=false" class="glyphicon glyphicon-remove-circle"></span>
+            </div>
+        </div>
+        <div id="print" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div id="printButton"></div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" ng-show="tools['Select & View']">
+        <div class="panel-heading">
+            <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#select">Select & View records</a>
+            </h4>
+            <div class="panel-button pull-right">
+                <span ng-click="tools['Select & View']=false" class="glyphicon glyphicon-remove-circle"></span>
+            </div>
+        </div>
+        <div id="select" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div id="selectFormDiv">
+                    <form name="myForm">
+                        <label for="selectForm">Choose Selectable Layer:</label>
+                        <select name="selectForm" id="selectForm" ng-options="layer as layer.name for layer in layers" ng-model="userSelectedLayer" ng-change="change()">
+                        </select>
+                    </form>
                 </div>
+                <button class="panel-body-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-unchecked"></span></button>
+                <button class="panel-body-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-hand-up"></span></button>
             </div>
         </div>
     </div>
 </div>
+</div>
+
 
 <legend-box ng-show="legendVisible"></legend-box>
 

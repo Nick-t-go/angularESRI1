@@ -1,12 +1,13 @@
-<div class="bottomSheetContainer">
+<div class="bottomSheetContainer" ng-show="showBottom">
       <table class="bottomSheetTable">
       <thead>
       	<tr>
       		<th ng-repeat="field in outFields">{{field}}</th>
+      		<th ng-click="showBottom=false">x</th>
         </tr>
       </thead>
-        <tr ng-repeat="item in newSelectedFeatures">
-          <td ng-repeat="field in outFields track by $index" data-title="{{field}}" sortable="{{field}}">{{item.attributes[field]}}</td>
+        <tr class="bottom-row" ng-repeat="item in newSelectedFeatures">
+          <td ng-repeat="field in outFields track by $index" data-title="{{field}}" sortable="{{field}}" ng-click="checkRecords(item.attributes['OBJECTID']">{{item.attributes[field]}}</td>
         </tr>
       </table>
 </div>

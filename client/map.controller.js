@@ -51,7 +51,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	visible: true,
 		  	options: {
 		  		id:"Outlines",
-		  		outFields: ['PkContractOutlineID', 'SDShortName', 'ContractNumber']
+		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber']
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -64,33 +64,20 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		  	visible: true,
 		  	options: {
 		  		id:"Districts",
-		  		outFields: ['SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
+		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
 		  	},
 		  	style: {
 	  			type: "polygon",
 	  			tblField: []
 	  		}
 		 },
-		 // {
-		 // 	name: 'sewerSheets',
-		 //  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
-		 //  	visible: true,
-		 //  	options: {
-		 //  		id:"Sheets",
-		  		
-		 //  	},
-		 //  	style: {
-	  // 			type: "polygon",
-	  // 			tblField: []
-	  // 		}
-		 // },
 		 {
 		 	name: 'sewerMains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
 		  	options: {
 		  		id:"Mains",
-		  		outFields: ['FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
+		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
 		  	},
 	  		style: {
 	  			type: "polyline",
@@ -103,7 +90,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		 	visible: true,
 		 	options: {
 		 		id:"Manholes",
-		 		outFields: ["MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality']
+		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality']
 		 	},
 		 	style: {
 	  			type: "point",
@@ -141,7 +128,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		    'esri/toolbars/draw',
                 'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', "esri/symbols/SimpleFillSymbol",
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
-                'esri/graphic',
+                'esri/graphic', "esri/tasks/RelationshipQuery",
                 'esri/Color', "esri/renderers/SimpleRenderer",
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement", "esri/tasks/query",
@@ -151,7 +138,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,
-                Graphic,
+                Graphic, RelationshipQuery,
                 Color, SimpleRenderer,
                 Print, dom,
                 Measurement, Query,
@@ -243,9 +230,33 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 		            $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
 		            $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
 		            $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;
-		            if($scope.outFields.indexOf('OBJECTID')<0){
-		            		$scope.outFields.unshift('OBJECTID');
-		            	}
+		            $scope.relationshipStore = [];
+
+		            // if($scope.outFields.indexOf('OBJECTID')<0){
+		            // 		$scope.outFields.unshift('OBJECTID');
+		            // 	}
+		            $scope.showBottom = true;
+		            if($scope.newSelection.relationships.length > 0){
+		            	$scope.newSelection.relationships.forEach(function(relationship){
+		            		var relatedQuery = new RelationshipQuery();
+				            relatedQuery.outFields = ["*"];
+				            relatedQuery.relationshipId = relationship.id;
+				            relatedQuery.objectIds = $scope.newSelectedFeatures.map(function(feature){
+				            	return feature.attributes['OBJECTID']
+				            })
+				            $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords){
+				            	if($scope.relationshipStore.length === 0){
+				            		$scope.relationshipStore = relatedRecords;
+				            	}else{
+				            		relatedQuery.objectIds.forEach(function(id){
+				            			var features = relatedRecords[id].features
+				            			$scope.relationshipStore[id] ? $scope.relationshipStore[id].features.push(features) : $scope.relationshipStore[id] = relatedRecords[id];
+				            		})
+				            	}
+				            	console.log($scope.relationshipStore);
+				            })
+				        })
+		            }	
 		            $scope.$digest();
 
 		          });
@@ -253,9 +264,13 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 
 			$scope.change = function(){
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id)
+    			console.log($scope.newSelection)
     		}
 
     		$scope.selectByExtent = function(){
+    			measurement.setTool("area", false);
+                measurement.setTool("distance", false);
+                measurement.setTool("location", false);
     			selectionToolbar.activate(Draw.EXTENT)
     		}
 	
@@ -324,48 +339,54 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 				}
 			}
 
-			var measureLine;
-			$scope.resultLength = 0;
+			// var measureLine;
+			// $scope.resultLength = 0;
 
-			function initMeasureToolbar(mapObj) {  
-				var lengthParams = new esri.tasks.LengthsParameters();
-                map = mapObj;
-                measureLine = new Draw(map);
-                measureLine.on('draw-end', function(e) {
-                    $scope.$apply(function() {
-                        addMeasureGraphic(e);
-                        lengthParams.polylines = [e.geometry];
-						lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
-						lengthParams.geodesic = true;
-						geometryService.lengths(lengthParams)
-						.then(function(result){
-							$scope.resultLength = (result.lengths[0])
-							$scope.$digest;
-						});
-                    });
-                });
+			// function initMeasureToolbar(mapObj) {  
+			// 	var lengthParams = new esri.tasks.LengthsParameters();
+   //              map = mapObj;
+   //              measureLine = new Draw(map);
+   //              measureLine.on('draw-end', function(e) {
+   //                  $scope.$apply(function() {
+   //                      addMeasureGraphic(e);
+   //                      lengthParams.polylines = [e.geometry];
+			// 			lengthParams.lengthUnit = esri.tasks.GeometryService.UNIT_METER;
+			// 			lengthParams.geodesic = true;
+			// 			geometryService.lengths(lengthParams)
+			// 			.then(function(result){
+			// 				$scope.resultLength = (result.lengths[0])
+			// 				$scope.$digest;
+			// 			});
+   //                  });
+   //              });
 
-                // set the active tool once a button is clicked
-                $scope.activateMeasureTool = activateMeasureTool;
-            }
+   //              // set the active tool once a button is clicked
+   //              $scope.activateMeasureTool = activateMeasureTool;
+   //          }
 
             
 
-		    var mLineSymbol = new CartographicLineSymbol(
-                            CartographicLineSymbol.STYLE_SOLID,
-                            new Color([255, 10, 10]), 2,
-                            CartographicLineSymbol.CAP_ROUND,
-                            CartographicLineSymbol.JOIN_MITER, 2
-                    );
+		 //    var mLineSymbol = new CartographicLineSymbol(
+   //                          CartographicLineSymbol.STYLE_SOLID,
+   //                          new Color([255, 10, 10]), 2,
+   //                          CartographicLineSymbol.CAP_ROUND,
+   //                          CartographicLineSymbol.JOIN_MITER, 2
+   //                  );
 
 
-		    function activateMeasureTool(tool) {
-                    map.disableMapNavigation();
-                    measureLine.activate('polyline');
-                }
+		 //    function activateMeasureTool(tool) {
+   //                  map.disableMapNavigation();
+   //                  measureLine.activate('polyline');
+   //              }
 
 
-            initMeasureToolbar(map);
+            var measurement = new Measurement({
+		          map: map
+		        }, dom.byId("measurementDiv"));
+		        measurement.startup();
+
+
+            //initMeasureToolbar(map);
 
 
              function addMeasureGraphic(evt) {
@@ -455,6 +476,9 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 function activateDrawTool(tool) {
 
                     map.disableMapNavigation();
+                    measurement.setTool("area", false);
+                    measurement.setTool("distance", false);
+                    measurement.setTool("location", false);
                     tb.activate(tool.toLowerCase());
                 }
 

@@ -4,7 +4,6 @@
 }
 
 .navbar {
-	border-color: rgb(155, 193, 156);
     background-color: rgb(155, 193, 156);
     background: -webkit-linear-gradient(-270deg, rgb(155, 193, 156), #4CAF50); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(-270deg, rgb(155, 193, 156), #4CAF50); /* For Opera 11.1 to 12.0 */
@@ -21,7 +20,6 @@
     right: 0;
     left: 0;
     z-index: 1030;
-    border: 1px solid transparent;
     display: block;
 }
 .navContainer{
@@ -75,8 +73,31 @@
     top: 80px;
     right: 15px;
     max-width: 350px;
-    z-index: 1030;
+    z-index: 999;
     font-weight: 300;
     font-size: 17px;
     letter-spacing: .03em;
+    min-width: 350px;
+    
 }
+
+.panel-heading {
+	height: 40px;
+}
+
+.panel-heading h3{
+	white-space: nowrap;
+    line-height: normal;
+    width: 75%;
+    padding-top: 8px;
+}
+
+.panel-button {
+	margin-left: 5px;
+}
+
+
+.panel-body-button {
+	margin: 10px;
+}
+
