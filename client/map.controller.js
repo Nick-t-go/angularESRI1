@@ -1,5 +1,5 @@
 
-app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
+app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer, $timeout) {
 
 	$scope.map = {
 	            options: {
@@ -129,7 +129,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', "esri/symbols/SimpleFillSymbol",
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
                 'esri/graphic', "esri/tasks/RelationshipQuery",
-                'esri/Color', "esri/renderers/SimpleRenderer",
+                'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement", "esri/tasks/query",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
@@ -138,8 +138,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,
-                Graphic, RelationshipQuery,
-                Color, SimpleRenderer,
+                Graphic, RelationshipQuery, 
+                Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
                 Print, dom,
                 Measurement, Query,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
@@ -158,6 +158,15 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 
 	        initSelectToolbar()    
 
+
+	        $scope.changeRendering = function(legendLayer, field){
+	        	var idx = $scope.layers.indexOf(legendLayer);
+	        	var layer = map.getLayer(legendLayer.options.id)
+	        	customRenderer.verticalQuality(layer, legendLayer);
+	        	layer.redraw();
+	        	$scope.layers[idx].style = legendLayer.style;
+	        	console.log($scope.layers)
+	        }
 
 		    $scope.renderNow = function(){
 
@@ -246,10 +255,11 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			                	if(Object.keys(relatedRecords).length){
 				                	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
 				                    $scope.relationshipStore[relName] = relatedRecords;
-				                    console.log(relatedRecords)
-				                    console.log($scope.relationshipStore[relName])
-				                    console.log(relationship.name)
-				                    console.log("Hey Now")
+				                    $scope.noRelatedRecords = false;
+				                }
+				                else {
+				                	$scope.noRelatedRecords = true;
+				                	$timeout( function(){ $scope.noRelatedRecords = false; }, 6000);
 				                }
 			                })
 			            })
@@ -280,11 +290,12 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
  				$scope.featuresById = [];
  				$scope.relationshipClasses = Object.keys($scope.relationshipStore);
  				console.log($scope.relationshipClasses)
- 				$scope.relationshipClasses.forEach(function(tblHeader){
- 					$scope.relationshipStore[tblHeader][id] ? $scope.featuresById.push( $scope.relationshipStore[tblHeader][id] ) : console.log("none")
+ 				$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
+ 					console.log($scope.relationshipStore[tblHeader][id])
+ 					$scope.relationshipStore[tblHeader][id] ? $scope.featuresById.push( $scope.relationshipStore[tblHeader][id] ) : $scope.relationshipClasses.splice(elIndex,1);
  				});
  				$scope.relationShow = $scope.relationshipClasses[0];
- 				console.log($scope.featuresById);
+ 				console.log($scope.relationshipClasses);
  			}
 
  			$scope.turnOffRelatedDocs = function(){
@@ -323,6 +334,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 						console.log(singleLayer.renderer)
 						if(singleLayer.renderer.defaultSymbol.type === "picturemarkersymbol"){
 							var defaultImage = singleLayer.renderer.defaultSymbol.url
+							layer.style.typeIdField = singleLayer.renderer.attributeField
 							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"') no-repeat center"})
 						}
 						console.log('here')

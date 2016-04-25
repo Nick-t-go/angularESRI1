@@ -105,3 +105,17 @@ select {
     margin: 10px;
 }
 
+#north-arrow {
+    position: fixed;
+    bottom: 80px;
+    right: 15px;
+    width: 69px;
+    z-index: 99;
+    height: 100px;
+    background: url('/images/north-arrow.png') no-repeat;
+}
+
+#dijit_Dialog_0 tr{
+    background: transparent;
+}
+
