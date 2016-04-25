@@ -273,8 +273,9 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
     			$scope.relationshipStore = {};
     		}
 	
-
+    		$scope.showRelatedDocs= false;
  			$scope.checkRecords = function(id){
+ 				$scope.showRelatedDocs= true;
  				$scope.objIdOfInterest = id;
  				$scope.featuresById = [];
  				$scope.relationshipClasses = Object.keys($scope.relationshipStore);
@@ -284,6 +285,11 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
  				});
  				$scope.relationShow = $scope.relationshipClasses[0];
  				console.log($scope.featuresById);
+ 			}
+
+ 			$scope.turnOffRelatedDocs = function(){
+ 				console.log('off');
+ 				$scope.showRelatedDocs = false;
  			}
 
  			$scope.changeTable = function(relation){

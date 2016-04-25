@@ -1,6 +1,6 @@
-<div id="related-docs">
+<div id="related-docs" ng-show="showRelatedDocs">
 	<div class="relatio-buttons btn-group" data-toggle="buttons">
-	  <button ng-repeat="relation in relationshipClasses track by $index" ng-class="$index == 0 ? 'active' : ''" ng-click="changeTable(relation)">
+	  <button ng-repeat="relation in relationshipClasses track by $index" ng-class="$index == 0 ? 'active' : 'inactive'" ng-click="changeTable(relation)">
 	   	{{relation}}
 	  </button>
 	</div>
@@ -11,13 +11,13 @@
 	      		<th>Contract Number</th>
 	      		<th>Contract Name</th>
 	      		<th>Link</th>
-	      		<th>x</th>
+	      		<th ng-click="turnOffRelatedDocs()">x</th>
 	        </tr>
 	        <tr ng-if="relationShow == 'DocumentLinks'">
 				<th>Document Type</th>
 				<th>Description</th>
 				<th>Link</th>
-				<th>x</th>	
+				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	      </thead>
 	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in featuresById[$index].features">
