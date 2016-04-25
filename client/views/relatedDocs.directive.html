@@ -1,5 +1,13 @@
 <div id="related-docs">
-	<ul>
-		<li ng-repeat="feature in featuresById[0].features">{{feature.attributes.ContractName}}</li>
-	</ul>
+	<div ng-repeat="relation in relationshipClasses track by $index">
+		<h3>{{relation}}</h3>
+		<ul ng-repeat="feature in featuresById[$index].features">
+			<li >{{feature.attributes.ContractName }}</li>
+			<li>{{feature.attributes.Description}}</li>
+		</ul>
+	</div>
 </div>
+
+<!--  TODO 
+
+ Make this a tabbed table i.e two different tabels and the relation is the tab if need be. -->
