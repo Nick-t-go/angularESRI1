@@ -3,6 +3,18 @@
 	right: 0px;
 	position: fixed;
 	z-index: 100;
-	min-height: 250px;
-	background: white;
+	background: transparent;
+	width: 50%;
+	height: 250px;
+	
+}
+
+.relation-buttons{
+	height:25px;
+}
+
+.tableContainer{
+	min-height: 225px;
+	background-color: white;
+	overflow-y: scroll;
 }

@@ -243,12 +243,14 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
 			                })
 			                //Make Query
 			                $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
-			                	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
-			                    $scope.relationshipStore[relName] = relatedRecords;
-			                    console.log(relatedRecords)
-			                    console.log($scope.relationshipStore[relName])
-			                    console.log(relationship.name)
-			                    console.log("Hey Now")
+			                	if(Object.keys(relatedRecords).length){
+				                	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
+				                    $scope.relationshipStore[relName] = relatedRecords;
+				                    console.log(relatedRecords)
+				                    console.log($scope.relationshipStore[relName])
+				                    console.log(relationship.name)
+				                    console.log("Hey Now")
+				                }
 			                })
 			            })
 			        }
@@ -280,7 +282,13 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies) {
  				$scope.relationshipClasses.forEach(function(tblHeader){
  					$scope.relationshipStore[tblHeader][id] ? $scope.featuresById.push( $scope.relationshipStore[tblHeader][id] ) : console.log("none")
  				});
+ 				$scope.relationShow = $scope.relationshipClasses[0];
  				console.log($scope.featuresById);
+ 			}
+
+ 			$scope.changeTable = function(relation){
+ 				console.log(relation)
+ 				$scope.relationShow = relation;
  			}
 			
 			//Create new legend Create unique rendering class
