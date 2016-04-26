@@ -1,5 +1,5 @@
 
-app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer, $timeout) {
+app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer, $timeout, RelatedDocuments) {
 
 	$scope.map = {
 	            options: {
@@ -228,7 +228,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
 			// esriConfig.defaults.io.alwaysUseProxy = false;
 			var selectionToolbar;
-		    $scope.newSelection;    
+		    $scope.newSelection; 
+
 		    function initSelectToolbar() {
 			    selectionToolbar = new Draw(map);
 			    var selectQuery = new Query();
@@ -238,32 +239,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			        selectQuery.geometry = geometry;
 			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
 			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
-			        $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;
-			        
+			        $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;		        
 			        $scope.showBottom = true;
-			        if ($scope.newSelection.relationships.length > 0) {
-			            $scope.newSelection.relationships.forEach(function(relationship) {
-			                //Define Query Params
-			                var relatedQuery = new RelationshipQuery();
-			                relatedQuery.outFields = ["*"];
-			                relatedQuery.relationshipId = relationship.id;
-			                relatedQuery.objectIds = $scope.newSelectedFeatures.map(function(feature) {
-			                    return feature.attributes['OBJECTID']
-			                })
-			                //Make Query
-			                $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
-			                	if(Object.keys(relatedRecords).length){
-				                	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
-				                    $scope.relationshipStore[relName] = relatedRecords;
-				                    $scope.noRelatedRecords = false;
-				                }
-				                else {
-				                	$scope.noRelatedRecords = true;
-				                	$timeout( function(){ $scope.noRelatedRecords = false; }, 6000);
-				                }
-			                })
-			            })
-			        }
 			        console.log($scope.relationshipStore);
 			        $scope.$digest();
 			    });
@@ -284,19 +261,61 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
     		}
 	
     		$scope.showRelatedDocs= false;
- 			$scope.checkRecords = function(id){
- 				$scope.showRelatedDocs= true;
- 				$scope.objIdOfInterest = id;
- 				$scope.featuresById = [];
- 				$scope.relationshipClasses = Object.keys($scope.relationshipStore);
- 				console.log($scope.relationshipClasses)
- 				$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
- 					console.log($scope.relationshipStore[tblHeader][id])
- 					$scope.relationshipStore[tblHeader][id] ? $scope.featuresById.push( $scope.relationshipStore[tblHeader][id] ) : $scope.relationshipClasses.splice(elIndex,1);
- 				});
- 				$scope.relationShow = $scope.relationshipClasses[0];
- 				console.log($scope.relationshipClasses);
+
+ 			$scope.checkRecords = function(itemId){
+ 				
+ 				RelatedDocuments.findRelated(itemId, $scope.newSelection)
+ 				.then(function(records){
+
+ 					$scope.featuresById = [];
+ 					$scope.relationshipClasses = [];
+ 					$scope.relationshipClasses = Object.keys(records);
+ 					$scope.selectedFeatureId = itemId;
+ 					$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
+ 			 	 		$scope.featuresById.push( records[tblHeader][itemId] ) 
+ 			 	 		$scope.showRelatedDocs = true;
+ 					});
+ 			 		$scope.relationShow = $scope.relationshipClasses[0];
+ 				})
+ 				// $scope.relationshipClasses = [];
+ 				// $scope.featuresById = [];
+ 				// returnRelated(itemId)
  			}
+
+ 			// function returnRelated(itemId){
+		  //       $scope.newSelection.relationships.forEach(function(relationship) {
+		  //       	    //Define Query Params
+			 //        var relatedQuery = new RelationshipQuery();
+			 //        relatedQuery.outFields = ["*"];
+			 //        relatedQuery.relationshipId = relationship.id;
+			 //        relatedQuery.objectIds = [itemId];
+
+			 //        //Make Query
+			 //        $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
+			 //        	console.log(relatedRecords)
+	   //              	if(Object.keys(relatedRecords).length > 0){
+		  //               	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
+		  //                   $scope.relationshipStore[relName] = relatedRecords;
+		  //               } 
+		  //           })
+			 //    })
+			   
+				// if(Object.keys($scope.relationshipStore).length > 0){
+				// 	console.log('no', Object.keys($scope.relationshipStore).length, Object.keys($scope.relationshipStore))
+				// 	$scope.relationshipClasses = Object.keys($scope.relationshipStore);
+				// 	$scope.showRelatedDocs= true;
+ 			// 		$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
+ 			// 	 		$scope.featuresById.push( $scope.relationshipStore[tblHeader][itemId] ) 
+ 			// 		});
+ 			// 		$scope.relationShow = $scope.relationshipClasses[0];
+ 			// 	}else {
+ 			// 		console.log('yes')
+			 //    	$scope.showRelatedDocs = false;
+				// 	$scope.noRelatedRecords = true;
+				// 	$timeout( function(){ $scope.noRelatedRecords = false; }, 6000);
+				// }
+
+ 	
 
  			$scope.turnOffRelatedDocs = function(){
  				console.log('off');

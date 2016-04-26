@@ -1,4 +1,4 @@
-<div id="related-docs" ng-show="showRelatedDocs">
+<div id="related-docs" ng-show="featuresById.length > 0 && showRelatedDocs">
 	<div class="relatio-buttons btn-group" data-toggle="buttons">
 	  <button ng-repeat="relation in relationshipClasses track by $index" ng-class="$index == 0 ? 'active' : 'inactive'" ng-click="changeTable(relation)">
 	   	{{relation}}
@@ -20,22 +20,26 @@
 				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	      </thead>
+
 	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in featuresById[$index].features">
 	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
 	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>
 	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
+
 	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in featuresById[$index].features">
 	          <td data-title="Document Type" sortable="Document Type">{{feature.attributes.fkDocumentType || 'not specified' }}</td>
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
 	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
+
 	      </table>
 	</div>
-	<div ng-show="noRelatedRecords" class="alert alert-danger" role="alert">Your Selection Has No Related Documents</div>
 </div>
+
+<div ng-show="noRelatedRecords" class="alert alert-danger" role="alert">Your Selection Has No Related Documents</div>
 
 
 
