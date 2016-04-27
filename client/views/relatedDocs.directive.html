@@ -1,11 +1,11 @@
-<div id="related-docs" ng-show="featuresById.length > 0 && showRelatedDocs">
+<div id="related-docs" ng-show="relationshipClasses.length > 0 && showRelatedDocs">
 	<div class="relatio-buttons btn-group" data-toggle="buttons">
 	  <button ng-repeat="relation in relationshipClasses track by $index" ng-class="$index == 0 ? 'active' : 'inactive'" ng-click="changeTable(relation)">
 	   	{{relation}}
 	  </button>
 	</div>
 	<div class="tableContainer" ng-repeat="relation in relationshipClasses track by $index">
-		<table class="relationTable" ng-show="relation === relationShow">
+		<table class="relationTable" >
 	      <thead>
 	      	<tr ng-if="relationShow == 'Contracts'">
 	      		<th>Contract Number</th>
@@ -19,17 +19,28 @@
 				<th>Link</th>
 				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
+	        <tr ng-if="relationShow == 'StructurePhotos'">
+				<th>Description</th>
+				<th>Link</th>
+				<th ng-click="turnOffRelatedDocs()">x</th>	
+	        </tr>
 	      </thead>
 
-	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in featuresById[$index].features">
+	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
 	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>
 	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 
-	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in featuresById[$index].features">
+	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Document Type" sortable="Document Type">{{feature.attributes.fkDocumentType || 'not specified' }}</td>
+	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
+	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
+	          <td data-title="x" sortable="x">{{" "}}</td>
+	        </tr>
+
+	        <tr ng-if="relationShow == 'StructurePhotos'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
 	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>

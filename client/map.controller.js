@@ -219,7 +219,6 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 		      $scope.zoomToExtent = function(newExtent){
 		      	map.setExtent(newExtent);
 		      }
-		     $scope.relationshipStore = {};
 		    // Measure 
 
 
@@ -238,9 +237,8 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			        selectionToolbar.deactivate();
 			        selectQuery.geometry = geometry;
 			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
-			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();
-			        $scope.outFields = $scope.newSelectedFeatures[0]._layer._outFields;		        
-			        $scope.showBottom = true;
+			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
+			        $scope.showSelected = true;
 			        console.log($scope.relationshipStore);
 			        $scope.$digest();
 			    });
@@ -248,8 +246,15 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 
 			$scope.change = function(){
+				$scope.showSelected = false;
+				$scope.showRelatedDocs = false;
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id)
-    			console.log($scope.newSelection)
+    			var fieldsSelectionSymbol =
+          			new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+            		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5]));
+          		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol);
+          		$scope.outFields = $scope.newSelection._outFields;	
     		}
 
     		$scope.selectByExtent = function(){
@@ -257,73 +262,48 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
                 measurement.setTool("distance", false);
                 measurement.setTool("location", false);
     			selectionToolbar.activate(Draw.EXTENT)
-    			$scope.relationshipStore = {};
+    		}
+
+    		$scope.selectByClick = function(){
+    			if($scope.newSelection){
+    				console.log($scope.newSelection)
+	    			measurement.setTool("area", false);
+	                measurement.setTool("distance", false);
+	                measurement.setTool("location", false);
+	                var singleSelectQuery = new Query();
+	                $scope.newSelection.on('click', function(evt){	
+	                	singleSelectQuery.geometry = evt.mapPoint;
+	                	$scope.newSelection.selectFeatures(singleSelectQuery, $scope.newSelection.SELECTION_NEW, function(selection){
+	                		$scope.newSelectedFeatures = selection;
+	                		$scope.showSelected = true;
+	                		$scope.$digest();
+	                	})
+
+	                })
+	            }
     		}
 	
     		$scope.showRelatedDocs= false;
 
+
  			$scope.checkRecords = function(itemId){
- 				
+
  				RelatedDocuments.findRelated(itemId, $scope.newSelection)
  				.then(function(records){
-
- 					$scope.featuresById = [];
- 					$scope.relationshipClasses = [];
+ 					console.log(records)
+ 					$scope.relatedRecords = records;
  					$scope.relationshipClasses = Object.keys(records);
  					$scope.selectedFeatureId = itemId;
- 					$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
- 			 	 		$scope.featuresById.push( records[tblHeader][itemId] ) 
- 			 	 		$scope.showRelatedDocs = true;
- 					});
+ 					$scope.showRelatedDocs = true;
  			 		$scope.relationShow = $scope.relationshipClasses[0];
  				})
- 				// $scope.relationshipClasses = [];
- 				// $scope.featuresById = [];
- 				// returnRelated(itemId)
  			}
 
- 			// function returnRelated(itemId){
-		  //       $scope.newSelection.relationships.forEach(function(relationship) {
-		  //       	    //Define Query Params
-			 //        var relatedQuery = new RelationshipQuery();
-			 //        relatedQuery.outFields = ["*"];
-			 //        relatedQuery.relationshipId = relationship.id;
-			 //        relatedQuery.objectIds = [itemId];
-
-			 //        //Make Query
-			 //        $scope.newSelection.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
-			 //        	console.log(relatedRecords)
-	   //              	if(Object.keys(relatedRecords).length > 0){
-		  //               	var relName = relationship.name.slice(relationship.name.indexOf("DBO.tbl")+7)
-		  //                   $scope.relationshipStore[relName] = relatedRecords;
-		  //               } 
-		  //           })
-			 //    })
-			   
-				// if(Object.keys($scope.relationshipStore).length > 0){
-				// 	console.log('no', Object.keys($scope.relationshipStore).length, Object.keys($scope.relationshipStore))
-				// 	$scope.relationshipClasses = Object.keys($scope.relationshipStore);
-				// 	$scope.showRelatedDocs= true;
- 			// 		$scope.relationshipClasses.forEach(function(tblHeader, elIndex){
- 			// 	 		$scope.featuresById.push( $scope.relationshipStore[tblHeader][itemId] ) 
- 			// 		});
- 			// 		$scope.relationShow = $scope.relationshipClasses[0];
- 			// 	}else {
- 			// 		console.log('yes')
-			 //    	$scope.showRelatedDocs = false;
-				// 	$scope.noRelatedRecords = true;
-				// 	$timeout( function(){ $scope.noRelatedRecords = false; }, 6000);
-				// }
-
- 	
-
  			$scope.turnOffRelatedDocs = function(){
- 				console.log('off');
  				$scope.showRelatedDocs = false;
  			}
 
  			$scope.changeTable = function(relation){
- 				console.log(relation)
  				$scope.relationShow = relation;
  			}
 			
@@ -377,6 +357,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 				console.log($scope.layers)
 			}
 
+
 			var doneOnce = false;
 			$scope.legendVisible = false;
 			$scope.showLegend = function(){
@@ -388,112 +369,81 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			}
 
 
-
+			//initMeasureToolbar(map);
             var measurement = new Measurement({
 		          map: map
 		        }, dom.byId("measurementDiv"));
 		        measurement.startup();
+		        
 
+			var tb; //draw Tool Bar i.e tb
 
-            //initMeasureToolbar(map);
+			// markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
+			var markerSymbol = new SimpleMarkerSymbol();
+			markerSymbol.setPath('M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z');
+			markerSymbol.setColor(new Color('#00FFFF'));
 
+			// lineSymbol used for freehand polyline, polyline and line.
+			var lineSymbol = new CartographicLineSymbol(
+			    CartographicLineSymbol.STYLE_SOLID,
+			    new Color([255, 0, 0]), 10,
+			    CartographicLineSymbol.CAP_ROUND,
+			    CartographicLineSymbol.JOIN_MITER, 5
+			);
 
-             function addMeasureGraphic(evt) {
-                    //deactivate the toolbar and clear existing graphics
-                    measureLine.deactivate();
-                    map.enableMapNavigation();
-                    // figure out which symbol to use
-                    var symbol;
-                    if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
-                        symbol = markerSymbol;
-                    } else if (evt.geometry.type === 'line' || evt.geometry.type === 'polyline') {
-                        symbol = mLineSymbol;
-                    } else {
-                        symbol = fillSymbol;
-                    }
-                    map.graphics.add(new Graphic(evt.geometry, symbol));
-                    console.log(map.graphics)
-                }
-				var geometryService = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-				geometryService.on("lengths-complete", function(e){
-            		map.graphics.remove(map.graphics.graphics[map.graphics.graphics.length-1])
-            })
+			// fill symbol used for extent, polygon and freehand polygon, use a picture fill symbol
+			// the images folder contains additional fill images, other options: sand.png, swamp.png or stiple.png
+			var fillSymbol = new PictureFillSymbol(
+			    // 'images/mangrove.png',
+			    '//developers.arcgis.com/javascript/samples/graphics_add/images/mangrove.png',
+			    new SimpleLineSymbol(
+			        SimpleLineSymbol.STYLE_SOLID,
+			        new Color('#000'),1),42,42);
 
-		
-			 var tb;
+			// get a local reference to the map object once it's loaded
+			// and initialize the drawing toolbar
+			 function initToolbar(mapObj) {
+			    map = mapObj;
+			    tb = new Draw(map);
+			    tb.on('draw-end', function(e) {
+			        $scope.$apply(function() {
+			            addGraphic(e);
+			        });
+			    });
 
-                // markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
-                var markerSymbol = new SimpleMarkerSymbol();
-                markerSymbol.setPath('M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z');
-                markerSymbol.setColor(new Color('#00FFFF'));
-
-                // lineSymbol used for freehand polyline, polyline and line.
-                var lineSymbol = new CartographicLineSymbol(
-                    CartographicLineSymbol.STYLE_SOLID,
-                    new Color([255, 0, 0]), 10,
-                    CartographicLineSymbol.CAP_ROUND,
-                    CartographicLineSymbol.JOIN_MITER, 5
-                );
-
-                // fill symbol used for extent, polygon and freehand polygon, use a picture fill symbol
-                // the images folder contains additional fill images, other options: sand.png, swamp.png or stiple.png
-                var fillSymbol = new PictureFillSymbol(
-                    // 'images/mangrove.png',
-                    '//developers.arcgis.com/javascript/samples/graphics_add/images/mangrove.png',
-                    new SimpleLineSymbol(
-                        SimpleLineSymbol.STYLE_SOLID,
-                        new Color('#000'),
-                        1
-                    ),
-                    42,
-                    42
-                );
-
-                // get a local reference to the map object once it's loaded
-                // and initialize the drawing toolbar
-                 function initToolbar(mapObj) {
-                    map = mapObj;
-                    tb = new Draw(map);
-                    tb.on('draw-end', function(e) {
-                        $scope.$apply(function() {
-                            addGraphic(e);
-                        });
-                    });
-
-                    // set the active tool once a button is clicked
-                    $scope.activateDrawTool = activateDrawTool;
-                }
-
-                function activateDrawTool(tool) {
-
-                    map.disableMapNavigation();
-                    measurement.setTool("area", false);
-                    measurement.setTool("distance", false);
-                    measurement.setTool("location", false);
-                    tb.activate(tool.toLowerCase());
-                }
-
-                function addGraphic(evt) {
-                    //deactivate the toolbar and clear existing graphics
-                    tb.deactivate();
-                    map.enableMapNavigation();
-
-                    // figure out which symbol to use
-                    var symbol;
-                    if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
-                        symbol = markerSymbol;
-                    } else if (evt.geometry.type === 'line' || evt.geometry.type === 'polyline') {
-                        symbol = lineSymbol;
-                    } else {
-                        symbol = fillSymbol;
-                    }
-
-                    map.graphics.add(new Graphic(evt.geometry, symbol));
-                    console.log(map.graphics)
-                }
-                 // bind the toolbar to the map
-                initToolbar(map);
-
+			    // set the active tool once a button is clicked
+			    $scope.activateDrawTool = activateDrawTool;
 			}
+
+			function activateDrawTool(tool) {
+
+			    map.disableMapNavigation();
+			    measurement.setTool("area", false);
+			    measurement.setTool("distance", false);
+			    measurement.setTool("location", false);
+			    tb.activate(tool.toLowerCase());
+			}
+
+			function addGraphic(evt) {
+			    //deactivate the toolbar and clear existing graphics
+			    tb.deactivate();
+			    map.enableMapNavigation();
+
+			    // figure out which symbol to use
+			    var symbol;
+			    if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
+			        symbol = markerSymbol;
+			    } else if (evt.geometry.type === 'line' || evt.geometry.type === 'polyline') {
+			        symbol = lineSymbol;
+			    } else {
+			        symbol = fillSymbol;
+			    }
+
+			    map.graphics.add(new Graphic(evt.geometry, symbol));
+			    console.log(map.graphics)
+			}
+			 // bind the toolbar to the map
+			initToolbar(map);
+		}
 	)}
 })
