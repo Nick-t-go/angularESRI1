@@ -4,21 +4,17 @@
 	</div>
 	<div class="row">
 		<ul  ng-repeat="layer in layers">
-			<li> 
-				<label>
-					<input type="checkbox" ng-model="layer.visible"ng-change="toggleLayer(layer)">{{layer.name}} &nbsp; &nbsp; 
+			<li class="legend-list-item"> 
+				<label >
+					<input type="checkbox" ng-model="layer.visible"ng-change="toggleLayer(layer)">{{layer.name}} 
 				</label>
-				<div class="dropup">
-				  <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<div ng-if="layer.renderOptions.length>0" class="dropup legend-item-edit">
+				  <button class=" btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				    <span class="glyphicon glyphicon-edit"></span>
-				    <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-				    <li><a href="#">Action</a></li>
-				    <li><a href="#">Another action</a></li>
-				    <li><a href="#">Something else here</a></li>
-				    <li role="separator" class="divider"></li>
-				    <li><a href="#">Separated link</a></li>
+				  	<li class="dropdown-header">Symbolize By:</li>
+				    <li ng-repeat="option in layer.renderOptions" ng-click="changeRendering(layer, option)"><a>{{option}}</a></li>
 				  </ul>
 				</div>
 			</li>
@@ -31,18 +27,3 @@
 </div> 
 
 
-
-
-<div class="dropup">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropup
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-    <li><a href="#">Action</a></li>
-    <li><a href="#">Another action</a></li>
-    <li><a href="#">Something else here</a></li>
-    <li role="separator" class="divider"></li>
-    <li><a href="#">Separated link</a></li>
-  </ul>
-</div>

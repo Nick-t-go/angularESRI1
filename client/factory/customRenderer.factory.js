@@ -20,6 +20,7 @@ app.factory('customRenderer', function(esriLoader) {
 				var renderer = new UniqueValueRenderer(nonSurveyGradeMarker, "FkMhVerticalQuality");
 				renderer.addValue("SURVEY", surveyGradeMarker);
 				layer.setRenderer(renderer)
+				layer.redraw();
 				legendLayer.style = {
 					type: "point",
 					typeIdField: "FkMhVerticalQuality",
@@ -49,6 +50,7 @@ app.factory('customRenderer', function(esriLoader) {
 				var renderer = new UniqueValueRenderer(nonSurveyGradeMarker, "FkMhHorizontalQuality");
 				renderer.addValue("SURVEY", surveyGradeMarker);
 				layer.setRenderer(renderer)
+				layer.redraw();
 				legendLayer.style = {
 					type: "point",
 					typeIdField: "FkMhHorizontalQuality",
@@ -87,6 +89,7 @@ app.factory('customRenderer', function(esriLoader) {
 				var renderer = new UniqueValueRenderer(defaultMarker, "InvestigationStatus");
 				renderer.addValue("2", completeMarker);
 				layer.setRenderer(renderer)
+				layer.redraw();
 				legendLayer.style = {
 					type: "point",
 					typeIdField: "Investigation Status",

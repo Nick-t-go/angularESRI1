@@ -163,12 +163,12 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	        initSelectToolbar()    
 
 
-	        $scope.changeRendering = function(legendLayer, field){
+	        $scope.changeRendering = function(legendLayer, renderField){
 	        	var idx = $scope.layers.indexOf(legendLayer);
 	        	var layer = map.getLayer(legendLayer.options.id)
-	        	customRenderer.verticalQuality(layer, legendLayer);
-	        	layer.redraw();
+	        	customRenderer[renderField](layer, legendLayer);
 	        	$scope.layers[idx].style = legendLayer.style;
+	        	layer.redraw();
 	        	console.log($scope.layers)
 	        }
 
