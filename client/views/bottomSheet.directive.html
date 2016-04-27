@@ -1,9 +1,9 @@
-<div class="bottomSheetContainer" ng-show="showBottom">
+<div class="bottomSheetContainer" ng-show="showSelected">
       <table class="bottomSheetTable">
       <thead>
       	<tr>
       		<th ng-repeat="field in outFields">{{field}}</th>
-      		<th ng-click="showBottom=false">x</th>
+      		<th ng-click="showSelected=false">x</th>
         </tr>
       </thead>
         <tr class="bottom-row" ng-repeat="item in newSelectedFeatures">
