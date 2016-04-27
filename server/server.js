@@ -16,10 +16,10 @@ app.use(express.static(path.join(__dirname, '../client')));
 
 app.use(function(req, res, next){
     if (path.extname(req.path).length > 0){
-        res.status(404).end()
+        res.status(404).end();
     }
     else{
-        next(null)
+        next(null);
     }
 });
 
@@ -32,5 +32,5 @@ app.use(function(err, req, res, next){
 });
 
 app.listen(port, function(){
-    console.log('Listening on ' + port)
+    console.log('Listening on ' + port);
 });

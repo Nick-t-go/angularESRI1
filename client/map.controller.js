@@ -20,7 +20,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	        {name: "oceans"},
 	        {name: "national-geographic"},
 	        {name: "terrain"},
-	        {name: "osm"}]
+	        {name: "osm"}];
 
 	$scope.tools = {
 		About: false,
@@ -30,11 +30,11 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 		Draw: false,
 		Print:false,
 		"Select & View": false
-		} 
+		}; 
 
 	$scope.testFunction = function(tool){
-		console.log(tool)
-	}
+		console.log(tool);
+	};
 	
 
 	$scope.toggleTools = function (tool) {
@@ -101,13 +101,13 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	  			tblField: []
 	  		}
 		 }
-	 ]
+	 ];
 
 	 $scope.layersOn = [];
 
 	 $scope.layers.forEach(function(layer){
-	 	$scope.layersOn.push({url:layer.url, options:layer.options})
-	 })
+	 	$scope.layersOn.push({url:layer.url, options:layer.options});
+	 });
 
 	 $scope.toggleLayer = function (layer) {
 	 		var push = true;
@@ -136,7 +136,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
                 'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement", "esri/tasks/query",
-                "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters",  "esri/geometry/Extent","esri/SpatialReference",
+                "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
                 "esri/config", "esri/dijit/Legend", "esri/geometry/Extent", "esri/InfoTemplate" 
             ], function(
                 Draw,
@@ -146,7 +146,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
                 Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
                 Print, dom,
                 Measurement, Query,
-                lang, Geometry, GeometryService, AreasAndLengthsParameters, Extent, SpatialReference,
+                lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
                 config, Legend, Extent, InfoTemplate
             ) {
 
@@ -160,32 +160,31 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 
 
-	        initSelectToolbar()    
+	        initSelectToolbar();    
 
 
 	        $scope.changeRendering = function(legendLayer, renderField){
 	        	var idx = $scope.layers.indexOf(legendLayer);
-	        	var layer = map.getLayer(legendLayer.options.id)
+	        	var layer = map.getLayer(legendLayer.options.id);
 	        	customRenderer[renderField](layer, legendLayer);
 	        	$scope.layers[idx].style = legendLayer.style;
 	        	layer.redraw();
-	        	console.log($scope.layers)
-	        }
+	        };
 
 		    $scope.renderNow = function(){
 
 			    var visibleLayers = map.getLayersVisibleAtScale();
                 $scope.layer1 = visibleLayers[1];
-                console.log($scope.layer1.renderer.symbol.color)
-                $scope.clicked++
+                console.log($scope.layer1.renderer.symbol.color);
+                $scope.clicked++;
                 var symbol = new SimpleFillSymbol().setColor(new Color([100,255,100,0.5]));
                 var renderer = new SimpleRenderer(symbol);
-                $scope.layer1.setRenderer(renderer)
+                $scope.layer1.setRenderer(renderer);
                 $scope.layer1.redraw();
-                console.log($scope.layer1.renderer.symbol.color)
+                console.log($scope.layer1.renderer.symbol.color);
                 $scope.$digest();
 
-		      }
+		      };
 
 
 
@@ -195,34 +194,34 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 						name: "LI",
 						extent: new Extent(map.extent)
 					}
-					]
+					];
 				
-				 $cookies.putObject('test', bookmarks)
+				 $cookies.putObject('test', bookmarks);
 				}
 				else{
-					$scope.bookmarks = $cookies.getObject('test')
+					$scope.bookmarks = $cookies.getObject('test');
 					$scope.bookmarks.forEach(function(bookmark){
-						bookmark.extent = new Extent(bookmark.extent)
-					})
+						bookmark.extent = new Extent(bookmark.extent);
+					});
 		      		
 				}
 
 
 		      $scope.extentFinder = function(){
-		      	$scope.testExtent = map.extent
-		      	$scope.bookmarks.push({name:$scope.newBookmarkName, extent: map.extent})
+		      	$scope.testExtent = map.extent;
+		      	$scope.bookmarks.push({name:$scope.newBookmarkName, extent: map.extent});
 		      	$scope.newBookmarkName = "";
 				$cookies.putObject('test', $scope.bookmarks);
-		      }
+		      };
 
 		      $scope.removeBookmark = function(index){
 		      	$scope.bookmarks.splice(index, 1);
 		      	$cookies.putObject('test', $scope.bookmarks);
-		      }
+		      };
 
 		      $scope.zoomToExtent = function(newExtent){
 		      	map.setExtent(newExtent);
-		      }
+		      };
 		    // Measure 
 
 
@@ -231,7 +230,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
 			// esriConfig.defaults.io.alwaysUseProxy = false;
 			var selectionToolbar;
-		    $scope.newSelection; 
+		    $scope.newSelection = ""; 
 
 		    function initSelectToolbar() {
 			    selectionToolbar = new Draw(map);
@@ -252,25 +251,25 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			$scope.change = function(){
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
-    			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id)
+    			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
     			var fieldsSelectionSymbol =
           			new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
             		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
           			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5]));
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol);
           		$scope.outFields = $scope.newSelection._outFields;	
-    		}
+    		};
 
     		$scope.selectByExtent = function(){
     			measurement.setTool("area", false);
                 measurement.setTool("distance", false);
                 measurement.setTool("location", false);
-    			selectionToolbar.activate(Draw.EXTENT)
-    		}
+    			selectionToolbar.activate(Draw.EXTENT);
+    		};
 
     		$scope.selectByClick = function(){
     			if($scope.newSelection){
-    				console.log($scope.newSelection)
+    				console.log($scope.newSelection);
 	    			measurement.setTool("area", false);
 	                measurement.setTool("distance", false);
 	                measurement.setTool("location", false);
@@ -281,11 +280,11 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	                		$scope.newSelectedFeatures = selection;
 	                		$scope.showSelected = true;
 	                		$scope.$digest();
-	                	})
+	                	});
 
-	                })
+	                });
 	            }
-    		}
+    		};
 	
     		$scope.showRelatedDocs= false;
 
@@ -294,72 +293,70 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
  				RelatedDocuments.findRelated(itemId, $scope.newSelection)
  				.then(function(records){
- 					console.log(records)
+ 					console.log(records);
  					$scope.relatedRecords = records;
  					$scope.relationshipClasses = Object.keys(records);
  					$scope.selectedFeatureId = itemId;
  					$scope.showRelatedDocs = true;
  			 		$scope.relationShow = $scope.relationshipClasses[0];
- 				})
- 			}
+ 				});
+ 			};
 
  			$scope.turnOffRelatedDocs = function(){
  				$scope.showRelatedDocs = false;
- 			}
+ 			};
 
  			$scope.changeTable = function(relation){
  				$scope.relationShow = relation;
- 			}
+ 			};
 			
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
-					var singleLayer = map.getLayer(layer.options.id)
+					var singleLayer = map.getLayer(layer.options.id);
 					if (singleLayer.types.length > 0 && layer.style.type == 'polygon'){
 						for(var i = 0; i < singleLayer.types.length; i++){
-							var layerColors = singleLayer.renderer._symbols[i].symbol
+							var layerColors = singleLayer.renderer._symbols[i].symbol;
 							var fillColor = layerColors.getStroke().toCss(true);
 							var outlineColor = layerColors.getFill().toCss(true);
-							layer.style.typeIdField = singleLayer.typeIdField
-							layer.style.tblField.push({name: singleLayer.renderer._symbols[i].label, fill: fillColor, outline: outlineColor})
+							layer.style.typeIdField = singleLayer.typeIdField;
+							layer.style.tblField.push({name: singleLayer.renderer._symbols[i].label, fill: fillColor, outline: outlineColor});
 						}
 					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
-						console.log(singleLayer.visible)
+						console.log(singleLayer.visible);
 						singleLayer.renderer.infos.forEach(function(subLayer){
 							var name = subLayer.label;
 							var color = subLayer.symbol.color.toCss(true);
-							layer.style.typeIdField = singleLayer.typeIdField
-							layer.style.tblField.push({name:name, fill: color})
-						})
+							layer.style.typeIdField = singleLayer.typeIdField;
+							layer.style.tblField.push({name:name, fill: color});
+						});
 					}
 					else if(layer.style.type === 'point'){
-						console.log(singleLayer.renderer)
+						console.log(singleLayer.renderer);
 						if(singleLayer.renderer.defaultSymbol.type === "picturemarkersymbol"){
-							var defaultImage = singleLayer.renderer.defaultSymbol.url
-							layer.style.typeIdField = singleLayer.renderer.attributeField
-							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"') no-repeat center"})
+							var defaultImage = singleLayer.renderer.defaultSymbol.url;
+							layer.style.typeIdField = singleLayer.renderer.attributeField;
+							layer.style.tblField.push({name:singleLayer.renderer.defaultLabel, fill: "url('"+defaultImage+"') no-repeat center"});
 						}
-						console.log('here')
 						for(var k = 0; k < singleLayer.renderer.values.length; k++){
 							var fieldSymbol = singleLayer.renderer._symbols[singleLayer.renderer.values[k]];
-							console.log(fieldSymbol)
+							console.log(fieldSymbol);
 							if(fieldSymbol.symbol.type === "picturemarkersymbol"){
 								var fieldImage = fieldSymbol.symbol.url;
-								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+fieldImage+"') no-repeat center"})
+								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+fieldImage+"') no-repeat center"});
 							}
 						}	
 					}
 					else{
-						console.log(singleLayer)
 						var layerColors = singleLayer.renderer.getSymbol();
 						var fillColor = layerColors.getFill().toCss(true);
 						var outlineColor = layerColors.getStroke().color.toCss(true);
-						layer.style.tblField.push({name:'default', fill: fillColor, outline: outlineColor})
+						layer.style.tblField.push({name:'default', fill: fillColor, outline: outlineColor});
 					}
-				})
-				console.log($scope.layers)
-			}
+				});
+				console.log($scope.layers);
+			};
 
 
 			var doneOnce = false;
@@ -370,7 +367,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 					$scope.styleInit();
 					doneOnce = true;
 				}
-			}
+			};
 
 
 			//initMeasureToolbar(map);
@@ -444,10 +441,9 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 			    }
 
 			    map.graphics.add(new Graphic(evt.geometry, symbol));
-			    console.log(map.graphics)
 			}
 			 // bind the toolbar to the map
 			initToolbar(map);
 		}
 	)}
-})
+});
