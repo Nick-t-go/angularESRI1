@@ -4,8 +4,24 @@
 	</div>
 	<div class="row">
 		<ul  ng-repeat="layer in layers">
-			<li> <label><input type="checkbox" ng-model="layer.visible"
-			ng-change="toggleLayer(layer)">{{layer.name}} &nbsp; &nbsp; </label><span class="glyphicon glyphicon-edit" ng-click="changeRendering(layer,'vertical')"></span></li>
+			<li> 
+				<label>
+					<input type="checkbox" ng-model="layer.visible"ng-change="toggleLayer(layer)">{{layer.name}} &nbsp; &nbsp; 
+				</label>
+				<div class="dropup">
+				  <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    <span class="glyphicon glyphicon-edit"></span>
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+				    <li><a href="#">Action</a></li>
+				    <li><a href="#">Another action</a></li>
+				    <li><a href="#">Something else here</a></li>
+				    <li role="separator" class="divider"></li>
+				    <li><a href="#">Separated link</a></li>
+				  </ul>
+				</div>
+			</li>
 			<li class="legend-field" ng-if="layer.style.typeIdField">{{layer.style.typeIdField}}</li>
 				<ul class="legend-list" ng-repeat="field in layer.style.tblField">
 					<li class="legend-field"><div ng-class="layer.style.type" ng-style="{'background': field.fill, 'border-color': field.outline}"></div><span ng-hide="field.name === 'default'">{{field.name}}</span></li>
@@ -13,3 +29,20 @@
 		</ul>
 	</div>
 </div> 
+
+
+
+
+<div class="dropup">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropup
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li role="separator" class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>

@@ -45,10 +45,11 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 	$scope.layers = [
 		 {
-		 	name: 'sewerOutlines',
+		 	name: 'Sewer Outlines',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
+			renderOptions: [],
 		  	options: {
 		  		id:"Outlines",
 		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber']
@@ -59,9 +60,10 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	  		}
 		 },
 		 {
-		 	name: 'sewerDistricts',
+		 	name: 'Sewer Districts',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
 		  	visible: true,
+		  	renderOptions: [],	
 		  	options: {
 		  		id:"Districts",
 		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
@@ -72,9 +74,10 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	  		}
 		 },
 		 {
-		 	name: 'sewerMains',
+		 	name: 'Sewer Mains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
+		  	renderOptions: [],
 		  	options: {
 		  		id:"Mains",
 		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
@@ -85,9 +88,10 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	  		}
 		 },
 		 {
-		 	name: 'manholes',
+		 	name: 'Manholes',
 		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
 		 	visible: true,
+		 	renderOptions: ['investigationStatus','horizontalQuality','verticalQuality'],
 		 	options: {
 		 		id:"Manholes",
 		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality']
@@ -374,7 +378,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 		          map: map
 		        }, dom.byId("measurementDiv"));
 		        measurement.startup();
-		        
+
 
 			var tb; //draw Tool Bar i.e tb
 
