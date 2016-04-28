@@ -1,5 +1,5 @@
 
-app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer, $timeout, RelatedDocuments) {
+app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout, RelatedDocuments) {
 
 	$scope.map = {
 				basemap:'topo',
@@ -10,77 +10,12 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 	                sliderStyle: 'small'
 	            }
 	        };
-	$scope.hoverImage = 'none';   
-	$scope.showpreview = function(image){
-		$scope.hoverImage = image;
-	};
-
-	$scope.basemapOptions = [
-		{
-			name:"gray",
-			displayName:"Light-Gray",
-			show: false,
-			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/8b3b470883a744aeb60e5fff0a319ce7/info/thumbnail/light_gray_canvas.jpg')"
-		},
-		{
-			name: "dark-gray",
-			displayName:"Dark-Gray",
-			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/25869b8718c0419db87dad07de5b02d8/info/thumbnail/DGCanvasBase.png')"
-		},
-		{
-			name: "topo",
-			displayName: "Topo",
-			show: false,
-			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/931d892ac7a843d7ba29d085e0433465/info/thumbnail/usa_topo.jpg')"
-		},
-		{
-			name: "streets",
-			displayName: "Streets",
-			show: false,
-			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/d8855ee4d3d74413babfb0f41203b168/info/thumbnail/world_street_map.jpg')"
-		},
-		{
-			name: "satellite",
-			displayName: "Satellite",
-			show: false,
-			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/86de95d4e0244cba80f0fa2c9403a7b2/info/thumbnail/tempimagery.jpg')"
-		},
-	    {
-	    	name: "hybrid",
-	    	displayName: "Hybrid",
-	    	show: false,
-	    	imagery: "url('http://www.arcgis.com/sharing/rest/content/items/413fd05bbd7342f5991d5ec96f4f8b18/info/thumbnail/imagery_labels.jpg')"
-	    },
-	    {
-	    	name: "oceans",
-	    	displayName: "Oceans",
-	    	show: false,
-	    	imagery: "url('http://www.arcgis.com/sharing/rest/content/items/48b8cec7ebf04b5fbdcaf70d09daff21/info/thumbnail/tempoceans.jpg')"
-	    },
-	    {
-	    	name: "national-geographic",
-	    	displayName: "National Geographic",
-	    	show: false,
-	    	imagery: "url('http://www.arcgis.com/sharing/rest/content/items/509e2d6b034246d692a461724ae2d62c/info/thumbnail/natgeo.jpg')"
-		},
-	    {
-	    	name: "terrain",
-	    	displayName: "Terrain",
-	    	show: false,
-	    	imagery: "url('http://www.arcgis.com/sharing/rest/content/items/aab054ab883c4a4094c72e949566ad40/info/thumbnail/terrain_labels.jpg')"
-	    },
-	    {
-	    	name: "osm",
-	    	displayName: "Open Street Map",
-	    	show: false,
-	    	imagery: "url('http://www.arcgis.com/sharing/rest/content/items/5d2bfa736f8448b3a1708e1f6be23eed/info/thumbnail/temposm.jpg')"
-	    }];
 
 	$scope.tools = {
 		About: false,
 		Measure:false, 
 		Bookmarks:false, 
-		"Background Gallery": false, 
+		"Basemap Gallery": false, 
 		Draw: false,
 		Print:false,
 		"Select & View": false
@@ -191,7 +126,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement", "esri/tasks/query",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config", "esri/dijit/Legend", "esri/geometry/Extent", "esri/InfoTemplate" 
+                "esri/config"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -201,7 +136,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
                 Print, dom,
                 Measurement, Query,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config, Legend, Extent, InfoTemplate
+                config
             ) {
 
 
@@ -216,7 +151,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 	        initSelectToolbar();    
 
-
+	        $scope.esriMapObject = map;
 	        $scope.changeRendering = function(legendLayer, renderField){
 	        	var idx = $scope.layers.indexOf(legendLayer);
 	        	var layer = map.getLayer(legendLayer.options.id);
@@ -240,42 +175,6 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 		      };
 
-
-
-			if (!$cookies.getObject('test') || $cookies.getObject('test').length === 0){
-				$scope.bookmarks = [
-					{
-						name: "LI",
-						extent: new Extent(map.extent)
-					}
-					];
-				
-				 $cookies.putObject('test', bookmarks);
-				}
-				else{
-					$scope.bookmarks = $cookies.getObject('test');
-					$scope.bookmarks.forEach(function(bookmark){
-						bookmark.extent = new Extent(bookmark.extent);
-					});
-		      		
-				}
-
-
-		      $scope.extentFinder = function(){
-		      	$scope.testExtent = map.extent;
-		      	$scope.bookmarks.push({name:$scope.newBookmarkName, extent: map.extent});
-		      	$scope.newBookmarkName = "";
-				$cookies.putObject('test', $scope.bookmarks);
-		      };
-
-		      $scope.removeBookmark = function(index){
-		      	$scope.bookmarks.splice(index, 1);
-		      	$cookies.putObject('test', $scope.bookmarks);
-		      };
-
-		      $scope.zoomToExtent = function(newExtent){
-		      	map.setExtent(newExtent);
-		      };
 		    // Measure 
 
 

@@ -5,7 +5,7 @@ app.directive('legendBox', function () {
         templateUrl: 'views/legend.directive.html',
         scope: false,
         resolve: function($scope){
-        	$scope.digest()
+        	$scope.digest();
         }
     };
 
