@@ -25,7 +25,7 @@
 				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	      </thead>
-
+	      
 	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
 	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>

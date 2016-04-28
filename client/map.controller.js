@@ -189,7 +189,7 @@ app.controller('MapCtrl', function($scope, esriLoader, $cookies, customRenderer,
 
 
 			if (!$cookies.getObject('test') || $cookies.getObject('test').length === 0){
-				var bookmarks = [
+				$scope.bookmarks = [
 					{
 						name: "LI",
 						extent: new Extent(map.extent)
