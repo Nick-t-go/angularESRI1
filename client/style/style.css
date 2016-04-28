@@ -119,3 +119,30 @@ select {
     background: transparent;
 }
 
+.imagePreview{
+    margin: auto;
+    width: 60%;
+    height:120px;
+    background: no-repeat center;
+    border: 1px black solid;
+}
+
+.basemapOptions:hover{
+    background-color: #FF4500;
+    color: white;
+}
+
+
+
+
+.basemapOptions {
+    list-style: none;
+}
+
+.basemapOptions:before {
+    content: "\2727";
+}
+
+.selectedBasemap:before {
+    content: "\2726";
+}

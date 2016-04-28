@@ -78,12 +78,12 @@
         </div>
         <div id="collapse2" class="panel-collapse collapse">
             <div class="panel-body">
-                <form name="basemap">
-                    <label for="basemapSelect"> Basemap: </label>
-                    <select name="basemapSelect" id="basemapSelect" ng-model="map.basemap">
-                        <option ng-repeat="option in basemapOptions" value="{{option.name}}">{{option.name}}</option>
-                    </select>
-                </form>
+                <ul ng-mouseleave="hoverImage = 'none'">
+                    <li class="basemapOptions" ng-class="{selectedBasemap: option.name == map.basemap}" ng-repeat="option in basemapOptions" ng-mouseenter="showpreview(option.imagery)" ng-click="map.basemap=option.name">
+                        {{option.displayName}}
+                    </li>
+                </ul>
+                <div ng-hide="hoverImage==='none'" class="imagePreview" ng-style="{'background': hoverImage}"></div>
             </div>
         </div>
     </div>
