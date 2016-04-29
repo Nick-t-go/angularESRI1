@@ -79,14 +79,14 @@ app.factory('customRenderer', function(esriLoader) {
 						Color,
 						UniqueValueRenderer
 						){
-				var completeMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_SQUARE, 10,
+				var completeMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 10,
     				new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
     				new Color([32,120,0]), 1),
-    				new Color([0,0,0,0.25]));
+    				new Color([0,0,0,1]));
 				var defaultMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 10,
     				new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
     				new Color([0,90,120]), 1),
-    				new Color([0,255,0,0.25]));
+    				new Color([0,255,0,1]));
 				var renderer = new UniqueValueRenderer(defaultMarker, "InvestigationStatus");
 				renderer.addValue("2", completeMarker);
 				layer.setRenderer(renderer);

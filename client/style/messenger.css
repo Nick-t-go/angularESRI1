@@ -1,0 +1,22 @@
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0;  } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+
+
+.fadein {
+    opacity:0;  /* make things invisible upon start */
+    -webkit-animation:fadeIn 1s ease-in 0s 1 normal forwards;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+    -moz-animation:fadeIn 1s ease-in 0s 1 normal forwards;
+    animation:fadeIn 1s ease-in 0s 1 normal forwards;
+	
+}
+
+
+
+.messenger{
+	position: fixed;
+	z-index: 999;
+	right: 10%;
+	bottom: 10%;
+}

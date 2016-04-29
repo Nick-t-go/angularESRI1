@@ -1,5 +1,5 @@
 <div class="navbar">
-    <div class="navContainer">
+    <div class="navContainer ">
         <h3 style=" margin:5px; padding:12px 0 10px 10px; color:white">
             <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
             Sanitary Sewer GIS 
@@ -44,11 +44,7 @@
                     <span ng-click="tools.Bookmarks=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
-            <div id="collapse1" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <bookmarks map="esriMapObject"></bookmarks>
-                </div>
-            </div>
+            <bookmarks map="esriMapObject"></bookmarks>
         </div>
      <div class="panel panel-default" ng-show="tools['Basemap Gallery']">
         <div class="panel-heading">
@@ -59,11 +55,7 @@
                 <span ng-click="tools['Basemap Gallery']=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
-        <div id="collapse2" class="panel-collapse collapse">
-            <div class="panel-body">
-                <basemap-gallery map="map"></basemap-gallery>
-            </div>
-        </div>
+        <basemap-gallery map="map"></basemap-gallery>
     </div>
         <div class="panel panel-default" ng-show="tools.Draw">
             <div class="panel-heading">
@@ -165,3 +157,4 @@
 <div id="north-arrow"></div>
 <bottom-sheet></bottom-sheet>
 <related-docs></related-docs>
+<messenger></messenger>

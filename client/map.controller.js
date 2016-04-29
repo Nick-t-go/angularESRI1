@@ -152,6 +152,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        initSelectToolbar();    
 
 	        $scope.esriMapObject = map;
+
+	        $scope.$broadcast('map-loaded', map);
+
 	        $scope.changeRendering = function(legendLayer, renderField){
 	        	var idx = $scope.layers.indexOf(legendLayer);
 	        	var layer = map.getLayer(legendLayer.options.id);
@@ -195,22 +198,39 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
 			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
 			        $scope.showSelected = true;
-			        console.log($scope.relationshipStore);
+			        console.log($scope.newSelectedFeatures);
 			        $scope.$digest();
 			    });
 			}
 
 
 			$scope.change = function(){
+				if($scope.highlightOnMouseOver){
+					$scope.highlightOnMouseOver.remove();
+					$scope.highlightOnMouseOut.remove();
+					$scope.newSelection.clearSelection();
+				}
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
-    			var fieldsSelectionSymbol =
-          			new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-            		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
-          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5]));
-          		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol);
-          		$scope.outFields = $scope.newSelection._outFields;	
+    			
+    			var fieldsSelectionSymbol = {
+    				polygon: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+	            		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+	          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5])),
+    				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 30,
+		    			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+		    			new Color([255,0,0]), 1),new Color([255,255,0,0.6]))
+    			};
+          			
+          		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
+          		$scope.outFields = $scope.newSelection._outFields;
+
+          		$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
+		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
+	          		map.graphics.add(highlightGraphic);
+		        });
+				$scope.highlightOnMouseOut = $scope.newSelection.on('mouse-out', unHighlight);
     		};
 
     		$scope.selectByExtent = function(){
@@ -226,6 +246,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	    			measurement.setTool("area", false);
 	                measurement.setTool("distance", false);
 	                measurement.setTool("location", false);
+
+			        
+
 	                var singleSelectQuery = new Query();
 	                $scope.newSelection.on('click', function(evt){	
 	                	singleSelectQuery.geometry = evt.mapPoint;
@@ -249,6 +272,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
  					console.log(records);
  					$scope.relatedRecords = records;
  					$scope.relationshipClasses = Object.keys(records);
+ 					if(Object.keys(records).length === 0){
+ 						console.log('sent');
+ 						$scope.$broadcast('message',{message: 'No Related Documents Found.', type: 'alert-danger', time: 5000});
+ 					}
  					$scope.selectedFeatureId = itemId;
  					$scope.showRelatedDocs = true;
  			 		$scope.relationShow = $scope.relationshipClasses[0];
@@ -262,7 +289,33 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
  			$scope.changeTable = function(relation){
  				$scope.relationShow = relation;
  			};
-			
+
+ 			var highlightSymbol = {
+ 				polygon:  new SimpleFillSymbol(
+		          SimpleFillSymbol.STYLE_SOLID,
+		          new SimpleLineSymbol(
+		            SimpleLineSymbol.STYLE_SOLID,
+		            new Color([255,0,0]), 3),
+		          new Color([125,125,125,0.35])
+		        ),
+ 				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15,
+    			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+    			new Color([255,0,0]), 1),new Color([125,125,125,0.35]))
+ 			};
+	        
+
+	      	$scope.featureTableMouseOver = function(id){
+	      		var queryOne = new Query();
+	      		queryOne.objectIds = [id];
+	      		queryOne.where = "OBJECTID = '" + id + "'";
+	      		$scope.newSelection.selectFeatures(queryOne, $scope.newSelection.SELECTION_NEW);
+	      	};
+	        
+	       
+	        function unHighlight(){
+	        	map.graphics.clear();
+	        }
+
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
@@ -327,7 +380,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             var measurement = new Measurement({
 		          map: map
 		        }, dom.byId("measurementDiv"));
-		        measurement.startup();
+		    measurement.startup();
 
 
 			var tb; //draw Tool Bar i.e tb

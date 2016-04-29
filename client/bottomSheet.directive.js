@@ -5,7 +5,7 @@ app.directive('bottomSheet', function () {
         templateUrl: 'views/bottomSheet.directive.html',
         scope: false,
         resolve: function($scope){
-        	$scope.digest()
+        	$scope.digest();
         }
     };
 

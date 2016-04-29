@@ -1,18 +1,22 @@
-<div class="row">
-    <div class="col-lg-12">
-        <div class="input-group">
-            <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-click="extentFinder()">Add</button>
-                      </span>
-            <input type="text" class="form-control" ng-model="newBookmarkName" placeholder="New Bookmark name...">
+<div id="collapse1" class="panel-collapse collapse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng-click="extentFinder()">Add</button>
+                              </span>
+                    <input type="text" class="form-control" ng-model="newBookmarkName" placeholder="New Bookmark name...">
+                </div>
+                <!-- /input-group -->
+            </div>
+            <!-- /.col-lg-6 -->
         </div>
-        <!-- /input-group -->
+        <ul>
+            <li style="margin:5px" ng-repeat="bookmark in bookmarks">
+                <span ng-click="zoomToExtent(bookmark.extent)">{{bookmark.name}}</span>
+                <span ng-click="removeBookmark($index)" class="pull-right glyphicon glyphicon-remove"></span>
+            </li>
+        </ul>
     </div>
-    <!-- /.col-lg-6 -->
 </div>
-<ul>
-    <li style="margin:5px" ng-repeat="bookmark in bookmarks">
-        <span ng-click="zoomToExtent(bookmark.extent)">{{bookmark.name}}</span>
-        <span ng-click="removeBookmark($index)" class="pull-right glyphicon glyphicon-remove">
-    </li>
-</ul>
