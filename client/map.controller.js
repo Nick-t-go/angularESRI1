@@ -46,7 +46,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
 		 },
 		 {
 		 	name: 'Sewer Districts',
@@ -126,7 +126,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 "esri/dijit/Print", "dojo/dom",
                 "esri/dijit/Measurement", "esri/tasks/query",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config"
+                "esri/config", "esri/dijit/Scalebar"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -136,7 +136,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 Print, dom,
                 Measurement, Query,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config
+                config, Scalebar
             ) {
 
 
@@ -146,6 +146,13 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
 		        }, dom.byId("printButton"));
 		        printer.startup();	
+
+
+
+		    var scalebar = new Scalebar({
+			    map: map,
+			    attachTo: "bottom-center"
+			  });
 
 
 
@@ -203,6 +210,19 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			    });
 			}
 
+			$scope.currentScale = map.getScale();
+
+			map.on('zoom-end', function(){
+				$scope.currentScale = map.getScale();
+				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
+					$scope.scaleMessage = false;
+					$scope.$digest();
+				}
+				else if($scope.newSelection && $scope.newSelection.minScale < $scope.currentScale){
+					$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
+					$scope.$digest();
+				}
+			});
 
 			$scope.change = function(){
 				if($scope.highlightOnMouseOver){
@@ -210,9 +230,16 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.highlightOnMouseOut.remove();
 					$scope.newSelection.clearSelection();
 				}
+
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
+
+    			if($scope.newSelection.minScale < $scope.currentScale){
+    				$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
+    			} else{
+    				$scope.scaleMessage = false;
+    			}
     			
     			var fieldsSelectionSymbol = {
     				polygon: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
@@ -220,7 +247,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5])),
     				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 30,
 		    			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-		    			new Color([255,0,0]), 1),new Color([255,255,0,0.6]))
+		    			new Color([255,0,0]), 1),new Color([255,255,0,0.6])),
+    				polyline: new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]),15)
     			};
           			
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
@@ -300,7 +328,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		        ),
  				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15,
     			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-    			new Color([255,0,0]), 1),new Color([125,125,125,0.35]))
+    			new Color([255,0,0]), 1),new Color([125,125,125,0.35])),
+    			polyline: new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]),15)
  			};
 	        
 
@@ -384,6 +413,14 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 
 			var tb; //draw Tool Bar i.e tb
+
+			$scope.drawOptions = [
+				{id: 'Point',name: 'Point'},{id: 'Multipoint', name: 'Multipoint'},{id: 'Line',name: 'Line'},
+				{id: 'Polyline',name: 'Polyline'},{id: 'FreehandPolyline',name: 'Freehand Polyline'},
+				{id: 'Triangle',name: 'Triangle'},{id: 'Extent',name: 'Rectangle'},
+				{id: 'Circle',name: 'Circle'},{id: 'Ellipse',name: 'Ellipse'},
+				{id: 'Polygon',name: 'Polygon'},{id: 'FreehandPolygon',name: 'Freehand Polygon'}
+			];
 
 			// markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
 			var markerSymbol = new SimpleMarkerSymbol();

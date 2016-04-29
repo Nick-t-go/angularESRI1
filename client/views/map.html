@@ -67,24 +67,13 @@
                 </div>
             </div>
             <div id="collapse3" class="panel-collapse collapse">
-                <div class="panel-body"><div class="btn-group primary">
-                    <button type="button" class="btn btn-primary dropdown-toggle primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Pick a Shape <span class="caret"></span>
-                    </button>
-                            <ul class="dropdown-menu">
-                                <li><a ng-click="activateDrawTool('Point')">Point</a></li>
-                                <li><a ng-click="activateDrawTool('Multipoint')">Multipoint</a></li>
-                                <li><a ng-click="activateDrawTool('Line')">Line</a></li>
-                                <li><a ng-click="activateDrawTool('Polyline')">Polyline</a></li>
-                                <li><a ng-click="activateDrawTool('FreehandPolyline')">Freehand Polyline</a></li>
-                                <li role="separator" class="Shapes"></li>
-                                <li><a ng-click="activateDrawTool('Triangle')">Triangle</a></li>
-                                <li><a ng-click="activateDrawTool('Extent')">Rectangle</a></li>
-                                <li><a ng-click="activateDrawTool('Circle')">Circle</a></li>
-                                <li><a ng-click="activateDrawTool('Ellipse')">Ellipse</a></li>
-                                <li><a ng-click="activateDrawTool('Polygon')">Polygon</a></li>
-                                <li><a ng-click="activateDrawTool('FreehandPolygon')">Freehand Polygon</a></li>
-                            </ul>
+                <div class="panel-body">
+                    <div class="btn-group primary">
+                        <button type="button" class="btn btn-primary dropdown-toggle primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pick a Shape <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" >
+                            <li><a ng-repeat="shape in drawOptions" ng-click="activateDrawTool(shape.id)">{{shape.name}}</a></li>
+                        </ul>
                 </div>
             </div>
         </div>
@@ -101,8 +90,7 @@
         <div id="collapse4" class="panel-collapse collapse">
             <div class="panel-body">
                 <div id="measurementDiv"></div>
-            </div>
-            
+            </div>  
         </div>
     </div>
     <div class="panel panel-default" ng-show="tools.Print">
@@ -140,6 +128,9 @@
                 </div>
                 <button class="panel-body-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-unchecked"></span></button>
                 <button class="panel-body-button" ng-click="selectByClick()"><span class="glyphicon glyphicon-hand-up"></span></button>
+                <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
+                      <i>{{scaleMessage}}</i>
+                </div>
             </div>
         </div>
     </div>
