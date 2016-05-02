@@ -277,12 +277,15 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		};
 
     		$scope.selectByClick = function(){
-
+    			selectionToolbar.deactivate();
     			$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
 		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
 	          		map.graphics.add(highlightGraphic);
 		        });
-		        $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', $scope.unHighlight);
+		        $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', function(evt){
+		        	console.log('mouse out');
+		        	map.graphics.clear();
+		        });
 
     			if($scope.newSelection){
     				console.log($scope.newSelection);
