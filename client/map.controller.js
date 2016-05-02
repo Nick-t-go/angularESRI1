@@ -227,7 +227,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			$scope.change = function(){
 				if($scope.highlightOnMouseOver){
 					$scope.highlightOnMouseOver.remove();
-					$scope.highlightOnMouseOut.remove();
+					$scope.unhighlightOnMouseOut.remove();
 					$scope.newSelection.clearSelection();
 				}
 
@@ -254,14 +254,22 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
           		$scope.outFields = $scope.newSelection._outFields;
 
-          		$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
-		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
-	          		map.graphics.add(highlightGraphic);
-		        });
-				$scope.highlightOnMouseOut = $scope.newSelection.on('mouse-out', unHighlight);
+          		
+				
     		};
 
     		$scope.selectByExtent = function(){
+    			if($scope.highlightOnMouseOver){
+					$scope.highlightOnMouseOver.remove();
+					$scope.unhighlightOnMouseOut.remove();
+					$scope.newSelection.clearSelection();
+					console.log('removed');
+				}
+    			map.graphics.clear();
+    			if($scope.selectEvent){
+    				$scope.selectEvent.remove();
+    				console.log('removed');
+    			}
     			measurement.setTool("area", false);
                 measurement.setTool("distance", false);
                 measurement.setTool("location", false);
@@ -269,26 +277,36 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		};
 
     		$scope.selectByClick = function(){
+
+    			$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
+		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
+	          		map.graphics.add(highlightGraphic);
+		        });
+		        $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', $scope.unHighlight);
+
     			if($scope.newSelection){
     				console.log($scope.newSelection);
 	    			measurement.setTool("area", false);
 	                measurement.setTool("distance", false);
 	                measurement.setTool("location", false);
 
-			        
-
 	                var singleSelectQuery = new Query();
-	                $scope.newSelection.on('click', function(evt){	
+	                singleSelectQuery.distance = 10;
+	                singleSelectQuery.units = 'feet';
+
+	                $scope.selectEvent = map.on('click', function(evt){	
+	                	console.log(evt);
 	                	singleSelectQuery.geometry = evt.mapPoint;
 	                	$scope.newSelection.selectFeatures(singleSelectQuery, $scope.newSelection.SELECTION_NEW, function(selection){
+	                		console.log(selection);
 	                		$scope.newSelectedFeatures = selection;
-	                		$scope.showSelected = true;
-	                		$scope.$digest();
+	                		selection.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
+		                	$scope.$digest();
 	                	});
-
 	                });
 	            }
     		};
+    	
 	
     		$scope.showRelatedDocs= false;
 
@@ -341,9 +359,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	      	};
 	        
 	       
-	        function unHighlight(){
+	        $scope.unHighlight = function(){
+	        	console.log('unhighlight');
 	        	map.graphics.clear();
-	        }
+	        };
 
 			//Create new legend Create unique rendering class
 			$scope.styleInit = function(){
