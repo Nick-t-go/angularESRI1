@@ -123,7 +123,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
                 'esri/graphic', "esri/tasks/RelationshipQuery",
                 'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
-                "esri/dijit/Print", "dojo/dom",
+                "esri/dijit/Print", "dojo/dom", "esri/geometry/Circle",
                 "esri/dijit/Measurement", "esri/tasks/query",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
                 "esri/config", "esri/dijit/Scalebar"
@@ -133,7 +133,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 PictureFillSymbol, CartographicLineSymbol,
                 Graphic, RelationshipQuery, 
                 Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
-                Print, dom,
+                Print, dom, Circle,
                 Measurement, Query,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
                 config, Scalebar
@@ -204,8 +204,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			        selectQuery.geometry = geometry;
 			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
 			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
-			        $scope.showSelected = true;
-			        console.log($scope.newSelectedFeatures);
+			        $scope.newSelectedFeatures.length > 0 ? $scope.showSelected = true: $scope.showSelected = false;
 			        $scope.$digest();
 			    });
 			}
@@ -277,6 +276,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		};
 
     		$scope.selectByClick = function(){
+
+    			
+
+
     			selectionToolbar.deactivate();
     			$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
 		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
@@ -293,22 +296,76 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	                measurement.setTool("distance", false);
 	                measurement.setTool("location", false);
 
-	                var singleSelectQuery = new Query();
-	                singleSelectQuery.distance = 10;
-	                singleSelectQuery.units = 'feet';
+	    //         	function selectInBuffer(response){
+					//   var feature;
+					//   var features = response.features;
+					//   console.log(features);
+					//   var inBuffer = [];
+					//   //filter out features that are not actually in buffer, since we got all points in the buffer's bounding box
+					//   for (var i = 0; i < features.length; i++) {
+					//     feature = features[i];
+					//     if(circle.contains(feature.geometry)){
+					//       inBuffer.push(feature.attributes[$scope.newSelection.objectIdField]);
+					//     }
+					//   }
+					//   var query = new Query();
+					//   query.objectIds = inBuffer;
+					//   //use a fast objectIds selection query (should not need to go to the server)
+					//   $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
+					//    console.log(results);
+					//   });
+					// }
 
-	                $scope.selectEvent = map.on('click', function(evt){	
-	                	console.log(evt);
-	                	singleSelectQuery.geometry = evt.mapPoint;
-	                	$scope.newSelection.selectFeatures(singleSelectQuery, $scope.newSelection.SELECTION_NEW, function(selection){
-	                		console.log(selection);
-	                		$scope.newSelectedFeatures = selection;
-	                		selection.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
-		                	$scope.$digest();
-	                	});
-	                });
+	                var circle;
+	                $scope.selectEvent = map.on('click', function(evt){
+	                	circle = new Circle({
+				            center: evt.mapPoint,
+				            geodesic: true,
+				            radius: 10,
+				            radiusUnit: "esriFeet"
+				          });
+				          map.graphics.clear();
+				          map.infoWindow.hide();
+				          var graphic = new Graphic(circle);
+				          map.graphics.add(graphic);
+
+				          var query = new Query();
+				          query.geometry = circle.getExtent();
+				          //use a fast bounding box query. will only go to the server if bounding box is outside of the visible map
+				          $scope.newSelection.queryFeatures(query, function(selection){
+				          	if(selection.features.length>0){
+				          		var query = new Query();
+								query.objectIds = [selection.features[0].attributes.OBJECTID];
+								$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
+									console.log(results);
+									$scope.newSelectedFeatures = results;
+			                		results.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
+				                	$scope.$digest();
+								});
+				          	}
+				          });
+				      });
+
+
+	           //      	var singleSelectQuery = new Query();
+	           //      	singleSelectQuery.geometry = evt.mapPoint;
+	           //      	singleSelectQuery.distance = 50;
+				        // singleSelectQuery.units = "miles";
+				        // singleSelectQuery.returnGeometry = true;
+				        // console.log(singleSelectQuery);
+	              
+	           //      	$scope.newSelection.selectFeatures(singleSelectQuery, $scope.newSelection.SELECTION_NEW, function(selection){
+	           //      		console.log(selection);
+	           //      		$scope.newSelectedFeatures = selection;
+	           //      		selection.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
+		          //       	$scope.$digest();
+	           //      	});
+	           //      });
 	            }
     		};
+
+
+			
     	
 	
     		$scope.showRelatedDocs= false;

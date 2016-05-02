@@ -126,8 +126,8 @@
                         </select>
                     </form>
                 </div>
-                <button class="panel-body-button" ng-click="selectByExtent()"><span class="glyphicon glyphicon-unchecked"></span></button>
-                <button class="panel-body-button" ng-click="selectByClick()"><span class="glyphicon glyphicon-hand-up"></span></button>
+                <button class="panel-body-button btn" ng-click="selectByExtent()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-unchecked"></span></button>
+                <button class="panel-body-button btn" ng-click="selectByClick()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-hand-up"></span></button>
                 <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
                       <i>{{scaleMessage}}</i>
                 </div>
