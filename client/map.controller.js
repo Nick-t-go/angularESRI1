@@ -39,6 +39,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
 			renderOptions: [],
+			currentRender: "",
 		  	options: {
 		  		id:"Outlines",
 		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber']
@@ -52,7 +53,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		 	name: 'Sewer Districts',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
 		  	visible: true,
-		  	renderOptions: [],	
+		  	renderOptions: [],
+		  	currentRender: "",	
 		  	options: {
 		  		id:"Districts",
 		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
@@ -67,6 +69,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
 		  	renderOptions: [],
+		  	currentRender: "",
 		  	options: {
 		  		id:"Mains",
 		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
@@ -81,9 +84,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
 		 	visible: true,
 		 	renderOptions: ['investigationStatus','horizontalQuality','verticalQuality'],
+		 	currentRender: "",
 		 	options: {
 		 		id:"Manholes",
-		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality']
+		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus']
 		 	},
 		 	style: {
 	  			type: "point",
@@ -110,6 +114,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        }
             if(push === true){
                 $scope.layersOn.push({url:layer.url, options:layer.options});
+                $scope.changeRendering(layer, layer.currentRender);
             }
         };
 
@@ -163,31 +168,22 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        $scope.$broadcast('map-loaded', map);
 
 	        $scope.changeRendering = function(legendLayer, renderField){
-	        	var idx = $scope.layers.indexOf(legendLayer);
-	        	var layer = map.getLayer(legendLayer.options.id);
-	        	customRenderer[renderField](layer, legendLayer);
-	        	$scope.layers[idx].style = legendLayer.style;
-	        	layer.redraw();
+	        	if(renderField){	     
+		        	legendLayer.currentRender = renderField;
+		        	var idx = $scope.layers.indexOf(legendLayer);
+		        	var layer = map.getLayer(legendLayer.options.id);
+		        	customRenderer[renderField](layer, legendLayer);
+		        	$scope.layers[idx].style = legendLayer.style;
+		        	layer.redraw();
+		        }
 	        };
 
-		    $scope.renderNow = function(){
-
-			    var visibleLayers = map.getLayersVisibleAtScale();
-                $scope.layer1 = visibleLayers[1];
-                console.log($scope.layer1.renderer.symbol.color);
-                $scope.clicked++;
-                var symbol = new SimpleFillSymbol().setColor(new Color([100,255,100,0.5]));
-                var renderer = new SimpleRenderer(symbol);
-                $scope.layer1.setRenderer(renderer);
-                $scope.layer1.redraw();
-                console.log($scope.layer1.renderer.symbol.color);
-                $scope.$digest();
-
-		      };
-
+		   
 		    // Measure 
 
-
+		    map.on('layer-add', function(evt){
+		    	console.log(evt, 'added');
+		    });
 		    //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
 			// esriConfig.defaults.io.proxyUrl = "/proxy/";
@@ -275,94 +271,55 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			selectionToolbar.activate(Draw.EXTENT);
     		};
 
-    		$scope.selectByClick = function(){
+    		$scope.selectByClick = function() {
 
-    			
+    		    selectionToolbar.deactivate();
+    		    $scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt) {
+    		        var highlightGraphic = new Graphic(evt.graphic.geometry, highlightSymbol[$scope.userSelectedLayer.style.type]);
+    		        map.graphics.add(highlightGraphic);
+    		    });
+    		    $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', function(evt) {
+    		        console.log('mouse out');
+    		        map.graphics.clear();
+    		    });
 
+    		    if ($scope.newSelection) {
+    		        console.log($scope.newSelection);
+    		        measurement.setTool("area", false);
+    		        measurement.setTool("distance", false);
+    		        measurement.setTool("location", false);
 
-    			selectionToolbar.deactivate();
-    			$scope.highlightOnMouseOver = $scope.newSelection.on('mouse-over', function(evt){
-		        	var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol[$scope.userSelectedLayer.style.type]);
-	          		map.graphics.add(highlightGraphic);
-		        });
-		        $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', function(evt){
-		        	console.log('mouse out');
-		        	map.graphics.clear();
-		        });
+    		        var circle;
+    		        $scope.selectEvent = map.on('click', function(evt) {
+    		            circle = new Circle({
+    		                center: evt.mapPoint,
+    		                geodesic: true,
+    		                radius: 10,
+    		                radiusUnit: "esriFeet"
+    		            });
+    		            map.graphics.clear();
+    		            map.infoWindow.hide();
+    		            var graphic = new Graphic(circle);
+    		            map.graphics.add(graphic);
 
-    			if($scope.newSelection){
-    				console.log($scope.newSelection);
-	    			measurement.setTool("area", false);
-	                measurement.setTool("distance", false);
-	                measurement.setTool("location", false);
-
-	    //         	function selectInBuffer(response){
-					//   var feature;
-					//   var features = response.features;
-					//   console.log(features);
-					//   var inBuffer = [];
-					//   //filter out features that are not actually in buffer, since we got all points in the buffer's bounding box
-					//   for (var i = 0; i < features.length; i++) {
-					//     feature = features[i];
-					//     if(circle.contains(feature.geometry)){
-					//       inBuffer.push(feature.attributes[$scope.newSelection.objectIdField]);
-					//     }
-					//   }
-					//   var query = new Query();
-					//   query.objectIds = inBuffer;
-					//   //use a fast objectIds selection query (should not need to go to the server)
-					//   $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
-					//    console.log(results);
-					//   });
-					// }
-
-	                var circle;
-	                $scope.selectEvent = map.on('click', function(evt){
-	                	circle = new Circle({
-				            center: evt.mapPoint,
-				            geodesic: true,
-				            radius: 10,
-				            radiusUnit: "esriFeet"
-				          });
-				          map.graphics.clear();
-				          map.infoWindow.hide();
-				          var graphic = new Graphic(circle);
-				          map.graphics.add(graphic);
-
-				          var query = new Query();
-				          query.geometry = circle.getExtent();
-				          //use a fast bounding box query. will only go to the server if bounding box is outside of the visible map
-				          $scope.newSelection.queryFeatures(query, function(selection){
-				          	if(selection.features.length>0){
-				          		var query = new Query();
-								query.objectIds = [selection.features[0].attributes.OBJECTID];
-								$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
-									console.log(results);
-									$scope.newSelectedFeatures = results;
-			                		results.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
-				                	$scope.$digest();
-								});
-				          	}
-				          });
-				      });
-
-
-	           //      	var singleSelectQuery = new Query();
-	           //      	singleSelectQuery.geometry = evt.mapPoint;
-	           //      	singleSelectQuery.distance = 50;
-				        // singleSelectQuery.units = "miles";
-				        // singleSelectQuery.returnGeometry = true;
-				        // console.log(singleSelectQuery);
-	              
-	           //      	$scope.newSelection.selectFeatures(singleSelectQuery, $scope.newSelection.SELECTION_NEW, function(selection){
-	           //      		console.log(selection);
-	           //      		$scope.newSelectedFeatures = selection;
-	           //      		selection.length>0 ? $scope.showSelected = true : $scope.showSelected = false;
-		          //       	$scope.$digest();
-	           //      	});
-	           //      });
-	            }
+    		            var query = new Query();
+    		            query.geometry = circle.getExtent();
+    		            //use a fast bounding box query. will only go to the server if bounding box is outside of the visible map
+    		            $scope.newSelection.queryFeatures(query, function(selection) {
+    		                if (selection.features.length > 0) {
+    		                    var query = new Query();
+    		                    query.objectIds = [selection.features[0].attributes.OBJECTID];
+    		                    $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results) {
+    		                        $scope.newSelectedFeatures = results;
+    		                        results.length > 0 ? $scope.showSelected = true : $scope.showSelected = false;
+    		                        $scope.$digest();
+    		                    });
+    		                }
+    		            });
+    		        });
+    		    }
     		};
+
 
 
 			
@@ -494,11 +451,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			var tb; //draw Tool Bar i.e tb
 
 			$scope.drawOptions = [
-				{id: 'Point',name: 'Point'},{id: 'Multipoint', name: 'Multipoint'},{id: 'Line',name: 'Line'},
-				{id: 'Polyline',name: 'Polyline'},{id: 'FreehandPolyline',name: 'Freehand Polyline'},
-				{id: 'Triangle',name: 'Triangle'},{id: 'Extent',name: 'Rectangle'},
-				{id: 'Circle',name: 'Circle'},{id: 'Ellipse',name: 'Ellipse'},
-				{id: 'Polygon',name: 'Polygon'},{id: 'FreehandPolygon',name: 'Freehand Polygon'}
+				{id: 'Point',name: 'Point', icon: 'flag', help: 'Click on map to place 1 point'},{id: 'Multipoint', name: 'Multipoint', icon: 'option-horizontal', help: 'Click on map to place a point'},{id: 'Line',name: 'Line', icon: 'minus', help: "Click and hold down mouse, release to finish line"},
+				{id: 'Polyline',name: 'Polyline', icon: 'minus', help: "Click map to place line verticies, double-click to end line"},{id: 'FreehandPolyline',name: 'Freehand Polyline', icon: 'pencil', help: "Click and hold to draw, release to end sketch"},
+				{id: 'Triangle', name: 'Triangle' ,icon: 'triangle-top', help: "Click on map and hold button to size triangle"},{id: 'Extent',name: 'Rectangle', icon: 'stop', help: 'Click on map and hold to size rectangle'},
+				{id: 'Circle',name: 'Circle', icon: "repeat", help: "Click on map and hold to size circle"},{id: 'Ellipse',name: 'Ellipse', icon: "repeat", help: "Click on map and hold to size ellipse"},
+				{id: 'Polygon',name: 'Polygon',icon: 'unchecked', help: "Click on map to start shape, click to place vertex, double click to complete sketch"},{id: 'FreehandPolygon',name: 'Freehand Polygon', icon: 'pencil', help:'Click and hold to draw polygon release to complete sketch'}
 			];
 
 			// markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
@@ -538,8 +495,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			    $scope.activateDrawTool = activateDrawTool;
 			}
 
-			function activateDrawTool(tool) {
+			function activateDrawTool(tool, help) {
 
+				$scope.helpMessage = help;
 			    map.disableMapNavigation();
 			    measurement.setTool("area", false);
 			    measurement.setTool("distance", false);

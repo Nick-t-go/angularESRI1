@@ -68,13 +68,13 @@
             </div>
             <div id="collapse3" class="panel-collapse collapse">
                 <div class="panel-body">
-                    <div class="btn-group primary">
-                        <button type="button" class="btn btn-primary dropdown-toggle primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pick a Shape <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" >
-                            <li><a ng-repeat="shape in drawOptions" ng-click="activateDrawTool(shape.id)">{{shape.name}}</a></li>
-                        </ul>
+                        <button style="margin:5px" type="button" class="btn btn-primary" ng-repeat="shape in drawOptions" ng-click="activateDrawTool(shape.id, shape.help)"><span class="glyphicon" ng-class="'glyphicon-'+ shape.icon"></span>{{"  " + shape.name}}</button>
+
+                    <div class="alert alert-info" role="alert" ng-show="helpMessage">
+                      <i>{{helpMessage}}</i>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -130,6 +130,9 @@
                 <button class="panel-body-button btn" ng-click="selectByClick()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-hand-up"></span></button>
                 <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
                       <i>{{scaleMessage}}</i>
+                </div>
+                <div class="alert alert-info" role="alert" ng-show="newSelectedFeatures.length>0 && showSelected === true">
+                      <i>{{newSelectedFeatures.length}} Feature(s) selected. <strong>Click</strong> Feature in Table Below to View Related Documents.</i>
                 </div>
             </div>
         </div>
