@@ -114,7 +114,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        }
             if(push === true){
                 $scope.layersOn.push({url:layer.url, options:layer.options});
-                $scope.changeRendering(layer, layer.currentRender);
             }
         };
 
@@ -168,12 +167,16 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        $scope.$broadcast('map-loaded', map);
 
 	        $scope.changeRendering = function(legendLayer, renderField){
+	        	console.log(legendLayer, renderField);
 	        	if(renderField){	     
 		        	legendLayer.currentRender = renderField;
 		        	var idx = $scope.layers.indexOf(legendLayer);
+		        	console.log(idx);
 		        	var layer = map.getLayer(legendLayer.options.id);
+		        	console.log(layer);
 		        	customRenderer[renderField](layer, legendLayer);
 		        	$scope.layers[idx].style = legendLayer.style;
+		        	$scope.layers[idx].currentRender = renderField;
 		        	layer.redraw();
 		        }
 	        };
@@ -182,7 +185,12 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    // Measure 
 
 		    map.on('layer-add', function(evt){
-		    	console.log(evt, 'added');
+		    	var layer = $scope.layers.filter(function(lyr){
+		    		return lyr.options.id === evt.layer.id;
+		    	})
+		    	if(layer[0].currentRender){
+		    		$scope.changeRendering(layer[0], layer[0].currentRender)
+		    	}
 		    });
 		    //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
