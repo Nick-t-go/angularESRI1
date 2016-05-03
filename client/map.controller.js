@@ -68,7 +68,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		 	name: 'Sewer Mains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
-		  	renderOptions: [],
+		  	renderOptions: ['mainType'],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Mains",
@@ -174,7 +174,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		        	console.log(idx);
 		        	var layer = map.getLayer(legendLayer.options.id);
 		        	console.log(layer);
-		        	customRenderer[renderField](layer, legendLayer);
+		        	customRenderer[renderField](layer, legendLayer, map);
 		        	$scope.layers[idx].style = legendLayer.style;
 		        	$scope.layers[idx].currentRender = renderField;
 		        	layer.redraw();
@@ -187,9 +187,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    map.on('layer-add', function(evt){
 		    	var layer = $scope.layers.filter(function(lyr){
 		    		return lyr.options.id === evt.layer.id;
-		    	})
+		    	});
 		    	if(layer[0].currentRender){
-		    		$scope.changeRendering(layer[0], layer[0].currentRender)
+		    		$scope.changeRendering(layer[0], layer[0].currentRender);
 		    	}
 		    });
 		    //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.

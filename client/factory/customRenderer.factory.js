@@ -2,6 +2,93 @@ app.factory('customRenderer', function(esriLoader) {
 		
 		return{
 
+			mainType: function(layer, LegendLayer, map){
+				esriLoader.require([
+					"esri/renderers/SimpleRenderer", 
+					"esri/symbols/PictureMarkerSymbol",
+					"esri/renderers/UniqueValueRenderer",
+					"esri/symbols/SimpleLineSymbol", 
+					"esri/Color",
+					"esri/tasks/query",
+					"esri/graphic", 
+					"esri/geometry/Point",
+					"esri/symbols/SimpleMarkerSymbol", 
+					], 
+					function(
+						SimpleRenderer,
+						PictureMarkerSymbol,
+						UniqueValueRenderer,
+						SimpleLineSymbol,
+						Color,
+						Query,
+						Graphic,
+						Point,
+						SimpleMarkerSymbol
+						){
+						console.log(map);
+						var arrow = function(pt1,pt2){     
+					          return new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 10,
+				    				new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+				    				new Color([32,120,0]), 1),
+				    				new Color([0,0,0,1]));
+					      }; 
+
+						var setAngle = function (p1, p2){  
+					        var rise = p2[1] - p1[1];  
+					        var run = p2[0] - p1[0];  
+					        var angle = ((180/Math.PI) * Math.atan2(run, rise));  
+						  	return angle-180;  
+						};
+						var holder = [];
+
+						var query = new Query();
+					    query.geometry = map.extent;
+					    query.spatialRelationship = Query.SPATIAL_REL_ENVELOPEINTERSECTS;
+					    query.returnGeometry = true;
+					    query.outFields = ["*"];
+
+					    layer.queryFeatures(query, function (featureSet){
+					      featureSet.features.forEach(function(feature, idx, array){
+					      	//loop over the points on your line//  
+							for(var x in feature.geometry.paths[0]){  
+							  
+							 var pt1 = feature.geometry.paths[0][x];   
+							 var pt2 = feature.geometry.paths[0][x-1];   
+							  
+							 var point = new Point(pt1);
+							 if(pt2){ 
+							 	holder.push(
+							 		new Graphic(point, arrow(
+							 			pt1,pt2)
+							 		)
+							 	);
+
+							}
+							 
+							}
+							if(idx === array.length-1){
+								holder.forEach(function(graph, idx, array2){
+									console.log('adding');
+									map.graphics.add(graph);
+								});
+								var ext = (holder[0]._extent);
+								console.log(holder[0].geometry.getLatitude(), holder[0].geometry.getLongitude());
+
+							}   
+					    });
+					      // populate the Geometry cache by calling getExtent()
+					      
+					  }, function(err){console.log(err);}
+					  );
+
+
+						var line = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([32,120,0]), 10);
+						var renderer = new UniqueValueRenderer(line, "dPipeLifeCycleStatus");
+						layer.setRenderer(renderer);
+						layer.redraw();
+				}
+			)},
+
 			verticalQuality: function(layer, legendLayer){
 				esriLoader.require([
 					"esri/renderers/SimpleRenderer", 
