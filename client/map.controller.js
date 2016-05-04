@@ -5,6 +5,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				basemap:'topo',
 	            options: {
 	                basemap: 'topo',
+	                showLabels : true,
 	                center: [-73.1350,40.7891],
 	                zoom: 10,
 	                sliderStyle: 'small'
@@ -68,11 +69,12 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		 	name: 'Sewer Mains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
-		  	renderOptions: [],
-		  	currentRender: "",
+		  	renderOptions: ['PipeSubType'],
+		  	currentRender: "PipeSubType",
 		  	options: {
+		  		bas
 		  		id:"Mains",
-		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'dPipeLifeCycleStatus']
+		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType']
 		  	},
 	  		style: {
 	  			type: "polyline",
@@ -167,14 +169,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        $scope.$broadcast('map-loaded', map);
 
 	        $scope.changeRendering = function(legendLayer, renderField){
-	        	console.log(legendLayer, renderField);
 	        	if(renderField){	     
 		        	legendLayer.currentRender = renderField;
 		        	var idx = $scope.layers.indexOf(legendLayer);
-		        	console.log(idx);
 		        	var layer = map.getLayer(legendLayer.options.id);
-		        	console.log(layer);
-		        	customRenderer[renderField](layer, legendLayer);
+		        	customRenderer[renderField](layer, legendLayer, map);
 		        	$scope.layers[idx].style = legendLayer.style;
 		        	$scope.layers[idx].currentRender = renderField;
 		        	layer.redraw();
@@ -187,10 +186,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    map.on('layer-add', function(evt){
 		    	var layer = $scope.layers.filter(function(lyr){
 		    		return lyr.options.id === evt.layer.id;
-		    	})
+		    	});
+		    	if(layer.length === 0) return;
 		    	if(layer[0].currentRender){
-		    		$scope.changeRendering(layer[0], layer[0].currentRender)
-		    	}
+		    		$scope.changeRendering(layer[0], layer[0].currentRender);
+			    }
 		    });
 		    //identify proxy page to use if the toJson payload to the geometry service is greater than 2000 characters.
 			//If this null or not available the project and lengths operation will not work.  Otherwise it will do a http post to the proxy.
@@ -402,6 +402,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 							layer.style.tblField.push({name: singleLayer.renderer._symbols[i].label, fill: fillColor, outline: outlineColor});
 						}
 					}
+					else if(layer.currentRender){
+						$scope.changeRendering(layer, layer.currentRender);
+					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
 						console.log(singleLayer.visible);
 						singleLayer.renderer.infos.forEach(function(subLayer){
@@ -412,7 +415,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						});
 					}
 					else if(layer.style.type === 'point'){
-						console.log(singleLayer.renderer);
 						if(singleLayer.renderer.defaultSymbol.type === "picturemarkersymbol"){
 							var defaultImage = singleLayer.renderer.defaultSymbol.url;
 							layer.style.typeIdField = singleLayer.renderer.attributeField;
@@ -420,7 +422,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						}
 						for(var k = 0; k < singleLayer.renderer.values.length; k++){
 							var fieldSymbol = singleLayer.renderer._symbols[singleLayer.renderer.values[k]];
-							console.log(fieldSymbol);
 							if(fieldSymbol.symbol.type === "picturemarkersymbol"){
 								var fieldImage = fieldSymbol.symbol.url;
 								layer.style.tblField.push({name:fieldSymbol.label, fill: "url('"+fieldImage+"') no-repeat center"});
@@ -434,19 +435,21 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						layer.style.tblField.push({name:'default', fill: fillColor, outline: outlineColor});
 					}
 				});
-				console.log($scope.layers);
 			};
 
 
 			var doneOnce = false;
 			$scope.legendVisible = false;
 			$scope.showLegend = function(){
+				console.log(map.graphics);
 				$scope.legendVisible = !$scope.legendVisible;
 				if(doneOnce === false){
 					$scope.styleInit();
 					doneOnce = true;
 				}
 			};
+
+			
 
 
 			//initMeasureToolbar(map);
