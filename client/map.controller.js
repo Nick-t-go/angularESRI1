@@ -72,7 +72,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	renderOptions: ['PipeSubType'],
 		  	currentRender: "PipeSubType",
 		  	options: {
-		  		bas
 		  		id:"Mains",
 		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType']
 		  	},
@@ -130,9 +129,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 'esri/graphic', "esri/tasks/RelationshipQuery",
                 'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
                 "esri/dijit/Print", "dojo/dom", "esri/geometry/Circle",
-                "esri/dijit/Measurement", "esri/tasks/query",
+                "esri/dijit/Measurement", "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config", "esri/dijit/Scalebar"
+                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -140,9 +139,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 Graphic, RelationshipQuery, 
                 Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
                 Print, dom, Circle,
-                Measurement, Query,
+                Measurement, Query,QueryTask, Point,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config, Scalebar
+                config, Scalebar, GraphicsLayer
             ) {
 
 
@@ -215,8 +214,15 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 			$scope.currentScale = map.getScale();
 
+
+			var graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" }); 
+                graphicsLayer.minScale = map.getLayer("Mains").minScale;
+                graphicsLayer.maxScale = map.getLayer("Mains").maxScale;
+            map.addLayer(graphicsLayer);
+
 			map.on('zoom-end', function(){
 				$scope.currentScale = map.getScale();
+				var mainsMinScale = map.getLayer("Mains").minScale;
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
 					$scope.scaleMessage = false;
 					$scope.$digest();
@@ -225,7 +231,58 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
 					$scope.$digest();
 				}
+				if($scope.currentScale <= mainsMinScale){
+					$scope.addArrows = map.on('extent-change', function(event){
+					graphicsLayer.clear();
+					var setAngle = function(p1, p2) {
+                        var rise = Math.abs(p2[1]) - Math.abs(p1[1]);
+                        var run = Math.abs(p2[0]) - Math.abs(p1[0]);
+                        var angle = ((180 / Math.PI) * Math.atan2(run, rise));
+                        return angle - 270;
+            		};
+
+	                var layer = map.getLayer("Mains"); 
+
+	                var query = new Query();
+		                query.geometry = event.extent;
+		                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+		                query.returnGeometry = true;
+		                query.outFields = ["OBJECTID"];
+
+	                featureSetQT = new QueryTask(layer.url);
+	                featureSetQT.execute(query)
+	                .then(function(featureSet) {
+	                    featureSet.features.forEach(function(feature, idx, array) {
+	                        for (var x in feature.geometry.paths[0]) {
+	                        	if(x%2 !== 0){
+	                        		
+	                        	
+	                            var pt1 = feature.geometry.paths[0][x];
+	                            var pt2 = feature.geometry.paths[0][x - 1];
+	                            if (pt2) {
+	                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
+	                                var point = new Point(midPoint, map.spatialReference);
+	                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
+	                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
+	                                var dotGraphic = new Graphic(point, dot, {}, null);
+	                                graphicsLayer.add(dotGraphic);
+		                            	}
+		                        	}
+		                        }
+		                    	});
+
+		                	});
+						});
+					}
+				else if($scope.addArrows) {
+					$scope.addArrows.remove();
+					graphicsLayer.clear();
+				}
 			});
+
+
+		
+
 
 			$scope.change = function(){
 				if($scope.highlightOnMouseOver){
