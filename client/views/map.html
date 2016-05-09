@@ -17,6 +17,7 @@
 </div>
 
 <button class="legendButton" ng-click="showLegend()"><span class="glyphicon glyphicon-th-list"></span></button>
+<button class="homeButton" ng-click="zoomHome()"><span class="glyphicon glyphicon-home"></span></button>
 
 <div class="panel-container">
     <div class="panel-group" id="accordion">
@@ -31,7 +32,16 @@
                 </div>
             </div>
             <div id="about" class="panel-collapse collapse in">
-                <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+                <div class="panel-body"> Suffolk County DPW 
+                             Sanitary Sewer GIS<br> 
+
+                             <a href="https://portal.gayrondebruin.com/suffolkcounty/WebLinks/Sewers/Other/SCDPWSewerHelp.pdf"  target="_blank">Help PDF</a> <br>
+
+                             <a href="https://portal.gayrondebruin.com/suffolkcounty/WebLinks/Sewers/Other/SCDPWSewersGeodatabaseMetadata.Htm"  target="_blank">Geodatabase Metadata 
+                             Data Dictionary</a> <br>
+                              
+                             Gayron de Bruin Land Surveying and Engineering, PC 
+                             .</div>
             </div>
         </div>
         <div class="panel panel-default" ng-show="tools.Bookmarks">
@@ -73,6 +83,10 @@
                     <div class="alert alert-info" role="alert" ng-show="helpMessage">
                       <i>{{helpMessage}}</i>
                     </div>
+                    <div ng-show="drawGraphicsLayer.graphics.length>0">
+                        <button class="draw-btn btn-lg btn-warning" ng-click="removeLast()">Remove Last</button>
+                        <button class="draw-btn btn-lg btn-danger" ng-click="removeAll()">Remove All</button>
+                    </div>
                 </div>
                 
             </div>
@@ -105,6 +119,13 @@
         <div id="print" class="panel-collapse collapse">
             <div class="panel-body">
                 <div id="printButton"></div>
+                    <form name="printForm">
+                        <label for="printForm">Layout:</label>
+                        <select name="printForm" id="printForm" ng-options="template as template.label for template in printTemplates" ng-change="layoutChange()" ng-model="printTemplate" >
+                        </select>
+                        <button ng-click="initiatePrint(printTemplate)"><span class="glyphicon glyphicon-print"></span></button>
+                    </form>
+                    <div id="print-alert" class="alert" ng-class="printedPage.status"><a ng-href="{{printedPage.link}}" target="_blank">{{printedPage.message}}</a></div>
             </div>
         </div>
     </div>
@@ -117,7 +138,7 @@
                 <span ng-click="tools['Select & View']=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
-        <div id="select" class="panel-collapse collapse">
+        <div id="select" class="panel-collapse collapse in">
             <div class="panel-body">
                 <div id="selectFormDiv">
                     <form name="myForm">
@@ -128,6 +149,7 @@
                 </div>
                 <button class="panel-body-button btn" ng-click="selectByExtent()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-unchecked"></span></button>
                 <button class="panel-body-button btn" ng-click="selectByClick()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-hand-up"></span></button>
+                <button class="panel-body-button btn" ng-click="clearSelection()" ng-class="{'disabled': !newSelectedFeatures}"><span class="glyphicon glyphicon-minus-sign"></span></button>
                 <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
                       <i>{{scaleMessage}}</i>
                 </div>

@@ -7,23 +7,23 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	                basemap: 'topo',
 	                showLabels : true,
 	                center: [-73.1350,40.7891],
-	                zoom: 10,
+	                zoom: 11,
 	                sliderStyle: 'small'
 	            }
 	        };
 
 	$scope.tools = {
-		About: false,
+		About: true,
 		Measure:false, 
 		Bookmarks:false, 
-		"Basemap Gallery": false, 
+		"Basemap Gallery": true, 
 		Draw: false,
 		Print:false,
-		"Select & View": false
+		"Select & View": true
 		}; 
 
-	$scope.test = function(){
-		console.log('test');
+	$scope.test = function(test){
+		console.log((test || 'test'));
 	};
 	
 
@@ -34,6 +34,21 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
         };       
 
 	$scope.layers = [
+		{
+		 	name: 'Sewer Districts',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",	
+		  	options: {
+		  		id:"Districts",
+		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
+		  	},
+		  	style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+		 },
 		 {
 		 	name: 'Sewer Outlines',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
@@ -50,26 +65,27 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	  			tblField: []
 	  		},
 		 },
-		 {
-		 	name: 'Sewer Districts',
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
-		  	visible: true,
-		  	renderOptions: [],
-		  	currentRender: "",	
-		  	options: {
-		  		id:"Districts",
-		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
-		  	},
-		  	style: {
-	  			type: "polygon",
+		  {
+		 	name: 'Manholes',
+		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
+		 	visible: true,
+		 	renderOptions: [{label:"Investigation Status", id:'investigationStatus'},{label: "Horizontal Quality", id:'horizontalQuality'},{label: "Vertical Quality", id: 'verticalQuality'}],
+		 	currentRender: "horizontalQuality",
+		 	options: {
+		 		id:"Manholes",
+		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus']
+		 	},
+		 	style: {
+	  			type: "point",
 	  			tblField: []
 	  		}
 		 },
+		 
 		 {
 		 	name: 'Sewer Mains',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
 		  	visible: true,
-		  	renderOptions: ['PipeSubType'],
+		  	renderOptions: [{label: "Pipe Sub Type", id:'PipeSubType'}],
 		  	currentRender: "PipeSubType",
 		  	options: {
 		  		id:"Mains",
@@ -79,22 +95,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	  			type: "polyline",
 	  			tblField: []
 	  		}
-		 },
-		 {
-		 	name: 'Manholes',
-		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
-		 	visible: true,
-		 	renderOptions: ['investigationStatus','horizontalQuality','verticalQuality'],
-		 	currentRender: "",
-		 	options: {
-		 		id:"Manholes",
-		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus']
-		 	},
-		 	style: {
-	  			type: "point",
-	  			tblField: []
-	  		}
 		 }
+		
 	 ];
 
 	 $scope.layersOn = [];
@@ -131,7 +133,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 "esri/dijit/Print", "dojo/dom", "esri/geometry/Circle",
                 "esri/dijit/Measurement", "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer"
+                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer", "esri/tasks/PrintTemplate", "esri/geometry/Extent"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -141,18 +143,121 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 Print, dom, Circle,
                 Measurement, Query,QueryTask, Point,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config, Scalebar, GraphicsLayer
+                config, Scalebar, GraphicsLayer, PrintTemplate, Extent
             ) {
 
 
              // print dijit
 		        var printer = new Print({
-		          map: map,
-		          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+			          map: map,
+			          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
 		        }, dom.byId("printButton"));
-		        printer.startup();	
+		        printer.startup();
+		        printer.hide();
+		      
 
+		        esriConfig.defaults.io.corsEnabledServers.push("https://sampleserver6.arcgisonline.com/");
 
+		    $scope.printTemplates = [{
+		          	  label: "A4 Landscape",
+					  format: "PDF",
+					  layout: "A4 Landscape",
+					  layoutOptions: {
+					    titleText: "Sanitarty Sewers GIS",
+					    copyrightText: "Suffolk County DPW",
+					    scalebarUnit: "Miles"
+						}
+
+					}, {
+						label: "A4 Portrait",	
+						format: "PDF",
+						layout: "A4 Portrait",
+						layoutOptions: {
+						    titleText: "Sanitarty Sewers GIS",
+						    copyrightText: "Suffolk County DPW",
+						    scalebarUnit: "Miles"
+						}
+					},
+					{
+						label: "Letter Landscape",
+						format: "PDF",
+						layout: "Letter ANSI A Landscape",
+						layoutOptions: {
+						    titleText: "Sanitarty Sewers GIS",
+						    copyrightText: "Suffolk County DPW",
+						    scalebarUnit: "Miles"
+						}
+					},
+					{
+						label: "Letter Portrait",
+						format: "PDF",
+						layout: "Letter ANSI A Portrait",
+						layoutOptions: {
+						    titleText: "Sanitarty Sewers GIS",
+						    copyrightText: "Suffolk County DPW",
+						    scalebarUnit: "Miles"
+						}
+					}
+					];
+		  //   ].map(function(template){
+		  //   	var temp = new PrintTemplate();
+		  //   	temp.label = template.label;	
+				// temp.format = template.format;
+				// temp.layout = template.layout;
+				// temp.layoutOptions = template.layoutOptions;
+				// console.log(temp);
+				// return temp;
+
+		  //   });
+
+		    $scope.printedPage = {
+		    						  status: "alert-info",
+		    						  message: "Select Layout Size and Click Printer Icon to Print",
+		    						  link: ""
+		    						}; 
+
+		    $scope.layoutChange = function(){
+		    	$scope.printedPage = {
+		    						  status: "alert-info",
+		    						  message: "Select Layout Size and Click Printer Icon to Print",
+		    						  link: ""
+		    						}; 
+		    };
+
+		    $scope.initiatePrint = function(template){
+		    	var temp = new PrintTemplate();
+		    	temp.label = template.label;	
+				temp.format = template.format;
+				temp.layout = template.layout;
+				temp.layoutOptions = template.layoutOptions;
+
+		    	printer.printMap(temp);
+		    	$scope.printedPage = {
+		    						  status: "alert-warning",
+		    						  message: "Please Wait While Your Print is Prepared",
+		    						  link: ""
+		    						};
+		    					};
+
+		    printer.on('print-complete',function(evt){
+			    $scope.printedPage = {
+		    						  status: "alert-success",
+		    						  message: "Click Here To View Print Ready PDF",
+		    						  link: evt.result.url
+		    						};
+		    						$scope.$digest();
+			});
+
+			printer.on('error', function(error){
+				$scope.printedPage = {
+		    						  status: "alert-danger",
+		    						  message: "Error Occured",
+		    						  link: ""
+		    						};
+		    	console.log(error);
+		    	$scope.$digest();
+			});
+			
 
 		    var scalebar = new Scalebar({
 			    map: map,
@@ -213,14 +318,21 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			}
 
 			$scope.currentScale = map.getScale();
+			var homeExtent = new Extent({
+				xmin: -8183238.450666123, ymin: 4943600.09971468, xmax: -8100227.837948534, ymax: 5023171.046159441,
+				spatialReference: map.spatialReference});
+			$scope.zoomHome = function(){map.setExtent(homeExtent);};
 
-
-			var graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" }); 
-                graphicsLayer.minScale = map.getLayer("Mains").minScale;
-                graphicsLayer.maxScale = map.getLayer("Mains").maxScale;
-            map.addLayer(graphicsLayer);
+			$scope.graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" }); 
+                $scope.graphicsLayer.minScale = map.getLayer("Mains").minScale;
+                $scope.graphicsLayer.maxScale = map.getLayer("Mains").maxScale;
+            map.addLayer($scope.graphicsLayer);
 
 			map.on('zoom-end', function(){
+				console.log('zoomend');
+				console.log(map.extent);
+				$scope.graphicsLayer.clear();
+				console.log($scope.graphicsLayer.clear());
 				$scope.currentScale = map.getScale();
 				var mainsMinScale = map.getLayer("Mains").minScale;
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
@@ -233,7 +345,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				}
 				if($scope.currentScale <= mainsMinScale){
 					$scope.addArrows = map.on('extent-change', function(event){
-					graphicsLayer.clear();
+					$scope.graphicsLayer.clear();
 					var setAngle = function(p1, p2) {
                         var rise = Math.abs(p2[1]) - Math.abs(p1[1]);
                         var run = Math.abs(p2[0]) - Math.abs(p1[0]);
@@ -265,7 +377,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
 	                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
 	                                var dotGraphic = new Graphic(point, dot, {}, null);
-	                                graphicsLayer.add(dotGraphic);
+	                                $scope.graphicsLayer.add(dotGraphic);
 		                            	}
 		                        	}
 		                        }
@@ -276,13 +388,19 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					}
 				else if($scope.addArrows) {
 					$scope.addArrows.remove();
-					graphicsLayer.clear();
+					$scope.graphicsLayer.clear();
 				}
 			});
 
 
 		
 
+			$scope.clearSelection = function(){
+				$scope.newSelection.clearSelection();
+				$scope.newSelectedFeatures = "";
+				$scope.showSelected = false;
+				$scope.showRelatedDocs = false;
+			};
 
 			$scope.change = function(){
 				if($scope.highlightOnMouseOver){
@@ -323,12 +441,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.highlightOnMouseOver.remove();
 					$scope.unhighlightOnMouseOut.remove();
 					$scope.newSelection.clearSelection();
-					console.log('removed');
 				}
     			map.graphics.clear();
     			if($scope.selectEvent){
     				$scope.selectEvent.remove();
-    				console.log('removed');
     			}
     			measurement.setTool("area", false);
                 measurement.setTool("distance", false);
@@ -344,12 +460,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		        map.graphics.add(highlightGraphic);
     		    });
     		    $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', function(evt) {
-    		        console.log('mouse out');
     		        map.graphics.clear();
     		    });
 
     		    if ($scope.newSelection) {
-    		        console.log($scope.newSelection);
     		        measurement.setTool("area", false);
     		        measurement.setTool("distance", false);
     		        measurement.setTool("location", false);
@@ -373,7 +487,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		            $scope.newSelection.queryFeatures(query, function(selection) {
     		                if (selection.features.length > 0) {
     		                    var query = new Query();
-    		                    query.objectIds = [selection.features[0].attributes.OBJECTID];
+    		                    query.objectIds = selection.features.map(function(feature){
+    		                    	return feature.attributes.OBJECTID;
+    		                    });
     		                    $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results) {
     		                        $scope.newSelectedFeatures = results;
     		                        results.length > 0 ? $scope.showSelected = true : $scope.showSelected = false;
@@ -397,11 +513,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
  				RelatedDocuments.findRelated(itemId, $scope.newSelection)
  				.then(function(records){
- 					console.log(records);
  					$scope.relatedRecords = records;
  					$scope.relationshipClasses = Object.keys(records);
  					if(Object.keys(records).length === 0){
- 						console.log('sent');
  						$scope.$broadcast('message',{message: 'No Related Documents Found.', type: 'alert-danger', time: 5000});
  					}
  					$scope.selectedFeatureId = itemId;
@@ -442,7 +556,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        
 	       
 	        $scope.unHighlight = function(){
-	        	console.log('unhighlight');
 	        	map.graphics.clear();
 	        };
 
@@ -463,7 +576,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						$scope.changeRendering(layer, layer.currentRender);
 					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
-						console.log(singleLayer.visible);
 						singleLayer.renderer.infos.forEach(function(subLayer){
 							var name = subLayer.label;
 							var color = subLayer.symbol.color.toCss(true);
@@ -498,7 +610,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			var doneOnce = false;
 			$scope.legendVisible = false;
 			$scope.showLegend = function(){
-				console.log(map.graphics);
 				$scope.legendVisible = !$scope.legendVisible;
 				if(doneOnce === false){
 					$scope.styleInit();
@@ -519,7 +630,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			var tb; //draw Tool Bar i.e tb
 
 			$scope.drawOptions = [
-				{id: 'Point',name: 'Point', icon: 'flag', help: 'Click on map to place 1 point'},{id: 'Multipoint', name: 'Multipoint', icon: 'option-horizontal', help: 'Click on map to place a point'},{id: 'Line',name: 'Line', icon: 'minus', help: "Click and hold down mouse, release to finish line"},
+				{id: 'Point',name: 'Point', icon: 'flag', help: 'Click on map to place 1 point'},{id: 'Multipoint', name: 'Multipoint', icon: 'option-horizontal', help: 'Click on map to place a point, double-click to create'},{id: 'Line',name: 'Line', icon: 'minus', help: "Click and hold down mouse, release to finish line"},
 				{id: 'Polyline',name: 'Polyline', icon: 'minus', help: "Click map to place line verticies, double-click to end line"},{id: 'FreehandPolyline',name: 'Freehand Polyline', icon: 'pencil', help: "Click and hold to draw, release to end sketch"},
 				{id: 'Triangle', name: 'Triangle' ,icon: 'triangle-top', help: "Click on map and hold button to size triangle"},{id: 'Extent',name: 'Rectangle', icon: 'stop', help: 'Click on map and hold to size rectangle'},
 				{id: 'Circle',name: 'Circle', icon: "repeat", help: "Click on map and hold to size circle"},{id: 'Ellipse',name: 'Ellipse', icon: "repeat", help: "Click on map and hold to size ellipse"},
@@ -541,12 +652,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 			// fill symbol used for extent, polygon and freehand polygon, use a picture fill symbol
 			// the images folder contains additional fill images, other options: sand.png, swamp.png or stiple.png
-			var fillSymbol = new PictureFillSymbol(
-			    // 'images/mangrove.png',
-			    '//developers.arcgis.com/javascript/samples/graphics_add/images/mangrove.png',
-			    new SimpleLineSymbol(
-			        SimpleLineSymbol.STYLE_SOLID,
-			        new Color('#000'),1),42,42);
+			var fillSymbol = new SimpleFillSymbol().setColor(new Color([0, 0, 180, 0.25]));
 
 			// get a local reference to the map object once it's loaded
 			// and initialize the drawing toolbar
@@ -573,6 +679,20 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			    tb.activate(tool.toLowerCase());
 			}
 
+
+			$scope.drawGraphicsLayer = new GraphicsLayer({ id: "graphicsLayerB" }); 
+			map.addLayer($scope.drawGraphicsLayer);
+
+			$scope.removeLast = function(){
+				$scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer[$scope.drawGraphicsLayer.graphics.length-1]);
+				$scope.drawGraphicsLayer.refresh();
+				console.log($scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer.graphics[$scope.drawGraphicsLayer.graphics.length-1]));
+			};
+
+			$scope.removeAll = function(){
+				$scope.drawGraphicsLayer.clear();
+			};
+
 			function addGraphic(evt) {
 			    //deactivate the toolbar and clear existing graphics
 			    tb.deactivate();
@@ -588,7 +708,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			        symbol = fillSymbol;
 			    }
 
-			    map.graphics.add(new Graphic(evt.geometry, symbol));
+			    $scope.drawGraphicsLayer.add(new Graphic(evt.geometry, symbol));
+			    console.log($scope.drawGraphicsLayer);
 			}
 			 // bind the toolbar to the map
 			initToolbar(map);

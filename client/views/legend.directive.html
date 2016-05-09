@@ -14,7 +14,7 @@
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
 				  	<li class="dropdown-header">Symbolize By:</li>
-				    <li ng-repeat="option in layer.renderOptions" ng-click="changeRendering(layer, option)"><a>{{option}}</a></li>
+				    <li ng-repeat="option in layer.renderOptions" ng-click="changeRendering(layer, option.id)"><a>{{option.label}}</a></li>
 				  </ul>
 				</div>
 			</li>

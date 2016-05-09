@@ -48,7 +48,7 @@ app.factory('customRenderer', function(esriLoader) {
                                 ]
                             };
                         }
-                    )
+                    );
                 },
 
 
@@ -73,7 +73,7 @@ app.factory('customRenderer', function(esriLoader) {
 				layer.redraw();
 				legendLayer.style = {
 					type: "point",
-					typeIdField: "FkMhVerticalQuality",
+					typeIdField: "Vertical Survey Quality",
 					tblField: [
 					{fill: "url('"+nonSurveyGradeURL+"') no-repeat center", name: "Not Survey-grade Location" },
 					{fill: "url('"+surveygradeURL+"') no-repeat center", name: "Survey-grade Location"}
@@ -86,7 +86,7 @@ app.factory('customRenderer', function(esriLoader) {
 				esriLoader.require([
 					"esri/renderers/SimpleRenderer", 
 					"esri/symbols/PictureMarkerSymbol",
-					"esri/renderers/git aUniqueValueRenderer"
+					"esri/renderers/UniqueValueRenderer"
 					], 
 					function(
 						SimpleRenderer,
@@ -103,7 +103,7 @@ app.factory('customRenderer', function(esriLoader) {
 				layer.redraw();
 				legendLayer.style = {
 					type: "point",
-					typeIdField: "FkMhHorizontalQuality",
+					typeIdField: "Horizontal Survey Quality",
 					tblField: [
 					{fill: "url('"+nonSurveyGradeURL+"') no-repeat center", name: "Not Survey-grade Location" },
 					{fill: "url('"+surveygradeURL+"') no-repeat center", name: "Survey-grade Location"}

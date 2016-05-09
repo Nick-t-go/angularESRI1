@@ -29,20 +29,20 @@
 	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
 	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>
-	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
+	          <td data-title="Link" sortable="Link"  href="{{feature.attributes.WebRelativeImagePath}}" target="_blank">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 
 	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Document Type" sortable="Document Type">{{feature.attributes.fkDocumentType || 'not specified' }}</td>
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
-	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
+	          <td data-title="Link" sortable="Link"  href="{{feature.attributes.WebRelativeImagePath}}" target="_blank">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 
 	        <tr ng-if="relationShow == 'StructurePhotos'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
-	          <td data-title="Link" sortable="Link">{{feature.attributes.WebRelativeImagePath}}</td>
+	          <td data-title="Link" sortable="Link"><a href="{{feature.attributes.WebRelativeImagePath}}"  target="_blank">{{feature.attributes.WebRelativeImagePath}}</td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 

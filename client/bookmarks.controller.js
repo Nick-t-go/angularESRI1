@@ -5,7 +5,7 @@ app.controller('bookmarksCtrl', function($scope, $cookies, esriLoader) {
 
 		    if (!$cookies.getObject('test') || $cookies.getObject('test').length === 0) {
 		        $scope.bookmarks = [{
-		            name: "LI",
+		            name: "Long Island",
 		            extent: new Extent(map.extent)
 		        }];
 
