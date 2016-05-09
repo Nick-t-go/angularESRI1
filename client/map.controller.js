@@ -199,16 +199,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						}
 					}
 					];
-		  //   ].map(function(template){
-		  //   	var temp = new PrintTemplate();
-		  //   	temp.label = template.label;	
-				// temp.format = template.format;
-				// temp.layout = template.layout;
-				// temp.layoutOptions = template.layoutOptions;
-				// console.log(temp);
-				// return temp;
-
-		  //   });
+		  
 
 		    $scope.printedPage = {
 		    						  status: "alert-info",
@@ -246,7 +237,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    						  link: evt.result.url
 		    						};
 		    						$scope.$digest();
+		    						window.open(evt.result.url);
 			});
+
 
 			printer.on('error', function(error){
 				$scope.printedPage = {
@@ -329,10 +322,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             map.addLayer($scope.graphicsLayer);
 
 			map.on('zoom-end', function(){
-				console.log('zoomend');
-				console.log(map.extent);
 				$scope.graphicsLayer.clear();
-				console.log($scope.graphicsLayer.clear());
 				$scope.currentScale = map.getScale();
 				var mainsMinScale = map.getLayer("Mains").minScale;
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
@@ -686,7 +676,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			$scope.removeLast = function(){
 				$scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer[$scope.drawGraphicsLayer.graphics.length-1]);
 				$scope.drawGraphicsLayer.refresh();
-				console.log($scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer.graphics[$scope.drawGraphicsLayer.graphics.length-1]));
 			};
 
 			$scope.removeAll = function(){
@@ -709,7 +698,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			    }
 
 			    $scope.drawGraphicsLayer.add(new Graphic(evt.geometry, symbol));
-			    console.log($scope.drawGraphicsLayer);
 			}
 			 // bind the toolbar to the map
 			initToolbar(map);
