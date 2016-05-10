@@ -14,6 +14,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 	$scope.tools = {
 		About: true,
+		Search: true,
 		Measure:false, 
 		Bookmarks:false, 
 		"Basemap Gallery": true, 
@@ -58,7 +59,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			currentRender: "",
 		  	options: {
 		  		id:"Outlines",
-		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber']
+		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber', 'ContractNumberAlt']
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -110,8 +111,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             for(var j = 0; j < $scope.layersOn.length; j++){
             	if ($scope.layersOn[j].url === layer.url){
 	                $scope.layersOn.splice(j, 1);
-
 	                push = false;
+	                if(layer.name === "Sewer Mains"){
+	                	$scope.graphicsLayer.clear();
+	                }
 	                break;
 	            }
 	        }
@@ -314,11 +317,16 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			var homeExtent = new Extent({
 				xmin: -8183238.450666123, ymin: 4943600.09971468, xmax: -8100227.837948534, ymax: 5023171.046159441,
 				spatialReference: map.spatialReference});
-			$scope.zoomHome = function(){map.setExtent(homeExtent);};
+			$scope.zoomHome = function(){
+				map.setExtent(homeExtent);
+				$scope.graphicsLayer.clear();
+			};
+
+			console.log(map.spatialReference);
 
 			$scope.graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" }); 
-                $scope.graphicsLayer.minScale = map.getLayer("Mains").minScale;
-                $scope.graphicsLayer.maxScale = map.getLayer("Mains").maxScale;
+            $scope.graphicsLayer.setMinScale(map.getLayer("Mains").minScale);
+            $scope.graphicsLayer.setMaxScale(map.getLayer("Mains").maxScale);
             map.addLayer($scope.graphicsLayer);
 
 			map.on('zoom-end', function(){
@@ -335,46 +343,46 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				}
 				if($scope.currentScale <= mainsMinScale){
 					$scope.addArrows = map.on('extent-change', function(event){
-					$scope.graphicsLayer.clear();
-					var setAngle = function(p1, p2) {
-                        var rise = Math.abs(p2[1]) - Math.abs(p1[1]);
-                        var run = Math.abs(p2[0]) - Math.abs(p1[0]);
-                        var angle = ((180 / Math.PI) * Math.atan2(run, rise));
-                        return angle - 270;
-            		};
+						$scope.graphicsLayer.clear();
+						var setAngle = function(p1, p2) {
+	                        var rise = Math.abs(p2[1]) - Math.abs(p1[1]);
+	                        var run = Math.abs(p2[0]) - Math.abs(p1[0]);
+	                        var angle = ((180 / Math.PI) * Math.atan2(run, rise));
+	                        return angle - 270;
+	            		};
 
-	                var layer = map.getLayer("Mains"); 
+		                var layer = map.getLayer("Mains"); 
 
-	                var query = new Query();
-		                query.geometry = event.extent;
-		                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-		                query.returnGeometry = true;
-		                query.outFields = ["OBJECTID"];
+		                var query = new Query();
+			                query.geometry = event.extent;
+			                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+			                query.returnGeometry = true;
+			                query.outFields = ["OBJECTID"];
 
-	                featureSetQT = new QueryTask(layer.url);
-	                featureSetQT.execute(query)
-	                .then(function(featureSet) {
-	                    featureSet.features.forEach(function(feature, idx, array) {
-	                        for (var x in feature.geometry.paths[0]) {
-	                        	if(x%2 !== 0){
-	                        		
-	                        	
-	                            var pt1 = feature.geometry.paths[0][x];
-	                            var pt2 = feature.geometry.paths[0][x - 1];
-	                            if (pt2) {
-	                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
-	                                var point = new Point(midPoint, map.spatialReference);
-	                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
-	                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
-	                                var dotGraphic = new Graphic(point, dot, {}, null);
-	                                $scope.graphicsLayer.add(dotGraphic);
-		                            	}
-		                        	}
-		                        }
-		                    	});
+		                featureSetQT = new QueryTask(layer.url);
+		                featureSetQT.execute(query)
+		                .then(function(featureSet) {
+		                    featureSet.features.forEach(function(feature, idx, array) {
+		                        for (var x in feature.geometry.paths[0]) {
+		                        	if(x%2 !== 0){
+		                        		
+		                        	
+		                            var pt1 = feature.geometry.paths[0][x];
+		                            var pt2 = feature.geometry.paths[0][x - 1];
+		                            if (pt2) {
+		                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
+		                                var point = new Point(midPoint, map.spatialReference);
+		                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
+		                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
+		                                var dotGraphic = new Graphic(point, dot, {}, null);
+		                                $scope.graphicsLayer.add(dotGraphic);
+			                            	}
+			                        	}
+			                        }
+			                    	});
 
-		                	});
-						});
+			                	});
+							});
 					}
 				else if($scope.addArrows) {
 					$scope.addArrows.remove();

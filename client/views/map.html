@@ -1,20 +1,4 @@
-<div class="navbar">
-    <div class="navContainer ">
-        <h3 style=" margin:5px; padding:12px 0 10px 10px; color:white">
-            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
-            Sanitary Sewer GIS 
-            <small style="color:white">Suffolk County DPW</small>
-        </h3>
-        <div class="btn-group nav-menu" role="group">
-            <button type="button" class="btn btn-default dropdown-toggle nav-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="glyphicon glyphicon-menu-hamburger"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-              <li><a ng-repeat="(key, value) in tools" ng-click="toggleTools(key)">{{key}}</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+<navbar></navbar>
 
 <button class="legendButton" ng-click="showLegend()"><span class="glyphicon glyphicon-th-list"></span></button>
 <button class="homeButton" ng-click="zoomHome()"><span class="glyphicon glyphicon-home"></span></button>
@@ -55,6 +39,18 @@
                 </div>
             </div>
             <bookmarks map="esriMapObject"></bookmarks>
+        </div>
+        <div class="panel panel-default" ng-show="tools.Search">
+            <div class="panel-heading">
+                <h4 class="panel-title pull-left">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSearch">
+                Search</a>
+              </h4>
+              <div class="panel-button pull-right">
+                    <span ng-click="tools.Bookmarks=false" class="glyphicon glyphicon-remove-circle"></span>
+                </div>
+            </div>
+            <search map="esriMapObject"></search>
         </div>
      <div class="panel panel-default" ng-show="tools['Basemap Gallery']">
         <div class="panel-heading">

@@ -19,15 +19,15 @@ th, td {
     padding: 8px;
 }
 
-tr:nth-child(even){background-color: #f2f2f2}
-tr:nth-child(odd){background-color: white}
+.checkeredTable tr:nth-child(even){background-color: #f2f2f2}
+.checkeredTable tr:nth-child(odd){background-color: white}
 
 th {
     background-color: #4CAF50;
     color: white;
 }
 
-.bottom-row:hover {
+.checkeredTable tr:hover {
 	background-color: #FF4500;
 	color: white;
 }

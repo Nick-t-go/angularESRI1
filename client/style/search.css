@@ -1,0 +1,23 @@
+.searchList{
+	padding: 5px;
+}
+
+
+.searchListItems {
+   list-style: none;
+   margin: 10px;
+}
+
+.searchListItems:before {
+    content: "\2727";
+}
+
+.searchListItems:before {
+    content: "\2726";
+}
+
+.searchListItems:hover{
+    background-color: #FF4500;
+    color: white;
+}
+	
