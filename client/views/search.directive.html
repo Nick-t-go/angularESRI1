@@ -2,17 +2,29 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-lg-12">
-                Search
                 <form novalidate class="css-form">
-                <input type="text" ng-change="inputChange(input.text)" ng-model="input.text" required /><br />
-                <input type="button" ng-click="reset()" value="Reset" />
-                <input type="submit" ng-click="update(user)" value="Save" />
+                <input type="text" ng-change="inputChange(input.text)" ng-model="input.text" required />
+                <button class="btn btn-primary btn-sm " type="button" ng-click="inputChange(input.text)"><span class="
+glyphicon glyphicon-search"></span></button>
+                <button class="btn btn-primary btn-sm " type="button" ng-click="input.text = ''"><span class="
+glyphicon glyphicon-refresh"></span></button>
+                <label class="radio-inline"><input type="radio" name="optradio" ng-model="input.searchType" ng-change="input.text = ''" value="address" checked>Address</label>
+                <label class="radio-inline"><input type="radio" name="optradio" ng-model="input.searchType" value="contract" ng-change="input.text = ''">Contract</label>
               </form>
             </div>
             <!-- /.col-lg-6 -->
         </div>
-        <ul class="searchList">
+        <ul class="searchList" ng-if="suggestions.length>0">
+          Search Results
          <li class="searchListItems" ng-repeat="location in suggestions" ng-click="zoomToAddress(location)"><small>{{location.text | noUSA}}</small></li>
         </ul>
+        <i ng-show="searchWait" class="fa fa-spinner fa-pulse  fa-fw margin-bottom"></i>
+        <div class="alert alert-warning" role="alert" ng-show="count === 0 && input.text.length > 0">
+              <i>No Matching Contracts Found. Please Review Search Input.</i>
+        </div>
+        <div class="alert alert-info" role="alert" ng-show="count>0 && input.text.length > 0">
+              <i>{{count}} Feature(s) selected. <strong>Click</strong> Feature in Table Below to View Related Documents. <strong>Double Click</strong> to zoom to feature.</i>
+        </div>
+
     </div>
 </div>

@@ -13,11 +13,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        };
 
 	$scope.tools = {
-		About: true,
+		About: false,
 		Search: true,
 		Measure:false, 
 		Bookmarks:false, 
-		"Basemap Gallery": true, 
+		"Basemap Gallery": false, 
 		Draw: false,
 		Print:false,
 		"Select & View": true
@@ -133,126 +133,24 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
                 'esri/graphic', "esri/tasks/RelationshipQuery",
                 'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
-                "esri/dijit/Print", "dojo/dom", "esri/geometry/Circle",
+                "dojo/dom", "esri/geometry/Circle",
                 "esri/dijit/Measurement", "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point",
                 "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer", "esri/tasks/PrintTemplate", "esri/geometry/Extent"
+                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,
                 Graphic, RelationshipQuery, 
                 Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
-                Print, dom, Circle,
+                dom, Circle,
                 Measurement, Query,QueryTask, Point,
                 lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config, Scalebar, GraphicsLayer, PrintTemplate, Extent
+                config, Scalebar, GraphicsLayer,  Extent
             ) {
 
 
-             // print dijit
-		        var printer = new Print({
-			          map: map,
-			          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
-		        }, dom.byId("printButton"));
-		        printer.startup();
-		        printer.hide();
-		      
-
-		        esriConfig.defaults.io.corsEnabledServers.push("https://sampleserver6.arcgisonline.com/");
-
-		    $scope.printTemplates = [{
-		          	  label: "A4 Landscape",
-					  format: "PDF",
-					  layout: "A4 Landscape",
-					  layoutOptions: {
-					    titleText: "Sanitarty Sewers GIS",
-					    copyrightText: "Suffolk County DPW",
-					    scalebarUnit: "Miles"
-						}
-
-					}, {
-						label: "A4 Portrait",	
-						format: "PDF",
-						layout: "A4 Portrait",
-						layoutOptions: {
-						    titleText: "Sanitarty Sewers GIS",
-						    copyrightText: "Suffolk County DPW",
-						    scalebarUnit: "Miles"
-						}
-					},
-					{
-						label: "Letter Landscape",
-						format: "PDF",
-						layout: "Letter ANSI A Landscape",
-						layoutOptions: {
-						    titleText: "Sanitarty Sewers GIS",
-						    copyrightText: "Suffolk County DPW",
-						    scalebarUnit: "Miles"
-						}
-					},
-					{
-						label: "Letter Portrait",
-						format: "PDF",
-						layout: "Letter ANSI A Portrait",
-						layoutOptions: {
-						    titleText: "Sanitarty Sewers GIS",
-						    copyrightText: "Suffolk County DPW",
-						    scalebarUnit: "Miles"
-						}
-					}
-					];
-		  
-
-		    $scope.printedPage = {
-		    						  status: "alert-info",
-		    						  message: "Select Layout Size and Click Printer Icon to Print",
-		    						  link: ""
-		    						}; 
-
-		    $scope.layoutChange = function(){
-		    	$scope.printedPage = {
-		    						  status: "alert-info",
-		    						  message: "Select Layout Size and Click Printer Icon to Print",
-		    						  link: ""
-		    						}; 
-		    };
-
-		    $scope.initiatePrint = function(template){
-		    	var temp = new PrintTemplate();
-		    	temp.label = template.label;	
-				temp.format = template.format;
-				temp.layout = template.layout;
-				temp.layoutOptions = template.layoutOptions;
-
-		    	printer.printMap(temp);
-		    	$scope.printedPage = {
-		    						  status: "alert-warning",
-		    						  message: "Please Wait While Your Print is Prepared",
-		    						  link: ""
-		    						};
-		    					};
-
-		    printer.on('print-complete',function(evt){
-			    $scope.printedPage = {
-		    						  status: "alert-success",
-		    						  message: "Click Here To View Print Ready PDF",
-		    						  link: evt.result.url
-		    						};
-		    						$scope.$digest();
-		    						window.open(evt.result.url);
-			});
-
-
-			printer.on('error', function(error){
-				$scope.printedPage = {
-		    						  status: "alert-danger",
-		    						  message: "Error Occured",
-		    						  link: ""
-		    						};
-		    	console.log(error);
-		    	$scope.$digest();
-			});
+             
 			
 
 		    var scalebar = new Scalebar({
@@ -299,19 +197,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			var selectionToolbar;
 		    $scope.newSelection = ""; 
 
-		    function initSelectToolbar() {
-			    selectionToolbar = new Draw(map);
-			    var selectQuery = new Query();
-
-			    selectionToolbar.on("DrawEnd", function(geometry) {
-			        selectionToolbar.deactivate();
-			        selectQuery.geometry = geometry;
-			        $scope.newSelection.selectFeatures(selectQuery, $scope.newSelection.SELECTION_NEW);
-			        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
-			        $scope.newSelectedFeatures.length > 0 ? $scope.showSelected = true: $scope.showSelected = false;
-			        $scope.$digest();
-			    });
-			}
+		    
 
 			$scope.currentScale = map.getScale();
 			var homeExtent = new Extent({
@@ -322,17 +208,18 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				$scope.graphicsLayer.clear();
 			};
 
-			console.log(map.spatialReference);
 
 			$scope.graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" }); 
             $scope.graphicsLayer.setMinScale(map.getLayer("Mains").minScale);
             $scope.graphicsLayer.setMaxScale(map.getLayer("Mains").maxScale);
             map.addLayer($scope.graphicsLayer);
 
+            
+
 			map.on('zoom-end', function(){
 				$scope.graphicsLayer.clear();
 				$scope.currentScale = map.getScale();
-				var mainsMinScale = map.getLayer("Mains").minScale;
+				
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
 					$scope.scaleMessage = false;
 					$scope.$digest();
@@ -341,23 +228,33 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
 					$scope.$digest();
 				}
-				if($scope.currentScale <= mainsMinScale){
-					$scope.addArrows = map.on('extent-change', function(event){
-						$scope.graphicsLayer.clear();
-						var setAngle = function(p1, p2) {
+			});
+
+
+
+			var setAngle = function(p1, p2) {
 	                        var rise = Math.abs(p2[1]) - Math.abs(p1[1]);
 	                        var run = Math.abs(p2[0]) - Math.abs(p1[0]);
 	                        var angle = ((180 / Math.PI) * Math.atan2(run, rise));
 	                        return angle - 270;
-	            		};
+	                    };
 
-		                var layer = map.getLayer("Mains"); 
 
+			$scope.addArrows = map.on('extent-change', function(event){
+				$scope.currentScale = map.getScale();
+				$scope.mainsMinScale = map.getLayer("Mains").minScale;
+				$scope.graphicsLayer.clear();
+				var layer = map.getLayer("Mains"); 
+				switch($scope.currentScale > $scope.mainsMinScale){
+					case true:
+						$scope.graphicsLayer.clear();
+						break;
+					case false:	
 		                var query = new Query();
-			                query.geometry = event.extent;
-			                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-			                query.returnGeometry = true;
-			                query.outFields = ["OBJECTID"];
+		                query.geometry = event.extent;
+		                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+		                query.returnGeometry = true;
+		                query.outFields = ["OBJECTID"];
 
 		                featureSetQT = new QueryTask(layer.url);
 		                featureSetQT.execute(query)
@@ -365,33 +262,67 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		                    featureSet.features.forEach(function(feature, idx, array) {
 		                        for (var x in feature.geometry.paths[0]) {
 		                        	if(x%2 !== 0){
-		                        		
-		                        	
-		                            var pt1 = feature.geometry.paths[0][x];
-		                            var pt2 = feature.geometry.paths[0][x - 1];
-		                            if (pt2) {
-		                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
-		                                var point = new Point(midPoint, map.spatialReference);
-		                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
-		                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
-		                                var dotGraphic = new Graphic(point, dot, {}, null);
-		                                $scope.graphicsLayer.add(dotGraphic);
+			                            var pt1 = feature.geometry.paths[0][x];
+			                            var pt2 = feature.geometry.paths[0][x - 1];
+			                            if (pt2) {
+			                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
+			                                var point = new Point(midPoint, map.spatialReference);
+			                                var dot = new SimpleMarkerSymbol({ "color": new Color([32, 120, 0]), "size": 12, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
+			                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
+			                                var dotGraphic = new Graphic(point, dot, {}, null);
+			                                $scope.graphicsLayer.add(dotGraphic);
 			                            	}
 			                        	}
 			                        }
-			                    	});
+			                });
+	                	});
+	            }
+	        });
 
-			                	});
-							});
-					}
-				else if($scope.addArrows) {
-					$scope.addArrows.remove();
-					$scope.graphicsLayer.clear();
-				}
+			function initSelectToolbar() {
+			    selectionToolbar = new Draw(map);
+			    var selectQuery = new Query();
+
+			    selectionToolbar.on("DrawEnd", function(geometry) {
+			        selectionToolbar.deactivate();
+			        selectQuery.geometry = geometry;
+			        runQuery(selectQuery);
+			    });
+			}
+
+
+			function runQuery(query, type){
+				$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW);
+		        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
+		        $scope.newSelectedFeatures.length > 0 ? $scope.showSelected = true: $scope.showSelected = false
+		        if(type != 'where'){
+		        	$scope.$digest();
+		        	$scope.$broadcast('hideMenu');
+		        }
+		        else{
+		        	$scope.selectSearch = false;
+		        	$scope.$broadcast('selectionResults', {featureCount:$scope.newSelectedFeatures.length} );
+		        }
+			}
+
+			var fieldsSelectionSymbol = {
+    				polygon: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+	            		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+	          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5])),
+    				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 30,
+		    			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+		    			new Color([255,0,0]), 1),new Color([255,255,0,0.6])),
+    				polyline: new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]),15)
+    			};
+
+			$scope.$on('searchQuery', function(ev, data){
+				var searchQuery = new Query();
+				searchQuery.where = "ContractNumber LIKE '%" + data.search + "%'";
+				$scope.newSelection = map.getLayer('Outlines');
+				$scope.outFields = $scope.newSelection._outFields;
+				$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol.polygon);
+				runQuery(searchQuery, 'where');
 			});
-
-
-		
 
 			$scope.clearSelection = function(){
 				$scope.newSelection.clearSelection();
@@ -407,6 +338,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.newSelection.clearSelection();
 				}
 
+				$scope.selectSearch = true;
+
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
@@ -416,22 +349,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			} else{
     				$scope.scaleMessage = false;
     			}
-    			
-    			var fieldsSelectionSymbol = {
-    				polygon: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
-	            		new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
-	          			new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.5])),
-    				point: new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 30,
-		    			new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-		    			new Color([255,0,0]), 1),new Color([255,255,0,0.6])),
-    				polyline: new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]),15)
-    			};
-          			
+
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
           		$scope.outFields = $scope.newSelection._outFields;
-
-          		
-				
     		};
 
     		$scope.selectByExtent = function(){
@@ -444,6 +364,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			if($scope.selectEvent){
     				$scope.selectEvent.remove();
     			}
+    			$scope.selectSearch = true;
     			measurement.setTool("area", false);
                 measurement.setTool("distance", false);
                 measurement.setTool("location", false);
@@ -460,12 +381,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		    $scope.unhighlightOnMouseOut = map.graphics.on('mouse-out', function(evt) {
     		        map.graphics.clear();
     		    });
-
+    		    $scope.selectSearch = true;
     		    if ($scope.newSelection) {
     		        measurement.setTool("area", false);
     		        measurement.setTool("distance", false);
     		        measurement.setTool("location", false);
-
     		        var circle;
     		        $scope.selectEvent = map.on('click', function(evt) {
     		            circle = new Circle({
@@ -483,6 +403,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		            query.geometry = circle.getExtent();
     		            //use a fast bounding box query. will only go to the server if bounding box is outside of the visible map
     		            $scope.newSelection.queryFeatures(query, function(selection) {
+    		            	$scope.$broadcast('hideMenu');
     		                if (selection.features.length > 0) {
     		                    var query = new Query();
     		                    query.objectIds = selection.features.map(function(feature){
@@ -499,11 +420,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		    }
     		};
 
-
-
-			
-    	
-	
     		$scope.showRelatedDocs= false;
 
 

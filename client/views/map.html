@@ -47,7 +47,7 @@
                 Search</a>
               </h4>
               <div class="panel-button pull-right">
-                    <span ng-click="tools.Bookmarks=false" class="glyphicon glyphicon-remove-circle"></span>
+                    <span ng-click="tools.Search=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
             <search map="esriMapObject"></search>
@@ -87,7 +87,7 @@
                 
             </div>
         </div>
-    </div>
+    
     <div class="panel panel-default" ng-show="tools.Measure">
         <div class="panel-heading">
             <h4 class="panel-title pull-left">
@@ -112,18 +112,7 @@
                 <span ng-click="tools.Print=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
-        <div id="print" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div id="printButton"></div>
-                    <form name="printForm">
-                        <label for="printForm">Layout:</label>
-                        <select name="printForm" id="printForm" ng-options="template as template.label for template in printTemplates" ng-change="layoutChange()" ng-model="printTemplate" >
-                        </select>
-                        <button ng-click="initiatePrint(printTemplate)"><span class="glyphicon glyphicon-print"></span></button>
-                    </form>
-                    <div id="print-alert" class="alert" ng-class="printedPage.status"><a ng-href="{{printedPage.link}}" target="_blank">{{printedPage.message}}</a></div>
-            </div>
-        </div>
+        <print></print>
     </div>
     <div class="panel panel-default" ng-show="tools['Select & View']">
         <div class="panel-heading">
@@ -146,14 +135,17 @@
                 <button class="panel-body-button btn" ng-click="selectByExtent()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-unchecked"></span></button>
                 <button class="panel-body-button btn" ng-click="selectByClick()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-hand-up"></span></button>
                 <button class="panel-body-button btn" ng-click="clearSelection()" ng-class="{'disabled': !newSelectedFeatures}"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
-                      <i>{{scaleMessage}}</i>
-                </div>
-                <div class="alert alert-info" role="alert" ng-show="newSelectedFeatures.length>0 && showSelected === true">
-                      <i>{{newSelectedFeatures.length}} Feature(s) selected. <strong>Click</strong> Feature in Table Below to View Related Documents.</i>
+                <div ng-show="selectSearch">
+                    <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
+                          <i>{{scaleMessage}}</i>
+                    </div>
+                    <div class="alert alert-info" role="alert" ng-show="newSelectedFeatures.length>0 && showSelected === true">
+                          <i>{{newSelectedFeatures.length}} Feature(s) selected. <strong>Click</strong> Feature in Table Below to View Related Documents. <strong>Double Click</strong> to zoom to feature.</i>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 </div>

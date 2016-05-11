@@ -21,6 +21,7 @@
     left: 0;
     z-index: 1030;
     display: block;
+    box-shadow: 2.5px 2.5px 1px #888888;
 }
 .navContainer{
 	display: flex;
@@ -28,6 +29,7 @@
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	align-items: center;
+
 }
 
 .nav-menu{
@@ -35,9 +37,25 @@
 }
 
 .nav-button {
-	border: solid 2px rgb(155, 193, 156);
-	border-radius: 90%;
+	border-radius: 25%;
+    box-shadow: 2.5px 2.5px 1px #888888;
+
 }
+
+
+
+.panel-default{
+    box-shadow: 2.5px 2.5px 1px #888888;
+}
+
+.panel-title a{
+    font: 15px "Arial Black", Gadget, sans-serif;
+    text-shadow: 2.5px 2.5px 1px lightgrey;
+}
+
+
+
+
 
 .esriSimpleSliderTL {
     top: 100px;
@@ -159,10 +177,11 @@ input.dijitReset.dijitInputField.dijitValidationIcon.dijitValidationInner {
 }
 
 .esriSignInDialog{
-    border: solid black 1px;
+    border: solid #719971 1px;
     border-radius: 20px;
     padding: 10px;
     background-color: white;
+    box-shadow: 2.5px 2.5px 1px #888888;
 }
 
 .dijitButtonNode.dijitButtonNode{

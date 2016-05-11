@@ -1,0 +1,12 @@
+<div id="print" class="panel-collapse collapse">
+    <div class="panel-body">
+        <div id="printButton"></div>
+        <form name="printForm">
+            <label for="printForm">Layout:</label>
+            <select name="printForm" id="printForm" ng-options="template as template.label for template in printTemplates" ng-change="layoutChange()" ng-model="printTemplate">
+            </select>
+            <button ng-click="initiatePrint(printTemplate)"><span class="glyphicon glyphicon-print"></span></button>
+        </form>
+        <div id="print-alert" class="alert" ng-class="printedPage.status"><a ng-href="{{printedPage.link}}" target="_blank">{{printedPage.message}}</a> <i ng-show="printWait" class="fa fa-spinner fa-pulse  fa-fw margin-bottom"></i></div>
+    </div>
+</div>
