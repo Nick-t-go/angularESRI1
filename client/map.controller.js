@@ -317,7 +317,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 			$scope.$on('searchQuery', function(ev, data){
 				var searchQuery = new Query();
-				searchQuery.where = "ContractNumber LIKE '%" + data.search + "%'";
+				searchQuery.where = "ContractNumber LIKE '" + data.search + "%'";
 				$scope.newSelection = map.getLayer('Outlines');
 				$scope.outFields = $scope.newSelection._outFields;
 				$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol.polygon);
