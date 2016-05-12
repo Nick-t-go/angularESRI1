@@ -5,26 +5,15 @@ app.factory('customRenderer', function(esriLoader) {
                 PipeSubType: function(layer, legendLayer, mapObj) {
                     esriLoader.require([
                             "esri/renderers/SimpleRenderer",
-                            "esri/symbols/SimpleMarkerSymbol",
                             "esri/symbols/SimpleLineSymbol",
                             "esri/Color",
                             "esri/renderers/UniqueValueRenderer",
-                            "esri/graphic",
-                            "esri/tasks/query",
-                            "esri/symbols/PictureMarkerSymbol",
-                            "esri/symbols/TextSymbol"
                         ],
                         function(
                             SimpleRenderer,
-                            SimpleMarkerSymbol,
                             SimpleLineSymbol,
                             Color,
-                            UniqueValueRenderer,
-                            Graphic,
-                            Query,
-                            Point,
-                            PictureMarkerSymbol,
-                            TextSymbol
+                            UniqueValueRenderer                         
                         ) {
 
 
@@ -45,6 +34,34 @@ app.factory('customRenderer', function(esriLoader) {
                                     { fill: "#9A670D", name: "Force Main" },
                                     { fill: "#3BD815", name: "Gravity" },
                                     { fill: "#325DEE", name: "Outfall" }
+                                ]
+                            };
+                        }
+                    );
+                },
+
+                interceptorDefault: function(layer, legendLayer, mapObj) {
+                    esriLoader.require([
+                            "esri/renderers/SimpleRenderer",
+                            "esri/symbols/SimpleLineSymbol",
+                            "esri/Color",
+                            "esri/renderers/UniqueValueRenderer"                           
+                        ],
+                        function(
+                            SimpleRenderer,
+                            SimpleLineSymbol,
+                            Color,
+                            UniqueValueRenderer                     
+                        ) {
+                            var defaultLine = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color("#A50082"), 3);
+                            var renderer = new SimpleRenderer(defaultLine);
+                            layer.setRenderer(renderer);
+                            layer.redraw();
+                            legendLayer.style = {
+                                type: "polyline",
+                                typeIdField: " ",
+                                tblField: [
+                                    { fill: "#A50082"}
                                 ]
                             };
                         }

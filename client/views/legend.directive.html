@@ -3,7 +3,7 @@
         <h4 class="legend-title">Legend</h4>
     </div>
     <div class="row">
-        <ul ng-repeat="layer in layers">
+        <ul class="legend-ul" ng-repeat="layer in layers">
             <li class="legend-list-item">
                 <label>
                     <input type="checkbox" ng-model="layer.visible" ng-change="toggleLayer(layer)">{{layer.name}}

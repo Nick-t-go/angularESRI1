@@ -10,6 +10,8 @@
 	      	<tr ng-if="relationShow == 'Contracts'">
 	      		<th>Contract Number</th>
 	      		<th>Contract Name</th>
+	      		<th>Municipal</th>
+	      		<th>Year Built</th>
 	      		<th>Link</th>
 	      		<th ng-click="turnOffRelatedDocs()">x</th>
 	        </tr>
@@ -21,14 +23,17 @@
 	        </tr>
 	        <tr ng-if="relationShow == 'StructurePhotos'">
 				<th>Description</th>
+				<th>Enter Date</th>
 				<th>Link</th>
 				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	      </thead>
 	      
 	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
-	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
-	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>
+	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractNumber}}</td>
+	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractName}}</td>
+	          <td data-title="Municipal " sortable="Municipal ">{{feature.attributes.dSMuniOrSAgency}}</td>
+	          <td data-title="Year Built" sortable="Year Built">{{feature.attributes.YearBuilt}}</td>
 	          <td data-title="Link" sortable="Link"  ><a ng-href="{{feature.attributes.WebRelativeImagePath}}" target="_blank">{{feature.attributes.WebRelativeImagePath}}</a></td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
@@ -42,6 +47,7 @@
 
 	        <tr ng-if="relationShow == 'StructurePhotos'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
+	          <td data-title="Enter Date" sortable="Enter Date">{{feature.attributes.EnterDate  | date:'MM/dd/yyyy' }}</td>
 	          <td data-title="Link" sortable="Link"><a ng-href="{{feature.attributes.WebRelativeImagePath}}"  target="_blank">{{feature.attributes.WebRelativeImagePath}}</a></td>
 	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>

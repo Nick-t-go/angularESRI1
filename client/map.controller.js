@@ -43,7 +43,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	currentRender: "",	
 		  	options: {
 		  		id:"Districts",
-		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
+		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'dSdLifeCycleStatus', 'SdLongName'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Districts Info</b>',
+		  			content: 'Locality: ${SdLocality}<br>Long Name: ${SdLongName}<br>Short Name: ${SDShortName}<br>Life Cycle Status: ${dSdLifeCycleStatus}'
+		  		}
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -51,7 +55,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	  		}
 		 },
 		 {
-		 	name: 'Sewer Outlines',
+		 	name: 'Sewer Contract Outlines',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
@@ -59,7 +63,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			currentRender: "",
 		  	options: {
 		  		id:"Outlines",
-		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber', 'ContractNumberAlt']
+		  		outFields: ['OBJECTID', 'ContractNumber', 'ContractNumberAlt'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Contract Outlines</b>',
+		  			content: 'Contract Number: ${ContractNumber}<br> Alt Contract Number: ${ContractNumberAlt}'
+		  		}
 		  	},
 		  	style: {
 	  			type: "polygon",
@@ -74,7 +82,18 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		 	currentRender: "horizontalQuality",
 		 	options: {
 		 		id:"Manholes",
-		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus']
+		 		outFields: ['OBJECTID','HansenMatchStatus','MhYearBuilt', 'dMhLifeCycleStatus', 
+		 		'LastFieldSurveyDate', 'FlushCount', 'CoverLocationDate', 'MhRimElevRecord', 'MhRimElevNAVD88',
+		 		'MHsubType','MhContractNumber','dCountyResponsible','MhContractName', 'UnitID',
+		 		 "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus'],
+		 		infoTemplate: {
+		  			title: '<b>Manholes</b>',
+		  			content: 'Contract Number: ${MhContractNumber}<br>Contract Name: ${MhContractName}<br>Hansen Unit ID: ${UnitID}<br>'+
+                             'County Responsible?: ${dCountyResponsible}<br> Hansen Match Status: ${HansenMatchStatus }<br>' +
+                             'Manhole Type: ${MHsubType}<br> Rim Elevation Record: ${MhRimElevRecord}<br> Rim Elevation NAVD88: ${MhRimElevNAVD88}<br>' + 
+                             'Flush Count: ${FlushCount}<br> Horizontal Quality: ${FkMhHorizontalQuality}<br> Vertical Quality: ${FkMhVerticalQuality}<br>' +
+                             'Cover Location: ${CoverLocationDate}<br> Last Field Survey: ${LastFieldSurveyDate}<br> Life Cycle Status: ${dMhLifeCycleStatus}<br> Year Built: ${MhYearBuilt}'
+		  		}
 		 	},
 		 	style: {
 	  			type: "point",
@@ -90,14 +109,244 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		  	currentRender: "PipeSubType",
 		  	options: {
 		  		id:"Mains",
-		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType']
+		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType', 'FkPipeContractID', 'PipeContractNumber', 'PipeContractName',
+		  		'dCountyResponsible', 'dPipeDiameterRecord', 'dPipeMaterialRecord', 'dPipeClassRecord', 'LengthRecord', 'SlopeRecord',
+		  		 'InvertUpRecord', 'InvertDownRecord', 'InvertUpNAVD1988', 'InvertDownNAVD1988', 'dPipeLifeCycleStatus'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Mains</b>',
+		  			content: ' Contract ID:${FkPipeContractID}<br> Contract Number: ${PipeContractNumber}<br>'+
+		  			'Contract Name: ${PipeContractName}<br>County Responsible?: ${dCountyResponsible}<br> Diameter: ${dPipeDiameterRecord}<br>' +   
+                    'Material: ${dPipeMaterialRecord}<br>Pipe Class: ${dPipeClassRecord}<br>Record Length: ${LengthRecord}<br>'+  
+                    'Slope Record: ${SlopeRecord}<br>Pipe Type: ${PipeSubType}<br>Upstream Invert: ${InvertUpRecord}<br>' +
+                    'Downstream Invert: ${InvertDownRecord}<br> Upstream Invert - 1988 Datum: ${InvertUpNAVD1988}<br>' +  
+                    'Downstream Invert - 1988 Datum: ${InvertDownNAVD1988}<br>Life Cycle Status: ${dPipeLifeCycleStatus}<br> Year Built: ${YearBuilt}'
+		  			
+		  		}
 		  	},
 	  		style: {
 	  			type: "polyline",
 	  			tblField: []
 	  		}
-		 }
-		
+		 },
+		 {
+		 	name: 'Sewer Interceptors',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/1',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "interceptorDefault",
+		  	options: {
+		  		id:"Interceptors",
+		  		outFields: ['OBJECTID', 'InterceptorName'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Interceptors</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polyline",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Main Casings',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/3',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"Castings",
+		  		outFields: ['OBJECTID'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Main Casings</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polyline",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Easements',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/4',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"Easements",
+		  		outFields: ['OBJECTID'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Easements</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Pump Stations',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/5',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"Stations",
+		  		outFields: ['FkPsContractID','ProjectName','dPsSewerDistrict', 'PsLocation', 'FkParcelID','dLifeCycleStatus', 'StructureDescription','dCountyResponsible', 'PsManufacturer',
+		  						'FkPsType', 'PsNumberOfUnits','PsUnitIDnumbers', 'CapacityGPM', 'TotalHeadFeet', 'MotorHP', 'MotorRPM', 'MotorElectric' ],    
+		  		infoTemplate: {
+		  			title: '<b>Sewer Pump Stations</b>',
+		  			content: 'Contract Number: ${FkPsContractID}<br> Contract Name: ${ProjectName}<br>Sewer District: ${dPsSewerDistrict}<br>Location: ${PsLocation}<br>Tax Parcel ID: ${FkParcelID}<br>' +
+		  			'Life Cycle Status: ${dLifeCycleStatus}<br>Structure Description: ${StructureDescription}<br>County Responsible: ${dCountyResponsible}<br>Manufacturer: ${PsManufacturer}<br>' +
+		  			'Type: ${FkPsType}<br>Number of Units: ${PsNumberOfUnits}<br>Unit ID Numbers: ${PsUnitIDnumbers}<br>Capacity (GPM): ${CapacityGPM}<br>Total Head (Ft.): ${TotalHeadFeet}<br>' +
+		  			'Motor Electric: ${MotorElectric}<br>Motor RPM: ${MotorRPM}<br>Motor Horsepower: ${MotorHP}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Treatment Plants',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/6',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"Plants",
+		  		outFields: ['StpName','StpAddress', 'FkStpOwner','dStpSewerDistrict', 'SpdesPermitNumber', 'dCountyResponsible',
+		  					'dStpProcess', 'StpFlowDesignMGD', 'StpFlowPermittedMGD', 'StpFlowAnnualAverageMGD', 'StpFlowOverflowCapacityMGD',
+		  					  'StpFlowAnnualAverageMGD', 'StpFlowOverflowCapacityMGD', 'dStpDischargeMethod', 'dLifeCycleStatus', 'StpRemarks'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Treatment Plants</b>',
+		  			content: 'Plant Name: ${StpName}<br> Location: ${StpAddress}<br> Hamlet: ${StpHamletAddress}<br>Owner: ${FkStpOwner}'+ 
+                    'District: ${dStpSewerDistrict}<br>SPDES Permit #: ${SpdesPermitNumber}<br>County Responsible? ${dCountyResponsible} <br>'+
+                    'Process ${dStpProcess}<br>Design Flow(MGD): ${StpFlowDesignMGD}<br>Permitted Flow (MGD): ${StpFlowPermittedMGD}<br>' + 
+                    'Annual Average Flow (MGD): ${StpFlowAnnualAverageMGD} <br>Overflow Capacity (MGD): ${StpFlowOverflowCapacityMGD} <br>' +
+                    'Discharge Method: ${dStpDischargeMethod} <br>Life Cycle Status: ${dLifeCycleStatus} <br>Remarks: ${StpRemarks}'
+		  		} 
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Sheet Outlines',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"SheetOutlines",
+		  		outFields: ['OBJECTID', 'ContractNumber', 'ContractName', 'SheetNumA', 'SheetDescription', 'dDocumentType', 'WebRelativeImagePath'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Sheet Outlines</b>',
+		  			content: 'Contract Number: ${ContractNumber}<br>Contract Name: ${ContractName}<br>Sheet Number: ${SheetNumA}<br>Sheet Description: ${SheetDescription}<br> Document Type: ${dDocumentType}<br>Path: <a href=${WebRelativeImagePath}>${WebRelativeImagePath}</a>'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Problems',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/10',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"Problems",
+		  		outFields: ['OBJECTID'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Problems</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Contractee Parcels',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/11',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"ContracteeParcels",
+		  		outFields: ['OBJECTID'],
+		  		infoTemplate: {
+		  			title: '<b>Contractee Parcels</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'House Connection Permits',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/12',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"ConnectionPermits",
+		  		outFields: ['OBJECTID', 'TaxParcelID', 'PermitNumber', 'Comments', 'WebRelativeImagePath'],
+		  		infoTemplate: {
+		  			title: '<b>House Connection Permits</b>',
+		  			content: 'Tax Parcel ID: ${TaxParcelID}<br>Permit Number: ${PermitNumber}<br>Comments: ${Comments}<br>Path: <a href=${WebRelativeImagePath}>${WebRelativeImagePath}</a><br>'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Sewer Aerial Photo Centers',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/15',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"PhotoCenters",
+		  		outFields: ['OBJECTID'],
+		  		infoTemplate: {
+		  			title: '<b>Sewer Aerial Photo Centers</b>',
+		  			content: 'OBJECTID: ${OBJECTID}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "point",
+	  			tblField: []
+	  		}
+	  	},
+	  	{
+		 	name: 'Possible Easement Parcels',
+		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/17',
+		  	visible: true,
+		  	renderOptions: [],
+		  	currentRender: "",
+		  	options: {
+		  		id:"EasementParcels",
+		  		outFields: ['PARCELID', 'LAST_NAME', 'STREET', 'CITY', "MAIL_ZIP", "OWNER_NAME"],
+		  		infoTemplate: {
+		  			title: '<b>Possible Easement Parcels</b>',
+		  			content: 'Tax Map: ${PARCELID} <br> Last Name: ${LAST_NAME} <br> Street: ${STREET}<br> City: ${CITY}<br> Mail Zip: ${MAIL_ZIP}<br> Owner Name: ${OWNER_NAME}'
+		  		}
+		  	},
+	  		style: {
+	  			type: "polygon",
+	  			tblField: []
+	  		}
+	  	},	
 	 ];
 
 	 $scope.layersOn = [];
@@ -114,6 +363,9 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	                push = false;
 	                if(layer.name === "Sewer Mains"){
 	                	$scope.graphicsLayer.clear();
+	                }
+	                if(layer.name === "Sewer Interceptors"){
+	                	$scope.interceptorGraphics.clear();
 	                }
 	                break;
 	            }
@@ -179,6 +431,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        };
 
 		   
+		   
+
 		    // Measure 
 
 		    map.on('layer-add', function(evt){
@@ -215,10 +469,14 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             map.addLayer($scope.graphicsLayer);
 
             
-
+            var renderLines = true;
 			map.on('zoom-end', function(){
 				$scope.graphicsLayer.clear();
 				$scope.currentScale = map.getScale();
+				if(renderLines === true){
+					renderLines = false;
+					renderArrowLines();
+				};
 				
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
 					$scope.scaleMessage = false;
@@ -229,6 +487,16 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.$digest();
 				}
 			});
+
+			function renderArrowLines(){
+				var lineLayers = [map.getLayer("Interceptors"), map.getLayer("Mains")];
+		   		lineLayers.forEach(function(lineLayer){
+		   			var layer = $scope.layers.filter(function(lyr){
+		    			return lyr.options.id === lineLayer.id;
+		    		});
+		    		$scope.changeRendering(layer[0], layer[0].currentRender);
+			   	});
+			}
 
 
 
@@ -271,6 +539,52 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
 			                                var dotGraphic = new Graphic(point, dot, {}, null);
 			                                $scope.graphicsLayer.add(dotGraphic);
+			                            	}
+			                        	}
+			                        }
+			                });
+	                	});
+	            }
+	        });
+
+			$scope.interceptorGraphics = new GraphicsLayer({ id: "interceptorGraphics" }); 
+            $scope.interceptorGraphics.setMinScale(map.getLayer("Interceptors").minScale);
+            $scope.interceptorGraphics.setMaxScale(map.getLayer("Interceptors").maxScale);
+            map.addLayer($scope.interceptorGraphics);
+
+	        $scope.addIntArrows = map.on('extent-change', function(event){
+	        	var layer = map.getLayer("Interceptors");
+				$scope.currentScale = map.getScale();
+				$scope.interceptorGraphics.clear();
+				 
+				switch($scope.currentScale > layer.minScale || $scope.currentScale < layer.maxScale){
+					case true:
+						$scope.interceptorGraphics.clear();
+						break;
+					case false:	
+		                var query = new Query();
+		                query.geometry = event.extent;
+		                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+		                query.returnGeometry = true;
+		                query.outFields = ["OBJECTID"];
+
+		                featureSetQT = new QueryTask(layer.url);
+		                featureSetQT.execute(query)
+		                .then(function(featureSet) {
+		                	count = 0;
+		                    featureSet.features.forEach(function(feature, idx, array) {		                    	
+		                        for (var x in feature.geometry.paths[0]) {
+		                        	count++;
+		                        	if(count%3===0){
+			                            var pt1 = feature.geometry.paths[0][x];
+			                            var pt2 = feature.geometry.paths[0][x - 1];
+			                            if (pt2) {
+			                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
+			                                var point = new Point(midPoint, map.spatialReference);
+			                                var dot = new SimpleMarkerSymbol({ "color": new Color([0, 0, 0]), "size": 8, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
+			                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
+			                                var dotGraphic = new Graphic(point, dot, {}, null);
+			                                $scope.interceptorGraphics.add(dotGraphic);
 			                            	}
 			                        	}
 			                        }
@@ -345,6 +659,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
 
     			if($scope.newSelection.minScale < $scope.currentScale){
+
     				$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
     			} else{
     				$scope.scaleMessage = false;
@@ -490,6 +805,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						$scope.changeRendering(layer, layer.currentRender);
 					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
+						console.log(singleLayer);
 						singleLayer.renderer.infos.forEach(function(subLayer){
 							var name = subLayer.label;
 							var color = subLayer.symbol.color.toCss(true);
@@ -511,7 +827,13 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 							}
 						}	
 					}
+					else if(layer.style.type === 'polyline' && singleLayer.renderer.getSymbol().style === 'solid'){
+						var layerStyle = singleLayer.renderer.getSymbol();
+						var fill = layerStyle.color.toCss();
+						layer.style.tblField.push({name:'default', fill: fill});
+					}
 					else{
+						console.log(singleLayer.renderer.getSymbol());
 						var layerColors = singleLayer.renderer.getSymbol();
 						var fillColor = layerColors.getFill().toCss(true);
 						var outlineColor = layerColors.getStroke().color.toCss(true);
