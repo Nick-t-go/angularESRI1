@@ -5,9 +5,14 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 			"esri/tasks/locator",
 			"esri/geometry/Extent",
 			"esri/SpatialReference",
-			 "esri/tasks/query"
+			 "esri/tasks/query",
+			 "esri/layers/GraphicsLayer",
+			 'esri/graphic',
+			 "esri/geometry/Point",
+			 'esri/symbols/SimpleMarkerSymbol',
+			 'esri/Color'
 			 ], 
-			function(Locator, Extent, SpatialReference, Query){
+			function(Locator, Extent, SpatialReference, Query, GraphicsLayer, Graphic, Point, SimpleMarkerSymbol, Color){
 
 				var locator = new Locator("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
 				locator.countryCode = "USA";
@@ -42,6 +47,19 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					console.log(value);
 				};
 
+				var searchResultGraphic = new GraphicsLayer({
+					infoTemplate: {
+						title: '<b>Search ResultInfo</b>',
+			  			content: 'Number: ${AddNum}<br>City: ${City}<br>County: ${Subregion}<br> Longitude: ${X} <br> Latitude: ${Y}'
+			  		},
+			  		id: "searchResult" 
+				});
+				map.addLayer(searchResultGraphic);
+
+				var markerSymbol = new SimpleMarkerSymbol();
+				markerSymbol.setPath('M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z');
+				markerSymbol.setColor(new Color('#00FFFF'));
+
 				$scope.zoomToAddress = function(local){
 					var SingleLine = local.text;
 					//.slice(0, local.text.indexOf(', USA'));
@@ -56,8 +74,14 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					FindLocal.find(params)
 					.then(function(response){
 						var firstHit = response.data.candidates[0];
+						var pt = new Point(firstHit.attributes.X,firstHit.attributes.Y,new SpatialReference({wkid:102100}));
+						var attr = {"AddNum":firstHit.attributes.AddNum,"City":firstHit.attributes.City,Subregion:firstHit.attributes.Subregion, X: firstHit.attributes.X,Y: firstHit.attributes.Y};
+						var pinGraphic = new Graphic(pt,markerSymbol,attr);
+						console.log(searchResultGraphic, map);
+						searchResultGraphic.add(pinGraphic);
 						var zoomExtent = new Extent(firstHit.extent.xmin, firstHit.extent.ymin, firstHit.extent.xmax,firstHit.extent.ymax, new SpatialReference({wkid:102100}));
 						map.setExtent(zoomExtent);
+						searchResultGraphic.refresh();
 					});
 				};
 

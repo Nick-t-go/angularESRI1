@@ -7,6 +7,8 @@
 	width: 50%;
 	height: 225px;
 	overflow-y: scroll;
+	border-top-right-radius: 5px;
+	
 }
 
 table {

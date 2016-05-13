@@ -42,24 +42,23 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	 	$scope.layersOn.push({url:layer.url, options:layer.options});
 	 });
 
+	
+
 	 $scope.toggleLayer = function (layer) {
-	 		var push = true;
-            for(var j = 0; j < $scope.layersOn.length; j++){
-            	if ($scope.layersOn[j].url === layer.url){
-	                $scope.layersOn.splice(j, 1);
-	                push = false;
-	                if(layer.name === "Sewer Mains"){
-	                	$scope.graphicsLayer.clear();
-	                }
-	                if(layer.name === "Sewer Interceptors"){
-	                	$scope.interceptorGraphics.clear();
-	                }
-	                break;
-	            }
-	        }
-            if(push === true){
-                $scope.layersOn.push({url:layer.url, options:layer.options});
-            }
+	 		if($scope.esriMapObject.getLayer(layer.options.id).visible === true){
+	 			$scope.esriMapObject.getLayer(layer.options.id).hide();
+	 			layer.options.visible = false;
+	 			if(layer.options.id === "Mains"){
+	 				$scope.graphicsLayer.clear();
+	 			}
+	 			if(layer.options.id === "Interceptors"){
+	 				$scope.interceptorGraphics.clear();
+	 			}
+	 		}
+	 		else{
+	 			$scope.esriMapObject.getLayer(layer.options.id).show();
+	 			layer.options.visible = true;
+	 		}
         };
 
     
@@ -71,7 +70,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    'esri/symbols/PictureFillSymbol','esri/symbols/CartographicLineSymbol','esri/graphic', 'esri/Color',
 		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
 		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
-            "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent"
+            "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
+            "dojo/domReady!"
             ], function(
                 Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,Graphic, Color, 
@@ -316,6 +316,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				$scope.newSelectedFeatures = "";
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
+				$scope.highlightOnMouseOver.remove();
+				$scope.unhighlightOnMouseOut.remove();
+				$scope.selectEvent.remove();
+				map.graphics.clear();
 			};
 
 			$scope.change = function(){
@@ -478,7 +482,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						$scope.changeRendering(layer, layer.currentRender);
 					}
 					else if(singleLayer.types.length > 0 && layer.style.type == 'polyline'){
-						console.log(singleLayer);
 						singleLayer.renderer.infos.forEach(function(subLayer){
 							var name = subLayer.label;
 							var color = subLayer.symbol.color.toCss(true);
@@ -506,7 +509,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 						layer.style.tblField.push({name:'default', fill: fill});
 					}
 					else{
-						console.log(singleLayer.renderer.getSymbol());
 						var layerColors = singleLayer.renderer.getSymbol();
 						var fillColor = layerColors.getFill().toCss(true);
 						var outlineColor = layerColors.getStroke().color.toCss(true);
@@ -534,6 +536,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		          map: map
 		        }, dom.byId("measurementDiv"));
 		    measurement.startup();
+
+		    $scope.clearMeasurement = function(){
+		    	measurement.clearResult();
+		    	console.log(map.getLayer('Manholes'));
+		    };
 
 
 			var tb; //draw Tool Bar i.e tb
@@ -593,7 +600,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			map.addLayer($scope.drawGraphicsLayer);
 
 			$scope.removeLast = function(){
-				$scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer[$scope.drawGraphicsLayer.graphics.length-1]);
+				var lastGraphic = $scope.drawGraphicsLayer.graphics[$scope.drawGraphicsLayer.graphics.length-1];
+				$scope.drawGraphicsLayer.remove(lastGraphic);
 				$scope.drawGraphicsLayer.refresh();
 			};
 

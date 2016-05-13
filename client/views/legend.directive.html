@@ -1,12 +1,14 @@
 <div class="container" id="legend">
     <div class="row">
         <h4 class="legend-title">Legend</h4>
+        <h4 class="legend-title">{{currentScale}}</h4>
+
     </div>
     <div class="row">
         <ul class="legend-ul" ng-repeat="layer in layers">
             <li class="legend-list-item">
                 <label>
-                    <input type="checkbox" ng-model="layer.visible" ng-change="toggleLayer(layer)">{{layer.name}}
+                    <input type="checkbox" ng-model="layer.options.visible" ng-change="toggleLayer(layer)">{{layer.name}}
                 </label>
                 <div ng-if="layer.renderOptions.length>1" class="dropup legend-item-edit">
                     <button class=" btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

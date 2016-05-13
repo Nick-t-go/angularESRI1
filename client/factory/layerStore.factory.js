@@ -11,6 +11,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	currentRender: "",	
 		  	options: {
 		  		id:"Districts",
+		  		visible: true,
 		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'dSdLifeCycleStatus', 'SdLongName'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Districts Info</b>',
@@ -31,6 +32,7 @@ app.factory('LayerStore', function(esriLoader) {
 			currentRender: "",
 		  	options: {
 		  		id:"Outlines",
+		  		visible: true,
 		  		outFields: ['OBJECTID', 'ContractNumber', 'ContractNumberAlt'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Contract Outlines</b>',
@@ -50,12 +52,13 @@ app.factory('LayerStore', function(esriLoader) {
 		 	currentRender: "horizontalQuality",
 		 	options: {
 		 		id:"Manholes",
-		 		outFields: ['OBJECTID','HansenMatchStatus','MhYearBuilt', 'dMhLifeCycleStatus', 
-		 		'LastFieldSurveyDate', 'FlushCount', 'CoverLocationDate', 'MhRimElevRecord', 'MhRimElevNAVD88',
-		 		'MHsubType','MhContractNumber','dCountyResponsible','MhContractName', 'UnitID',
-		 		 "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus'],
+		 		visible: true,
+		 		outFields: ['UnitID','HansenMatchStatus','MhYearBuilt', 'dMhLifeCycleStatus', 
+					 		'LastFieldSurveyDate', 'FlushCount', 'CoverLocationDate', 'MhRimElevRecord', 'MhRimElevNAVD88',
+					 		'MHsubType','MhContractNumber','dCountyResponsible','MhContractName', 'UnitID',
+					 		 "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus'],
 		 		infoTemplate: {
-		  			title: '<b>Manholes</b>',
+		  			title:   '<b>Manholes</b>',
 		  			content: 'Contract Number: ${MhContractNumber}<br>Contract Name: ${MhContractName}<br>Hansen Unit ID: ${UnitID}<br>'+
                              'County Responsible?: ${dCountyResponsible}<br> Hansen Match Status: ${HansenMatchStatus }<br>' +
                              'Manhole Type: ${MHsubType}<br> Rim Elevation Record: ${MhRimElevRecord}<br> Rim Elevation NAVD88: ${MhRimElevNAVD88}<br>' + 
@@ -77,6 +80,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	currentRender: "PipeSubType",
 		  	options: {
 		  		id:"Mains",
+		  		visible: true,
 		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType', 'FkPipeContractID', 'PipeContractNumber', 'PipeContractName',
 		  		'dCountyResponsible', 'dPipeDiameterRecord', 'dPipeMaterialRecord', 'dPipeClassRecord', 'LengthRecord', 'SlopeRecord',
 		  		 'InvertUpRecord', 'InvertDownRecord', 'InvertUpNAVD1988', 'InvertDownNAVD1988', 'dPipeLifeCycleStatus'],
@@ -104,6 +108,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	currentRender: "interceptorDefault",
 		  	options: {
 		  		id:"Interceptors",
+		  		visible: true,
 		  		showLabels: false,
 		  		outFields: ['OBJECTID', 'InterceptorName'],
 		  		infoTemplate: {
@@ -119,11 +124,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Main Casings',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/3',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Castings",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Main Casings</b>',
@@ -138,11 +145,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Easements',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/4',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Easements",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Easements</b>',
@@ -157,11 +166,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Pump Stations',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/5',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Stations",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['FkPsContractID','ProjectName','dPsSewerDistrict', 'PsLocation', 'FkParcelID','dLifeCycleStatus', 'StructureDescription','dCountyResponsible', 'PsManufacturer',
 		  						'FkPsType', 'PsNumberOfUnits','PsUnitIDnumbers', 'CapacityGPM', 'TotalHeadFeet', 'MotorHP', 'MotorRPM', 'MotorElectric' ],    
 		  		infoTemplate: {
@@ -180,11 +191,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Treatment Plants',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/6',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Plants",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['StpName','StpAddress', 'FkStpOwner','dStpSewerDistrict', 'SpdesPermitNumber', 'dCountyResponsible',
 		  					'dStpProcess', 'StpFlowDesignMGD', 'StpFlowPermittedMGD', 'StpFlowAnnualAverageMGD', 'StpFlowOverflowCapacityMGD',
 		  					  'StpFlowAnnualAverageMGD', 'StpFlowOverflowCapacityMGD', 'dStpDischargeMethod', 'dLifeCycleStatus', 'StpRemarks'],
@@ -205,11 +218,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Sheet Outlines',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"SheetOutlines",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID', 'ContractNumber', 'ContractName', 'SheetNumA', 'SheetDescription', 'dDocumentType', 'WebRelativeImagePath'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Sheet Outlines</b>',
@@ -224,11 +239,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Problems',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/10',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"Problems",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Problems</b>',
@@ -243,11 +260,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Contractee Parcels',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/11',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"ContracteeParcels",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID'],
 		  		infoTemplate: {
 		  			title: '<b>Contractee Parcels</b>',
@@ -262,11 +281,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'House Connection Permits',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/12',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"ConnectionPermits",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID', 'TaxParcelID', 'PermitNumber', 'Comments', 'WebRelativeImagePath'],
 		  		infoTemplate: {
 		  			title: '<b>House Connection Permits</b>',
@@ -281,11 +302,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Sewer Aerial Photo Centers',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/15',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"PhotoCenters",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['OBJECTID'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Aerial Photo Centers</b>',
@@ -300,11 +323,13 @@ app.factory('LayerStore', function(esriLoader) {
 	  	{
 		 	name: 'Possible Easement Parcels',
 		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/17',
-		  	visible: true,
+		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
 		  	options: {
 		  		id:"EasementParcels",
+		  		visible: false,
+		  		displayOnPan: false,
 		  		outFields: ['PARCELID', 'LAST_NAME', 'STREET', 'CITY', "MAIL_ZIP", "OWNER_NAME"],
 		  		infoTemplate: {
 		  			title: '<b>Possible Easement Parcels</b>',
