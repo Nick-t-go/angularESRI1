@@ -1,0 +1,28 @@
+#help img{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    box-shadow: 2.5px 2.5px 1px #888888;
+}
+
+#help h1{
+	text-align: center;
+	text-shadow: 2.5px 2.5px 1px lightgrey;
+	color: #cdb433;
+}
+
+#help .panel-heading {
+	background-color: #cdb433;
+	border-color: black;
+   
+}
+
+#help .panel-primary{
+	margin-top: 25px;
+	border-color: black;
+	border-radius: 5px;
+	box-shadow: 5px 5px 2px #888888;
+}

@@ -25,15 +25,15 @@ height: 12px;
 ::-webkit-scrollbar-track {
 border: 1px solid yellowgreen;
 border-radius: 25px;
-border-top-right-radius: 150px;
-border-bottom-right-radius: 150px;
+border-top-right-radius: 500px;
+border-bottom-right-radius: 500px;
 }
 
 ::-webkit-scrollbar-thumb {
 background: yellowgreen;  
 border-radius: 25px;
-border-top-right-radius: 150px;
-border-bottom-right-radius: 150px;
+border-top-right-radius: 500px;
+border-bottom-right-radius: 500px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

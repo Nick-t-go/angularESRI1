@@ -19,7 +19,7 @@
                 <div class="panel-body"> Suffolk County DPW 
                              Sanitary Sewer GIS<br> 
 
-                             <a href="https://portal.gayrondebruin.com/suffolkcounty/WebLinks/Sewers/Other/SCDPWSewerHelp.pdf"  target="_blank">Help PDF</a> <br>
+                             <a href="#/help"  target="_blank">Help PDF</a> <br>
 
                              <a href="https://portal.gayrondebruin.com/suffolkcounty/WebLinks/Sewers/Other/SCDPWSewersGeodatabaseMetadata.Htm"  target="_blank">Geodatabase Metadata 
                              Data Dictionary</a> <br>
@@ -136,7 +136,7 @@ glyphicon glyphicon-refresh"></span></button>
                 </div>
                 <button class="panel-body-button btn" ng-click="selectByExtent()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-unchecked"></span></button>
                 <button class="panel-body-button btn" ng-click="selectByClick()" ng-class="{'disabled': !newSelection}"><span class="glyphicon glyphicon-hand-up"></span></button>
-                <button class="panel-body-button btn" ng-click="clearSelection()" ng-class="{'disabled': !newSelectedFeatures}"><span class="glyphicon glyphicon-minus-sign"></span></button>
+                <button class="panel-body-button btn" ng-click="clearSelection()" ng-class="{'disabled': !newSelectedFeatures}"><span class="glyphicon glyphicon-refresh"></span></button>
                 <div ng-show="selectSearch">
                     <div class="alert alert-warning" role="alert" ng-show="scaleMessage">
                           <i>{{scaleMessage}}</i>

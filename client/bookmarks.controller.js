@@ -43,7 +43,7 @@ app.controller('bookmarksCtrl', function($scope, $cookies, esriLoader) {
 
 		    $scope.removeBookmark = function(index) {
 		        $scope.bookmarks.splice(index, 1);
-		        $cookies.putObject('test', $scope.bookmarks);
+		        $cookies.putObject('DPWGISViewerBookmarks', $scope.bookmarks);
 		    };
 
 		    $scope.zoomToExtent = function(newExtent) {

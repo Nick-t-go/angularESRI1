@@ -71,13 +71,15 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
 		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
             "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
+            "esri/layers/LabelClass", "esri/symbols/TextSymbol",
             "dojo/domReady!"
             ], function(
                 Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
                 PictureFillSymbol, CartographicLineSymbol,Graphic, Color, 
                 PictureMarkerSymbol, dom, Circle, Measurement, 
                 Query,QueryTask, Point, SpatialReference,
-                config, Scalebar, GraphicsLayer,  Extent
+                config, Scalebar, GraphicsLayer,  Extent,
+                LabelClass, TextSymbol
             ) {
 
 		    var scalebar = new Scalebar({
@@ -186,7 +188,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				$scope.mainsMinScale = map.getLayer("Mains").minScale;
 				$scope.graphicsLayer.clear();
 				var layer = map.getLayer("Mains"); 
-				switch($scope.currentScale > $scope.mainsMinScale){
+				switch($scope.currentScale > $scope.mainsMinScale || layer.visible === false){
 					case true:
 						$scope.graphicsLayer.clear();
 						break;
@@ -230,7 +232,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				$scope.currentScale = map.getScale();
 				$scope.interceptorGraphics.clear();
 				 
-				switch($scope.currentScale > layer.minScale || $scope.currentScale < layer.maxScale){
+				switch($scope.currentScale > layer.minScale || $scope.currentScale < layer.maxScale || layer.visible === false){
 					case true:
 						$scope.interceptorGraphics.clear();
 						break;
@@ -469,6 +471,20 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
 					var singleLayer = map.getLayer(layer.options.id);
+					if(layer.labels.length>0){
+						var labelClasses = [];
+						layer.labels.forEach(function(labelSetting){
+							var labelClass = new LabelClass(labelSetting.labelInfo);
+							var labelSymbol = new TextSymbol(labelSetting.textInfo);
+							labelClass.symbol = labelSymbol;
+							if(labelSetting.where){
+								labelClass.where = labelSetting.where;
+							}
+							labelClasses.push(labelClass);
+						});
+						singleLayer.setLabelingInfo(labelClasses);
+						console.log(singleLayer);
+					}
 					if (singleLayer.types.length > 0 && layer.style.type == 'polygon'){
 						for(var i = 0; i < singleLayer.types.length; i++){
 							var layerColors = singleLayer.renderer._symbols[i].symbol;

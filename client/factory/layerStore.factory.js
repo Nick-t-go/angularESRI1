@@ -21,7 +21,64 @@ app.factory('LayerStore', function(esriLoader) {
 		  	style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: [
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "{SDShortName} {SdLongName}"},
+	  				labelPlacement: "always-horizontal",
+	  				minScale:36111.0, 
+	  				maxScale: 9027.977411
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [168, 0, 132, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Arial",
+				      "size": 14,
+				      "style": "normal",
+				      "weight": "normal",
+				      "decoration": "none"
+					}
+	  			}
+
+	  		},
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "{SDShortName}"},
+	  				labelPlacement: "always-horizontal",
+	  				minScale:288894.0 , 
+	  				maxScale: 36111.909643
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [168, 0, 132, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Arial",
+				      "size": 14,
+				      "style": "normal",
+				      "weight": "normal",
+				      "decoration": "none"
+					}
+	  			}
+
+	  		},
+
+	  		]
 		 },
 		 {
 		 	name: 'Sewer Contract Outlines',
@@ -43,6 +100,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  			type: "polygon",
 	  			tblField: []
 	  		},
+	  		labels: []
 		 },
 		  {
 		 	name: 'Manholes',
@@ -69,7 +127,115 @@ app.factory('LayerStore', function(esriLoader) {
 		 	style: {
 	  			type: "point",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: [
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "R = {MhRimElevRecord}"},
+	  				labelPlacement: "center-right",
+	  				minScale:4513.988705 
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [0, 0, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Calibri ",
+				      "size": 10,
+				      "style": "italic ",
+				      "weight": "normal",
+				      "decoration": "none"
+					}
+	  			},
+	  			where: "MhRimElevRecord IS NOT NULL"
+	  		},
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "R = {MhRimElevNAVD88}"},
+	  				labelPlacement: "below-right",
+	  				minScale:4513.988705 
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [0, 0, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Calibri ",
+				      "size": 10,
+				      "style": "italic ",
+				      "weight": "normal",
+				      "decoration": "none"
+					},
+	  			},
+	  			where: "MhRimElevNAVD88 IS NOT NULL"
+	  			
+	  		},
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "#{UnitID}"},
+	  				labelPlacement: "above-right",
+	  				minScale:4513.988705 
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [0, 0, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Calibri ",
+				      "size": 10,
+				      "style": "italic ",
+				      "weight": "normal",
+				      "decoration": "none"
+					}
+	  			},
+	  			where: "UnitID <> ''"
+	  		},
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "{dMhLifeCycleStatus}"},
+	  				labelPlacement: "above-left",
+	  				minScale:4513.988705 
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [0, 0, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Calibri ",
+				      "size": 10,
+				      "style": "normal ",
+				      "weight": "bold",
+				      "decoration": "none"
+					}
+	  			}
+
+	  		},
+
+	  		]
 		 },
 		 
 		 {
@@ -98,7 +264,35 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polyline",
 	  			tblField: []
+	  		},
+	  		labels: [
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "{dPipeDiameterRecord} {LengthRecord}"},
+	  				labelPlacement: "above-along",
+	  				minScale:4513.988705 
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [38, 115, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "left ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Calibri ",
+				      "size": 12,
+				      "style": "normal ",
+				      "weight": "bold",
+				      "decoration": "none"
+					}
+	  			}
+
 	  		}
+	  		]
 		 },
 		 {
 		 	name: 'Sewer Interceptors',
@@ -119,7 +313,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polyline",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Main Casings',
@@ -140,7 +335,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polyline",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Easements',
@@ -161,7 +357,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Pump Stations',
@@ -185,8 +382,36 @@ app.factory('LayerStore', function(esriLoader) {
 		  	},
 	  		style: {
 	  			type: "polygon",
-	  			tblField: []
-	  		}
+	  			tblField: [
+	  			]
+	  		},
+	  		labels: [
+	  		{
+	  			labelInfo: 
+	  			{
+	  				labelExpressionInfo: {"value": "PS{PsName}"},
+	  				labelPlacement: "always-horizontal"
+	  			},
+	  			textInfo: {
+	  				 "type": "esriTS",
+				     "color": [0, 0, 0, 255],
+				     "verticalAlignment": "bottom",
+				     "horizontalAlignment": "center ",
+				     "rightToLeft": false,
+				     "angle": 0,
+				     "xoffset": 0,
+				     "yoffset": 0,
+				     "font": {
+				      "family": "Arial",
+				      "size": 8,
+				      "style": "normal ",
+				      "weight": "normal",
+				      "decoration": "none"
+					}
+	  			},
+	  			where: "PsName <> ''"
+
+	  		}]
 	  	},
 	  	{
 		 	name: 'Sewer Treatment Plants',
@@ -213,7 +438,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Sheet Outlines',
@@ -234,7 +460,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Problems',
@@ -246,16 +473,17 @@ app.factory('LayerStore', function(esriLoader) {
 		  		id:"Problems",
 		  		visible: false,
 		  		displayOnPan: false,
-		  		outFields: ['OBJECTID'],
+		  		outFields: ['OBJECTID', 'Description'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Problems</b>',
-		  			content: 'OBJECTID: ${OBJECTID}'
+		  			content: 'OBJECTID: ${OBJECTID} <br> Description: ${Description}'
 		  		}
 		  	},
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Contractee Parcels',
@@ -276,7 +504,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'House Connection Permits',
@@ -297,7 +526,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Sewer Aerial Photo Centers',
@@ -318,7 +548,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "point",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},
 	  	{
 		 	name: 'Possible Easement Parcels',
@@ -339,7 +570,8 @@ app.factory('LayerStore', function(esriLoader) {
 	  		style: {
 	  			type: "polygon",
 	  			tblField: []
-	  		}
+	  		},
+	  		labels: []
 	  	},	
 	 ]
     }

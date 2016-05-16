@@ -1,4 +1,4 @@
-<div id="collapseSearch" class="panel-collapse collapse">
+<div id="collapseSearch" class="panel-collapse collapse in">
     <div class="panel-body">
         <div class="row">
             <div class="col-lg-12">
@@ -6,7 +6,7 @@
                 <input type="text" ng-change="inputChange(input.text)" ng-model="input.text" required />
                 <button class="btn btn-primary btn-sm " type="button" ng-click="inputChange(input.text)"><span class="
 glyphicon glyphicon-search"></span></button>
-                <button class="btn btn-primary btn-sm " type="button" ng-click="input.text = ''"><span class="
+                <button class="btn btn-primary btn-sm " type="button" ng-click="resetSearch()"><span class="
 glyphicon glyphicon-refresh"></span></button>
                 <label class="radio-inline"><input type="radio" name="optradio" ng-model="input.searchType" ng-change="input.text = ''" value="address" checked>Address</label>
                 <label class="radio-inline"><input type="radio" name="optradio" ng-model="input.searchType" value="contract" ng-change="input.text = ''">Contract</label>

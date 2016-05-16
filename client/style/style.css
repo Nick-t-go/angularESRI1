@@ -5,10 +5,10 @@
 
 .navbar {
     background-color: rgb(155, 193, 156);
-    background: -webkit-linear-gradient(-270deg, yellowgreen, #4CAF50); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(-270deg, yellowgreen, #4CAF50); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(-270deg, yellowgreen, #4CAF50); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(-270deg, yellowgreen, #4CAF50); /* Standard syntax */
+    background: -webkit-linear-gradient(-270deg, yellowgreen,   #4ccd33); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(-270deg, yellowgreen,    #4ccd33); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(-270deg, yellowgreen,  #4ccd33); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(-270deg, yellowgreen,   #4ccd33); /* Standard syntax */
     right: 47px;
 	margin: 15px;
 	min-height: 64px
@@ -153,7 +153,7 @@ select {
 }
 
 .basemapOptions:hover{
-    background-color: #FF4500;
+    background-color: #cdb433;
     color: white;
 }
 

@@ -49,8 +49,8 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 
 				var searchResultGraphic = new GraphicsLayer({
 					infoTemplate: {
-						title: '<b>Search ResultInfo</b>',
-			  			content: 'Number: ${AddNum}<br>City: ${City}<br>County: ${Subregion}<br> Longitude: ${X} <br> Latitude: ${Y}'
+						title: '<b>${Match_addr}</b>',
+			  			content: 'Address: ${StAddr} <br>City: ${City}<br>County: ${Subregion}<br> Longitude: ${X} <br> Latitude: ${Y}'
 			  		},
 			  		id: "searchResult" 
 				});
@@ -61,6 +61,7 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 				markerSymbol.setColor(new Color('#00FFFF'));
 
 				$scope.zoomToAddress = function(local){
+					searchResultGraphic.clear();
 					var SingleLine = local.text;
 					//.slice(0, local.text.indexOf(', USA'));
 					var f = 'json';
@@ -74,10 +75,10 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					FindLocal.find(params)
 					.then(function(response){
 						var firstHit = response.data.candidates[0];
-						var pt = new Point(firstHit.attributes.X,firstHit.attributes.Y,new SpatialReference({wkid:102100}));
-						var attr = {"AddNum":firstHit.attributes.AddNum,"City":firstHit.attributes.City,Subregion:firstHit.attributes.Subregion, X: firstHit.attributes.X,Y: firstHit.attributes.Y};
+						var pt = new Point(firstHit.location.x,firstHit.location.y,new SpatialReference({wkid:102100}));
+						var attr = {"StAddr":firstHit.attributes.StAddr,"Match_addr":firstHit.attributes.Match_addr, "City":firstHit.attributes.City,Subregion:firstHit.attributes.Subregion, X: firstHit.attributes.X,Y: firstHit.attributes.Y};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
-						console.log(searchResultGraphic, map);
+						console.log(firstHit, searchResultGraphic, map);
 						searchResultGraphic.add(pinGraphic);
 						var zoomExtent = new Extent(firstHit.extent.xmin, firstHit.extent.ymin, firstHit.extent.xmax,firstHit.extent.ymax, new SpatialReference({wkid:102100}));
 						map.setExtent(zoomExtent);
@@ -97,6 +98,13 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					$scope.count = -1;
 					$scope.$digest();
 				});
+
+				$scope.resetSearch = function(){
+					$scope.suggestions="";
+					$scope.input.text = "";
+					searchResultGraphic.clear();
+				};
+
 
 
 		});
