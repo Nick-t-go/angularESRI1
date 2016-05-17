@@ -444,6 +444,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
  				RelatedDocuments.findRelated(itemId, $scope.newSelection)
  				.then(function(records){
  					$scope.relatedRecords = records;
+ 					console.log($scope.relatedRecords);
  					$scope.relationshipClasses = Object.keys(records);
  					if(Object.keys(records).length === 0){
  						$scope.$broadcast('message',{message: 'No Related Documents Found.', type: 'alert-danger', time: 5000});

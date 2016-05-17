@@ -207,33 +207,7 @@ app.factory('LayerStore', function(esriLoader) {
 					}
 	  			},
 	  			where: ""
-	  		},
-	  		{
-	  			labelInfo: 
-	  			{
-	  				labelExpressionInfo: {"value": "{dMhLifeCycleStatus}"},
-	  				labelPlacement: "above-left",
-	  				minScale:4513.988705 
-	  			},
-	  			textInfo: {
-	  				 "type": "esriTS",
-				     "color": [0, 0, 0, 255],
-				     "verticalAlignment": "bottom",
-				     "horizontalAlignment": "center ",
-				     "rightToLeft": false,
-				     "angle": 0,
-				     "xoffset": 0,
-				     "yoffset": 0,
-				     "font": {
-				      "family": "Calibri ",
-				      "size": 10,
-				      "style": "normal ",
-				      "weight": "bold",
-				      "decoration": "none"
-					}
-	  			}
-
-	  		},
+	  		}
 
 	  		]
 		 },
