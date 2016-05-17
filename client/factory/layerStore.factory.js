@@ -153,12 +153,12 @@ app.factory('LayerStore', function(esriLoader) {
 				      "decoration": "none"
 					}
 	  			},
-	  			where: "MhRimElevRecord IS NOT NULL"
+	  			where: ""
 	  		},
 	  		{
 	  			labelInfo: 
 	  			{
-	  				labelExpressionInfo: {"value": "R = {MhRimElevNAVD88}"},
+	  				labelExpressionInfo: {"value": "R = {MhRimElevNAVD88} (88)"},
 	  				labelPlacement: "below-right",
 	  				minScale:4513.988705 
 	  			},
@@ -179,7 +179,7 @@ app.factory('LayerStore', function(esriLoader) {
 				      "decoration": "none"
 					},
 	  			},
-	  			where: "MhRimElevNAVD88 IS NOT NULL"
+	  			where: ""
 	  			
 	  		},
 	  		{
@@ -206,7 +206,7 @@ app.factory('LayerStore', function(esriLoader) {
 				      "decoration": "none"
 					}
 	  			},
-	  			where: "UnitID <> ''"
+	  			where: ""
 	  		},
 	  		{
 	  			labelInfo: 
@@ -409,7 +409,7 @@ app.factory('LayerStore', function(esriLoader) {
 				      "decoration": "none"
 					}
 	  			},
-	  			where: "PsName <> ''"
+	  			where: ""
 
 	  		}]
 	  	},

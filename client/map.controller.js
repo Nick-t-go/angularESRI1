@@ -164,6 +164,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			});
 
 			function renderArrowLines(){
+				setLabels();
 				var lineLayers = [map.getLayer("Interceptors"), map.getLayer("Mains")];
 		   		lineLayers.forEach(function(lineLayer){
 		   			var layer = $scope.layers.filter(function(lyr){
@@ -171,6 +172,27 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    		});
 		    		$scope.changeRendering(layer[0], layer[0].currentRender);
 			   	});
+			}
+
+			function setLabels(){
+				$scope.layers.forEach(function(layer){
+					var singleLayer = map.getLayer(layer.options.id);
+					if(layer.labels.length>0){
+						var labelClasses = [];
+						layer.labels.forEach(function(labelSetting){
+							var labelClass = new LabelClass(labelSetting.labelInfo);
+							var labelSymbol = new TextSymbol(labelSetting.textInfo);
+							labelClass.symbol = labelSymbol;
+							if(labelSetting.where){
+								labelClass.where = labelSetting.where;
+							}
+							labelClasses.push(labelClass);
+						});
+						singleLayer.setLabelingInfo(labelClasses);
+						console.log(singleLayer);
+					}
+				});
+
 			}
 
 
@@ -471,20 +493,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			$scope.styleInit = function(){
 				$scope.layers.forEach(function(layer){
 					var singleLayer = map.getLayer(layer.options.id);
-					if(layer.labels.length>0){
-						var labelClasses = [];
-						layer.labels.forEach(function(labelSetting){
-							var labelClass = new LabelClass(labelSetting.labelInfo);
-							var labelSymbol = new TextSymbol(labelSetting.textInfo);
-							labelClass.symbol = labelSymbol;
-							if(labelSetting.where){
-								labelClass.where = labelSetting.where;
-							}
-							labelClasses.push(labelClass);
-						});
-						singleLayer.setLabelingInfo(labelClasses);
-						console.log(singleLayer);
-					}
 					if (singleLayer.types.length > 0 && layer.style.type == 'polygon'){
 						for(var i = 0; i < singleLayer.types.length; i++){
 							var layerColors = singleLayer.renderer._symbols[i].symbol;
