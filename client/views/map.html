@@ -12,6 +12,7 @@
                     About</a>
                 </h4>
                 <div class="panel-button pull-right">
+                    <a ui-sref="help" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
                     <span ng-click="tools.About=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
@@ -19,7 +20,7 @@
                 <div class="panel-body"> Suffolk County DPW 
                              Sanitary Sewer GIS<br> 
 
-                             <a href="#/help"  target="_blank">Help PDF</a> <br>
+                             <a ui-sref="help" target="_blank">Help PDF</a> <br>
 
                              <a href="https://portal.gayrondebruin.com/suffolkcounty/WebLinks/Sewers/Other/SCDPWSewersGeodatabaseMetadata.Htm"  target="_blank">Geodatabase Metadata 
                              Data Dictionary</a> <br>
@@ -35,6 +36,7 @@
                 Bookmarks</a>
               </h4>
               <div class="panel-button pull-right">
+                    <a ui-sref="help({section: 'Bookmarks'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
                     <span ng-click="tools.Bookmarks=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
@@ -47,6 +49,7 @@
                 Search</a>
               </h4>
               <div class="panel-button pull-right">
+                    <a ui-sref="help({section: 'Search'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
                     <span ng-click="tools.Search=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
@@ -58,6 +61,7 @@
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Basemap Gallery</a>
             </h4>
             <div class="panel-button pull-right">
+                <a ui-sref="help({section: 'Basemap Gallery'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
                 <span ng-click="tools['Basemap Gallery']=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
@@ -69,6 +73,7 @@
                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Draw</a>
                 </h4>
                 <div class="panel-button pull-right">
+                    <a ui-sref="help({section: 'Draw'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>    
                     <span ng-click="tools.Draw=false" class="glyphicon glyphicon-remove-circle"></span>
                 </div>
             </div>
@@ -94,6 +99,7 @@
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Measure</a>
             </h4>
             <div class="panel-button pull-right">
+                <a ui-sref="help({section: 'Measure'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>    
                 <span ng-click="tools.Measure=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
@@ -111,6 +117,7 @@ glyphicon glyphicon-refresh"></span></button>
                 <a data-toggle="collapse" data-parent="#accordion" href="#print">Print</a>
             </h4>
             <div class="panel-button pull-right">
+                <a ui-sref="help({section: 'Print'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a> 
                 <span ng-click="tools.Print=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>
@@ -122,6 +129,7 @@ glyphicon glyphicon-refresh"></span></button>
                 <a data-toggle="collapse" data-parent="#accordion" href="#select">Select & View records</a>
             </h4>
             <div class="panel-button pull-right">
+                <a ui-sref="help({section: 'Select & View'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>  
                 <span ng-click="tools['Select & View']=false" class="glyphicon glyphicon-remove-circle"></span>
             </div>
         </div>

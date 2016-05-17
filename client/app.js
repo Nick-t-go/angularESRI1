@@ -19,9 +19,9 @@ app.config(function($urlRouterProvider, $stateProvider){
         })
 
         .state('help',{
-            url:'/help',
+            url:'/help/:section',
             templateUrl: 'views/help.html',
-            controller: 'MapCtrl'
+            controller: 'HelpCtrl'
         });
 
     $urlRouterProvider.otherwise('/');

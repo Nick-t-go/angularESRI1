@@ -26,7 +26,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	$scope.test = function(test){
 		console.log((test || 'test'));
 	};
-	
+
 
 	$scope.toggleTools = function (tool) {
 	 		if( $scope.tools[tool] === false ){
