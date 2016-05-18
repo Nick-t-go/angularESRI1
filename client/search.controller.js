@@ -78,7 +78,6 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 						var pt = new Point(firstHit.location.x,firstHit.location.y,new SpatialReference({wkid:102100}));
 						var attr = {"StAddr":firstHit.attributes.StAddr,"Match_addr":firstHit.attributes.Match_addr, "City":firstHit.attributes.City,Subregion:firstHit.attributes.Subregion, X: firstHit.attributes.X,Y: firstHit.attributes.Y};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
-						console.log(firstHit, searchResultGraphic, map);
 						searchResultGraphic.add(pinGraphic);
 						var zoomExtent = new Extent(firstHit.extent.xmin, firstHit.extent.ymin, firstHit.extent.xmax,firstHit.extent.ymax, new SpatialReference({wkid:102100}));
 						map.setExtent(zoomExtent);

@@ -1,6 +1,9 @@
 
 app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout, RelatedDocuments, LayerStore) {
 
+
+
+
 	$scope.map = {
 				basemap:'topo',
 	            options: {
@@ -71,7 +74,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
 		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
             "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
-            "esri/layers/LabelClass", "esri/symbols/TextSymbol",
+            "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/basemaps",
             "dojo/domReady!"
             ], function(
                 Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -79,8 +82,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 PictureMarkerSymbol, dom, Circle, Measurement, 
                 Query,QueryTask, Point, SpatialReference,
                 config, Scalebar, GraphicsLayer,  Extent,
-                LabelClass, TextSymbol
+                LabelClass, TextSymbol, esriBasemaps
             ) {
+
+
+            
 
 		    var scalebar = new Scalebar({
 			    map: map,
@@ -189,7 +195,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 							labelClasses.push(labelClass);
 						});
 						singleLayer.setLabelingInfo(labelClasses);
-						console.log(singleLayer);
 					}
 				});
 
@@ -336,14 +341,14 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			});
 
 			$scope.clearSelection = function(){
-				$scope.newSelection.clearSelection();
+				if ($scope.newSelection) $scope.newSelection.clearSelection();
 				$scope.newSelectedFeatures = "";
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
-				$scope.highlightOnMouseOver.remove();
-				$scope.unhighlightOnMouseOut.remove();
-				$scope.selectEvent.remove();
-				map.graphics.clear();
+				if ($scope.highlightOnMouseOver) $scope.highlightOnMouseOver.remove();
+				if ($scope.unhighlightOnMouseOut)  $scope.unhighlightOnMouseOut.remove(); 
+				if ($scope.selectEvent) $scope.selectEvent.remove();
+				if (map.graphics) map.graphics.clear();
 			};
 
 			$scope.change = function(){
@@ -368,6 +373,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
           		$scope.outFields = $scope.newSelection._outFields;
+          		console.log($scope.outFields);
     		};
 
     		$scope.selectByExtent = function(){
@@ -444,7 +450,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
  				RelatedDocuments.findRelated(itemId, $scope.newSelection)
  				.then(function(records){
  					$scope.relatedRecords = records;
- 					console.log($scope.relatedRecords);
  					$scope.relationshipClasses = Object.keys(records);
  					if(Object.keys(records).length === 0){
  						$scope.$broadcast('message',{message: 'No Related Documents Found.', type: 'alert-danger', time: 5000});
@@ -564,7 +569,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 		    $scope.clearMeasurement = function(){
 		    	measurement.clearResult();
-		    	console.log(map.getLayer('Manholes'));
 		    };
 
 

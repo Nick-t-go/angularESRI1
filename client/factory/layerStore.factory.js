@@ -113,7 +113,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 		visible: true,
 		 		outFields: ['UnitID','HansenMatchStatus','MhYearBuilt', 'dMhLifeCycleStatus', 
 					 		'LastFieldSurveyDate', 'FlushCount', 'CoverLocationDate', 'MhRimElevRecord', 'MhRimElevNAVD88',
-					 		'MHsubType','MhContractNumber','dCountyResponsible','MhContractName', 'UnitID',
+					 		'MHsubType','MhContractNumber','dCountyResponsible','MhContractName', 
 					 		 "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus'],
 		 		infoTemplate: {
 		  			title:   '<b>Manholes</b>',
