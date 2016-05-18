@@ -1,12 +1,12 @@
-app.controller('basemapGalleryCtrl', function($scope, esriLoader) {
+app.controller('basemapGalleryCtrl', function($scope) {
 
 
-	esriLoader.require(["esri/basemaps"], function(esriBasemaps){
-		esriBasemaps.NYS = {
-            	baseMapLayers: [{url:"http://www.orthos.dhses.ny.gov/ArcGIS/rest/services/2013/MapServer/"}],
-            	title: "NYS"
-        	};
-        });
+	// esriLoader.require(["esri/basemaps"], function(esriBasemaps){
+	// 	esriBasemaps.NYS = {
+ //            	baseMapLayers: [{url:"http://www.orthos.dhses.ny.gov/ArcGIS/rest/services/2013/MapServer/"}],
+ //            	title: "NYS"
+ //        	};
+ //        });
 	 
 
 	$scope.hoverImage = 'none';   
@@ -27,12 +27,12 @@ app.controller('basemapGalleryCtrl', function($scope, esriLoader) {
 			displayName:"Dark-Gray",
 			imagery: "url('http://www.arcgis.com/sharing/rest/content/items/25869b8718c0419db87dad07de5b02d8/info/thumbnail/DGCanvasBase.png')"
 		},
-		{
-			name: "NYS",
-			displayName: "NYS Orthoimagery",
-			show: false,
-			imagery: "url('http://gis.ny.gov/gateway/orthoprogram/sample/images/color_half_foot_zoom.jpg')"
-		},
+		// {
+		// 	name: "NYS",
+		// 	displayName: "NYS Orthoimagery",
+		// 	show: false,
+		// 	imagery: "url('http://gis.ny.gov/gateway/orthoprogram/sample/images/color_half_foot_zoom.jpg')"
+		// },
 		{
 			name: "topo",
 			displayName: "Topo",

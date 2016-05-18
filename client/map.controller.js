@@ -3,7 +3,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 
 
-
 	$scope.map = {
 				basemap:'topo',
 	            options: {
@@ -45,8 +44,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	 	$scope.layersOn.push({url:layer.url, options:layer.options});
 	 });
 
-	
-
 	 $scope.toggleLayer = function (layer) {
 	 		if($scope.esriMapObject.getLayer(layer.options.id).visible === true){
 	 			$scope.esriMapObject.getLayer(layer.options.id).hide();
@@ -64,8 +61,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	 		}
         };
 
-    
-
 	$scope.onMapLoad = function(map) {
 		esriLoader.require([
 
@@ -74,7 +69,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
 		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
             "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
-            "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/basemaps",
+            "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/IdentityManager",
             "dojo/domReady!"
             ], function(
                 Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -82,11 +77,12 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 PictureMarkerSymbol, dom, Circle, Measurement, 
                 Query,QueryTask, Point, SpatialReference,
                 config, Scalebar, GraphicsLayer,  Extent,
-                LabelClass, TextSymbol, esriBasemaps
+                LabelClass, TextSymbol, esriId
             ) {
 
-
-            
+            esriId.on("credential-create", function(e){
+            	console.log("Credential: ", e.credential);
+            });	
 
 		    var scalebar = new Scalebar({
 			    map: map,
@@ -98,6 +94,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	        $scope.esriMapObject = map;
 
 	        $scope.$broadcast('map-loaded', map);
+
 
 	        $scope.changeRendering = function(legendLayer, renderField){
 	        	if(renderField){	     
