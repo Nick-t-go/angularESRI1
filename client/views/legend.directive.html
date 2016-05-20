@@ -2,7 +2,9 @@
     <div class="row">
         <h4 class="legend-title">Legend</h4>
     </div>
-    <div class="row">
+    <a ui-sref="help({section: 'Legend'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
+    <span ng-click="legendVisible = false" class="glyphicon glyphicon-remove-circle close-button"></span>
+    <div class="row all-items">
         <ul class="legend-ul" ng-repeat="layer in layers">
             <li class="legend-list-item">
                 <label>

@@ -38,6 +38,14 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 	$scope.layers = LayerStore.layers;
 
+	var specialOutfields = {};
+	$scope.layers.forEach(function(layer){
+		if (layer.specialOutfields){
+			specialOutfields[layer.options.id] = layer.specialOutfields;
+		}
+	});
+
+
 	 $scope.layersOn = [];
 
 	 $scope.layers.forEach(function(layer){
@@ -295,7 +303,6 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			function initSelectToolbar() {
 			    selectionToolbar = new Draw(map);
 			    var selectQuery = new Query();
-
 			    selectionToolbar.on("DrawEnd", function(geometry) {
 			        selectionToolbar.deactivate();
 			        selectQuery.geometry = geometry;
@@ -305,17 +312,19 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 
 			function runQuery(query, type){
-				$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW);
-		        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
-		        $scope.newSelectedFeatures.length > 0 ? $scope.showSelected = true: $scope.showSelected = false
-		        if(type != 'where'){
-		        	$scope.$digest();
-		        	$scope.$broadcast('hideMenu');
-		        }
-		        else{
-		        	$scope.selectSearch = false;
-		        	$scope.$broadcast('selectionResults', {featureCount:$scope.newSelectedFeatures.length} );
-		        }
+				query.outFields = $scope.outFields || ['*']; 
+				$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
+					$scope.newSelectedFeatures = results;
+					$scope.showSelected = $scope.newSelectedFeatures.length > 0 ? true : false;
+					if(type != 'where'){
+			        	$scope.$digest();
+			        	$scope.$broadcast('hideMenu');
+			        }
+		        	else{
+			        	$scope.selectSearch = false;
+			        	$scope.$broadcast('selectionResults', {featureCount:$scope.newSelectedFeatures.length} );
+			        }
+				});
 			}
 
 			var fieldsSelectionSymbol = {
@@ -332,8 +341,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				var searchQuery = new Query();
 				searchQuery.where = "ContractNumber LIKE '" + data.search + "%'";
 				$scope.newSelection = map.getLayer('Outlines');
-				$scope.outFields = $scope.newSelection._outFields;
 				$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol.polygon);
+				$scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
 				runQuery(searchQuery, 'where');
 			});
 
@@ -369,8 +378,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			}
 
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
-          		$scope.outFields = $scope.newSelection._outFields;
-          		console.log($scope.outFields);
+          		$scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
+          		console.log($scope.newSelection);
     		};
 
     		$scope.selectByExtent = function(){
@@ -428,9 +437,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		                    query.objectIds = selection.features.map(function(feature){
     		                    	return feature.attributes.OBJECTID;
     		                    });
+    		                    query.outFields = $scope.outFields;
     		                    $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results) {
     		                        $scope.newSelectedFeatures = results;
-    		                        results.length > 0 ? $scope.showSelected = true : $scope.showSelected = false;
+    		                        $scope.showSelected = results.length > 0 ? true : false;
     		                        $scope.$digest();
     		                    });
     		                }

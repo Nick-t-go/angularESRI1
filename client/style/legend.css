@@ -113,3 +113,28 @@ background: #88ba1c;
 	font: 12px "Arial", Gadget, sans-serif;
     
 }
+
+.close-button {
+	line-height: 12px;
+     /*width: 18px;
+     font-size: 8pt;
+     font-family: tahoma;*/
+     margin-top: 1.5px;
+     margin-right: 2.5px;
+     position:absolute;
+     top:0;
+     right:0;
+
+}
+
+#legend .help-button{
+	line-height: 12px;
+     margin-right: 15px;
+     position:absolute;
+     top:0;
+     right: 2.5px;
+}
+
+.all-items {
+	margin-left: 5px
+}

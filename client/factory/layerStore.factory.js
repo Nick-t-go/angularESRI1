@@ -108,6 +108,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 	visible: true,
 		 	renderOptions: [{label:"Investigation Status", id:'investigationStatus'},{label: "Horizontal Quality", id:'horizontalQuality'},{label: "Vertical Quality", id: 'verticalQuality'}],
 		 	currentRender: "horizontalQuality",
+		 	specialOutfields: ['UnitID', 'dMhLifeCycleStatus', 'MhRimElevRecord', 'MhContractNumber', "FkMhHorizontalQuality"],
 		 	options: {
 		 		id:"Manholes",
 		 		visible: true,
@@ -218,6 +219,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	visible: true,
 		  	renderOptions: [{label: "Pipe Sub Type", id:'PipeSubType'}],
 		  	currentRender: "PipeSubType",
+		  	specialOutfields: ['OBJECTID', 'LengthRecord', 'SlopeRecord','InvertUpRecord', 'InvertDownRecord'],
 		  	options: {
 		  		id:"Mains",
 		  		visible: true,
@@ -340,6 +342,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
+		  	specialOutfields: ['FkPsContractID','ProjectName','dPsSewerDistrict', 'PsLocation', 'FkParcelID'],
 		  	options: {
 		  		id:"Stations",
 		  		visible: false,
@@ -393,6 +396,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
+		  	specialOutfields: ['StpName','StpAddress', 'FkStpOwner','dStpSewerDistrict', 'SpdesPermitNumber'],
 		  	options: {
 		  		id:"Plants",
 		  		visible: false,
@@ -421,6 +425,7 @@ app.factory('LayerStore', function(esriLoader) {
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
+		  	specialOutfields: ['OBJECTID', 'ContractNumber', 'ContractName', 'WebRelativeImagePath'],
 		  	options: {
 		  		id:"SheetOutlines",
 		  		visible: false,

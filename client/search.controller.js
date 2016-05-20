@@ -14,7 +14,7 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 			 ], 
 			function(Locator, Extent, SpatialReference, Query, GraphicsLayer, Graphic, Point, SimpleMarkerSymbol, Color){
 
-				var locator = new Locator("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer");
+				var locator = new Locator("https://gisservices2.suffolkcountyny.gov/arcgis/rest/services/SCGeocoder/GeocodeServer/");
 				locator.countryCode = "USA";
 				locator.outSpatialReference = map.spatialReference;
 				var categories = ['Address','Postal'];
@@ -34,7 +34,7 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 						var maxSuggestions = 5;
 						$scope.count = -1;
 						var location = map.extent.getCenter().normalize();
-						var params = {text: text, categories: categories, maxSuggestions: maxSuggestions, location: location, distance:distance, region: 'New York'};
+						var params = {text: text, category: categories,  location: location, distance:distance};
 						locator.suggestLocations(params)
 						.then(function(suggestions, error){
 							$scope.suggestions = suggestions;
@@ -50,7 +50,7 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 				var searchResultGraphic = new GraphicsLayer({
 					infoTemplate: {
 						title: '<b>${Match_addr}</b>',
-			  			content: 'Address: ${StAddr} <br>City: ${City}<br>County: ${Subregion}<br> Longitude: ${X} <br> Latitude: ${Y}'
+			  			content: 'Address: ${StAddr} <br>City: ${City}<br>Zip: ${Zip}<br>'
 			  		},
 			  		id: "searchResult" 
 				});
@@ -71,22 +71,23 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					// var location = map.extent.getCenter().normalize();
 					// var distance = 50000;
 					var maxLocations = 6;
-					var params = {SingleLine: SingleLine, f: f, outSR: outSR, outFields: outFields, magicKey: local.magicKey, countryCode: countryCode, maxLocations: maxLocations};
+					var params = {SingleLine: SingleLine, f: f, "outSR": outSR, outFields: outFields, magicKey: local.magicKey, countryCode: countryCode, maxLocations: maxLocations};
 					FindLocal.find(params)
 					.then(function(response){
+						console.log(response);
 						var firstHit = response.data.candidates[0];
 						var pt = new Point(firstHit.location.x,firstHit.location.y,new SpatialReference({wkid:102100}));
-						var attr = {"StAddr":firstHit.attributes.StAddr,"Match_addr":firstHit.attributes.Match_addr, "City":firstHit.attributes.City,Subregion:firstHit.attributes.Subregion, X: firstHit.attributes.X,Y: firstHit.attributes.Y};
+						var attr = {"StAddr":firstHit.address,"City":firstHit.attributes.City, 'Zip': firstHit.attributes.ZIP};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
-						searchResultGraphic.add(pinGraphic);
-						var zoomExtent = new Extent(firstHit.extent.xmin, firstHit.extent.ymin, firstHit.extent.xmax,firstHit.extent.ymax, new SpatialReference({wkid:102100}));
-						map.setExtent(zoomExtent);
+						searchResultGraphic.add(pinGraphic);;
+						map.centerAndZoom(pt, 16);
 						searchResultGraphic.refresh();
 					});
 				};
 
 				$scope.searchContracts = function(contract){
 					$scope.$emit('searchQuery', {search: contract});
+					$scope.searchWait = false;
 				};
 
 				$scope.$on('selectionResults', function(evt, data){
@@ -102,6 +103,7 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					$scope.suggestions="";
 					$scope.input.text = "";
 					searchResultGraphic.clear();
+					$scope.searchWait = false;
 				};
 
 

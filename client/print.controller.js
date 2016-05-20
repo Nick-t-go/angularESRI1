@@ -10,13 +10,13 @@ app.controller('printCtrl', function($scope, esriLoader, FindLocal) {
 				// print dijit
 		        var printer = new Print({
 			          map: map,
-			          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+			          url: "https://portal.gayrondebruin.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
 		        }, dom.byId("printButton"));
 		        printer.startup();
 		        printer.hide();
 		      
 
-		        esriConfig.defaults.io.corsEnabledServers.push("https://sampleserver6.arcgisonline.com/");
+		        esriConfig.defaults.io.corsEnabledServers.push("https://portal.gayrondebruin.com/arcgis/rest/services/Utilities/PrintingTools/GPServer");
 
 		    $scope.printTemplates = [{
 		          	  label: "A4 Landscape",
@@ -103,7 +103,7 @@ app.controller('printCtrl', function($scope, esriLoader, FindLocal) {
 
 
 			printer.on('error', function(error){
-				$scope.printWait = true;
+				$scope.printWait = false;
 				$scope.printedPage = {
 		    						  status: "alert-danger",
 		    						  message: "Error Occured",

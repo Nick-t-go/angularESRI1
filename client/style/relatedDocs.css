@@ -6,15 +6,31 @@
 	background: transparent;
 	width: 50%;
 	height: 250px;
-	
+
 }
 
+
+/* Scrollbar styles */
+#related-docs::-webkit-scrollbar {
+	margin-top:25px;
+}
+
+#related-docs::-webkit-scrollbar-track {
+	margin-top:25px;
+	background: white;
+}
+
+#related-docs .close-button{
+	margin-top: 35px;
+	margin-right: 5px;
+}
 .relation-buttons{
 	height:25px;
+	background: black;
 }
 
 .tableContainer{
-	min-height: 500px;
+	min-height: 250px;
 	background-color: white;
 	overflow-y: auto;
 }
