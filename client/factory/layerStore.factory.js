@@ -5,11 +5,7 @@ app.factory('LayerStore', function(esriLoader) {
             	layers: [
 		{
 		 	name: 'Sewer Districts',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
-=======
 		  	url: rootPathOptions[activeLocation]+'9',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: true,
 		  	renderOptions: [],
 		  	currentRender: "",	
@@ -86,11 +82,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 },
 		 {
 		 	name: 'Sewer Contract Outlines',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
-=======
 		  	url: rootPathOptions[activeLocation]+'8',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
 			renderOptions: [],
@@ -112,11 +104,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 },
 		  {
 		 	name: 'Manholes',
-<<<<<<< HEAD
-		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
-=======
 		 	url: rootPathOptions[activeLocation]+'0',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		 	visible: true,
 		 	renderOptions: [{label:"Investigation Status", id:'investigationStatus'},{label: "Horizontal Quality", id:'horizontalQuality'},{label: "Vertical Quality", id: 'verticalQuality'}],
 		 	currentRender: "horizontalQuality",
@@ -227,11 +215,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 
 		 {
 		 	name: 'Sewer Mains',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
-=======
 		  	url: rootPathOptions[activeLocation]+'2',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: true,
 		  	renderOptions: [{label: "Pipe Sub Type", id:'PipeSubType'}],
 		  	currentRender: "PipeSubType",
@@ -288,11 +272,7 @@ app.factory('LayerStore', function(esriLoader) {
 		 },
 		 {
 		 	name: 'Sewer Interceptors',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/1',
-=======
 		  	url: rootPathOptions[activeLocation]+'1',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: true,
 		  	renderOptions: [],
 		  	currentRender: "interceptorDefault",
@@ -314,11 +294,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Main Casings',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/3',
-=======
 		  	url: rootPathOptions[activeLocation]+'3',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -340,11 +316,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Easements',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/4',
-=======
 		  	url: rootPathOptions[activeLocation]+'4',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -366,11 +338,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Pump Stations',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/5',
-=======
 		  	url: rootPathOptions[activeLocation]+'5',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -424,11 +392,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Treatment Plants',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/6',
-=======
 		  	url: rootPathOptions[activeLocation]+'6',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -457,11 +421,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Sheet Outlines',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/7',
-=======
 		  	url: rootPathOptions[activeLocation]+'7',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -484,11 +444,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Problems',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/10',
-=======
 		  	url: rootPathOptions[activeLocation]+'10',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -510,11 +466,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Contractee Parcels',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/11',
-=======
 		  	url: rootPathOptions[activeLocation]+'11',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -536,11 +488,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'House Connection Permits',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/12',
-=======
 		  	url: rootPathOptions[activeLocation]+'12',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -562,11 +510,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Sewer Aerial Photo Centers',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/15',
-=======
 		  	url: rootPathOptions[activeLocation]+'15',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",
@@ -588,11 +532,7 @@ app.factory('LayerStore', function(esriLoader) {
 	  	},
 	  	{
 		 	name: 'Possible Easement Parcels',
-<<<<<<< HEAD
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/17',
-=======
 		  	url: rootPathOptions[activeLocation]+'17',
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		  	visible: false,
 		  	renderOptions: [],
 		  	currentRender: "",

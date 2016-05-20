@@ -77,20 +77,12 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal, $timeout) {
 					var params = {SingleLine: SingleLine, f: f, "outSR": outSR, outFields: outFields, magicKey: local.magicKey, countryCode: countryCode, maxLocations: maxLocations};
 					FindLocal.find(params)
 					.then(function(response){
-<<<<<<< HEAD
-						console.log(response);
-=======
 
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 						var firstHit = response.data.candidates[0];
 						var pt = new Point(firstHit.location.x,firstHit.location.y,new SpatialReference({wkid:102100}));
 						var attr = {"StAddr":firstHit.address,"City":firstHit.attributes.City, 'Zip': firstHit.attributes.ZIP};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
-<<<<<<< HEAD
-						searchResultGraphic.add(pinGraphic);;
-=======
 						searchResultGraphic.add(pinGraphic);
->>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 						map.centerAndZoom(pt, 16);
 						searchResultGraphic.refresh();
 					});
