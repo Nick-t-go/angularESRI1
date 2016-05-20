@@ -2,7 +2,7 @@ app.directive('messenger', function () {
 
     return {
         restrict: 'E',
-        templateUrl: 'views/messenger.directive.html',
+        templateUrl: './client/views/messenger.directive.html',
         scope: {},
         controller: "messengerCtrl"
         

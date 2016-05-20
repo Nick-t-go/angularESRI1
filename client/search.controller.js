@@ -1,4 +1,4 @@
-app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
+app.controller('searchCtrl', function($scope, esriLoader, FindLocal, $timeout) {
 
 	$scope.$on('map-loaded', function(evt, map){
 		esriLoader.require([
@@ -37,8 +37,11 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 						var params = {text: text, category: categories,  location: location, distance:distance};
 						locator.suggestLocations(params)
 						.then(function(suggestions, error){
+							console.log(suggestions);
 							$scope.suggestions = suggestions;
-							$scope.$digest();
+							$timeout(function(){
+								$scope.$digest();
+							});
 						});
 					}
 				};
@@ -74,12 +77,20 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 					var params = {SingleLine: SingleLine, f: f, "outSR": outSR, outFields: outFields, magicKey: local.magicKey, countryCode: countryCode, maxLocations: maxLocations};
 					FindLocal.find(params)
 					.then(function(response){
+<<<<<<< HEAD
 						console.log(response);
+=======
+
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 						var firstHit = response.data.candidates[0];
 						var pt = new Point(firstHit.location.x,firstHit.location.y,new SpatialReference({wkid:102100}));
 						var attr = {"StAddr":firstHit.address,"City":firstHit.attributes.City, 'Zip': firstHit.attributes.ZIP};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
+<<<<<<< HEAD
 						searchResultGraphic.add(pinGraphic);;
+=======
+						searchResultGraphic.add(pinGraphic);
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 						map.centerAndZoom(pt, 16);
 						searchResultGraphic.refresh();
 					});
@@ -96,7 +107,9 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal) {
 				});
 				$scope.$on('hideMenu', function(evt, data){
 					$scope.count = -1;
-					$scope.$digest();
+					$timeout(function(){
+						$scope.$digest();
+					});
 				});
 
 				$scope.resetSearch = function(){

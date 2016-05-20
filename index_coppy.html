@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ESRI Angular</title>
+    
+    <link rel="icon" href="http://www.esri.com/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+
+    <!--    For Spinner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <!-- ESRI style -->
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/tundra/tundra.css">
+    
+    <!-- Custom Style     -->
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+    <link rel="stylesheet" type="text/css" href="style/legend.css" />
+    <link rel="stylesheet" type="text/css" href="style/bottomsheet.css" />
+    <link rel="stylesheet" type="text/css" href="style/relatedDocs.css" />
+    <link rel="stylesheet" type="text/css" href="style/messenger.css" />
+
+    
+
+    <body style="height:100vh; width:100vw; background-color: #719971" ng-app="angularESRI">
+        
+        <div style="height:100vh; width:100vw" ui-view></div>
+
+        <!-- BOOTSTRAP jQuery -->
+        <script type="text/javascript" src="../nm/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="./jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../nm/bootstrap/dist/js/bootstrap.min.js"></script>
+        
+        <script src="https://js.arcgis.com/3.16/"></script>
+
+        <!-- ANGULAR -->
+        <script type="text/javascript" src="../nm/angular/angular.js"></script>
+        <script type="text/javascript" src="../nm/angular-esri-map/dist/angular-esri-map.js"></script>
+        <script type="text/javascript" src="../nm/angular-ui-router/release/angular-ui-router.min.js"></script>
+        <script type="text/javascript" src="../nm/angular-cookies/angular-cookies.min.js"></script>
+    <!-- <script type="text/javascript" src="ng-table/dist/ng-table.js"></script> -->
+       
+         
+        <!-- App -->
+        <script type="text/javascript" src="./app.js"></script>
+        <script type="text/javascript" src="./map.controller.js"></script>
+        <script type="text/javascript" src="./map.directive.js"></script>
+        <script type="text/javascript" src="./legend.directive.js"></script>
+        <script type="text/javascript" src="./relatedDocs.directive.js"></script>
+        <script type="text/javascript" src="./bottomSheet.directive.js"></script>
+        <script type="text/javascript" src="./basemapGallery.controller.js"></script>
+        <script type="text/javascript" src="./basemapGallery.directive.js"></script>
+        <script type="text/javascript" src="./bookmarks.controller.js"></script>
+        <script type="text/javascript" src="./bookmarks.directive.js"></script>
+        <script type="text/javascript" src="./messenger.controller.js"></script>
+        <script type="text/javascript" src="./messenger.directive.js"></script>
+        <script type="text/javascript" src="./factory/customRenderer.factory.js"></script>
+        <script type="text/javascript" src="./factory/relatedDocuments.factory.js"></script>
+    </body>
+
+</html>

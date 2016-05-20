@@ -77,7 +77,12 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
 		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
             "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
+<<<<<<< HEAD
             "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/IdentityManager",
+=======
+            "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/IdentityManager", "esri/urlUtils",
+            "esri/config", "esri/layers/ArcGISImageServiceLayer",
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
             "dojo/domReady!"
             ], function(
                 Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
@@ -85,6 +90,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 PictureMarkerSymbol, dom, Circle, Measurement, 
                 Query,QueryTask, Point, SpatialReference,
                 config, Scalebar, GraphicsLayer,  Extent,
+<<<<<<< HEAD
                 LabelClass, TextSymbol, esriId
             ) {
 
@@ -92,6 +98,31 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             	console.log("Credential: ", e.credential);
             });	
 
+=======
+                LabelClass, TextSymbol, esriId, urlUtils,
+                esriConfig, ArcGISImageServiceLayer
+            ) {
+
+   //          esriConfig.defaults.io.proxyUrl = "https://portal.gayrondebruin.com/DotNet/proxy.ashx?";
+   //          esriConfig.defaults.io.alwaysUseProxy = false; 
+   //          urlUtils.addProxyRule({
+			//   urlPrefix: "http://www.orthos.dhses.ny.gov/ArcGIS/rest/services",
+			//   proxyUrl: "https://portal.gayrondebruin.com/DotNet/proxy.ashx"
+			// });
+			// urlUtils.addProxyRule({
+			//   urlPrefix: "http://gis.ny.gov/gateway/orthoprogram/",
+			//   proxyUrl: "https://portal.gayrondebruin.com/DotNet/proxy.ashx"
+			// });
+			// esriConfig.defaults.io.corsEnabledServers.push("https://gisimages.suffolkcountyny.gov/arcgis/rest/services/");
+	  //       esriConfig.defaults.io.corsEnabledServers.push('http://gis.ny.gov/gateway/orthoprogram/');
+
+            // esriId.on("credential-create", function(e){
+            // 	console.log(esriConfig.defaults.io);
+            // });	
+
+            // var imageService = new ArcGISImageServiceLayer("https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2013/ImageServer", {id: 'NYS2013'});
+            // map.addLayer(imageService);
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 		    var scalebar = new Scalebar({
 			    map: map,
 			    attachTo: "bottom-center"
@@ -116,8 +147,21 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		        }
 	        };
 
+<<<<<<< HEAD
 		   
 		   
+=======
+		   $scope.loading = false;
+		   map.on('update-start', (function(evt){
+		   		$scope.loading = true;
+		   }));
+		   map.on('update-end', (function(evt){
+		   		$scope.loading = false;
+		   		$timeout(function() {
+					$scope.$digest();
+				});
+		   }));
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 
 		    // Measure 
 
@@ -166,11 +210,15 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
 					$scope.scaleMessage = false;
-					$scope.$digest();
+					$timeout(function(){
+						$scope.$digest();
+					});
 				}
 				else if($scope.newSelection && $scope.newSelection.minScale < $scope.currentScale){
 					$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
-					$scope.$digest();
+					$timeout(function(){
+						$scope.$digest();
+					});
 				}
 			});
 
@@ -317,7 +365,13 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 					$scope.newSelectedFeatures = results;
 					$scope.showSelected = $scope.newSelectedFeatures.length > 0 ? true : false;
 					if(type != 'where'){
+<<<<<<< HEAD
 			        	$scope.$digest();
+=======
+			        	$timeout(function(){
+						$scope.$digest();
+					});
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
 			        	$scope.$broadcast('hideMenu');
 			        }
 		        	else{
@@ -379,7 +433,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
           		$scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
+<<<<<<< HEAD
           		console.log($scope.newSelection);
+=======
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
     		};
 
     		$scope.selectByExtent = function(){
@@ -441,7 +498,13 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		                    $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results) {
     		                        $scope.newSelectedFeatures = results;
     		                        $scope.showSelected = results.length > 0 ? true : false;
+<<<<<<< HEAD
     		                        $scope.$digest();
+=======
+    		                        $timeout(function(){
+											$scope.$digest();
+										});
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
     		                    });
     		                }
     		            });

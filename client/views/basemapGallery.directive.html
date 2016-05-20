@@ -2,7 +2,7 @@
     <div class="panel-body">
 
 		<ul ng-mouseleave="hoverImage = 'none'">
-		    <li class="basemapOptions" ng-class="{selectedBasemap: option.name == map.basemap}" ng-repeat="option in basemapOptions" ng-mouseenter="showpreview(option.imagery)" ng-click="map.basemap=option.name">
+		    <li class="basemapOptions" ng-class="{selectedBasemap: option.name == map.basemap}" ng-repeat="option in basemapOptions" ng-mouseenter="showpreview(option.imagery)" ng-click="basemapChange(option.name)">
 		        {{option.displayName}}
 		    </li>
 		</ul>

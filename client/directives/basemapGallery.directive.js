@@ -2,7 +2,7 @@ app.directive('basemapGallery', function () {
 
     return {
         restrict: 'E',
-        templateUrl: 'views/basemapGallery.directive.html',
+        templateUrl: './client/views/basemapGallery.directive.html',
         scope: {map:'='},
         controller: 'basemapGalleryCtrl'
     };

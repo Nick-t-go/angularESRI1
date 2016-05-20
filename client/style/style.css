@@ -225,3 +225,49 @@ input.dijitReset.dijitInputField.dijitValidationIcon.dijitValidationInner {
     font-size: 1.5em;
     text-align: center;
 }
+
+.blinking {
+    animation: blinker 1s linear infinite;
+    margin-right: .5em;
+}
+@keyframes blinker {  
+  50% { opacity: 0.0; }
+}
+
+.load{
+    display: flex;
+    flex-direction: row
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.loader {
+  border: 4px solid white;
+  border-radius: 50%;
+  border-top: 4px solid yellowgreen;
+  border-right: 4px solid #337ab7;
+  border-bottom: 4px solid #cdb433;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  margin-right: 1.5em;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.nav-elements{
+    display: flex;
+    flex-direction: row
+    justify-content: flex-end;
+    align-items: center;
+}

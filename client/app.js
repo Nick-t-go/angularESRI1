@@ -14,13 +14,17 @@ app.config(function($urlRouterProvider, $stateProvider){
     $stateProvider
         .state('map',{
             url:'/',
-            templateUrl: 'views/map.html',
+            templateUrl: './client/views/map.html',
             controller: 'MapCtrl'
         })
 
         .state('help',{
             url:'/help/:section',
+<<<<<<< HEAD
             templateUrl: 'views/help.html',
+=======
+            templateUrl: './client/views/help.html',
+>>>>>>> d6ebb738e5d59985e74e787ef730f9d518f688fb
             controller: 'HelpCtrl'
         });
 

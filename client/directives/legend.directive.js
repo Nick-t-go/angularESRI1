@@ -1,8 +1,8 @@
-app.directive('bottomSheet', function () {
+app.directive('legendBox', function () {
 
     return {
         restrict: 'E',
-        templateUrl: 'views/bottomSheet.directive.html',
+        templateUrl: './client/views/legend.directive.html',
         scope: false,
         resolve: function($scope){
         	$scope.digest();

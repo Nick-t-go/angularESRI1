@@ -16,7 +16,7 @@ glyphicon glyphicon-refresh"></span></button>
         </div>
         <ul class="searchList" ng-if="suggestions.length>0">
           Search Results
-         <li class="searchListItems" ng-repeat="location in suggestions" ng-click="zoomToAddress(location)"><small>{{location.text | noUSA}}</small></li>
+         <li class="searchListItems" ng-repeat="location in suggestions" ng-click="zoomToAddress(location)"><small>{{location.text}}</small></li>
         </ul>
         <i ng-show="searchWait" class="fa fa-spinner fa-pulse  fa-fw margin-bottom"></i>
         <div class="alert alert-warning" role="alert" ng-show="count === 0 && input.text.length > 0">

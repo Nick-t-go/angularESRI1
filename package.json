@@ -10,10 +10,14 @@
     "angular-ui-router": "^0.2.18",
     "body-parser": "^1.15.0",
     "bootstrap": "^3.3.6",
+    "core-util-is": "^1.0.2",
     "express": "^4.13.4",
+    "inherits": "^2.0.1",
     "jquery": "^2.2.3",
     "jquery-ui": "^1.10.5",
-    "nodemon": "^1.9.1"
+    "nodemon": "^1.9.1",
+    "util-deprecate": "^1.0.2",
+    "wrappy": "^1.0.2"
   },
   "devDependencies": {},
   "scripts": {
