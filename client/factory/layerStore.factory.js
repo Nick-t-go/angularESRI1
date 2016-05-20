@@ -83,7 +83,6 @@ app.factory('LayerStore', function(esriLoader) {
 		 {
 		 	name: 'Sewer Contract Outlines',
 		  	url: rootPathOptions[activeLocation]+'8',
-		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
 		  	visible: true,
 			renderOptions: [],
 			currentRender: "",
@@ -302,10 +301,10 @@ app.factory('LayerStore', function(esriLoader) {
 		  		id:"Castings",
 		  		visible: false,
 		  		displayOnPan: false,
-		  		outFields: ['OBJECTID'],
+		  		outFields: ['OBJECTID', 'CasingLengthRecord','CasingDiameterRecord' ],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Main Casings</b>',
-		  			content: 'OBJECTID: ${OBJECTID}'
+		  			content: 'OBJECTID: ${OBJECTID}<br> Length ${CasingLengthRecord} <br>Diameter: ${CasingDiameterRecord}'
 		  		}
 		  	},
 	  		style: {
@@ -324,10 +323,10 @@ app.factory('LayerStore', function(esriLoader) {
 		  		id:"Easements",
 		  		visible: false,
 		  		displayOnPan: false,
-		  		outFields: ['OBJECTID'],
+		  		outFields: ['OBJECTID', 'OwnerName', 'EasementNumber'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Easements</b>',
-		  			content: 'OBJECTID: ${OBJECTID}'
+		  			content: 'OBJECTID: ${OBJECTID}<br> Owner: ${OwnerName} <br> Easement #: ${EasementNumber} '
 		  		}
 		  	},
 	  		style: {
@@ -474,10 +473,10 @@ app.factory('LayerStore', function(esriLoader) {
 		  		id:"ContracteeParcels",
 		  		visible: false,
 		  		displayOnPan: false,
-		  		outFields: ['OBJECTID'],
+		  		outFields: ['OBJECTID', 'PARCELID', 'OWNER_NAME'],
 		  		infoTemplate: {
 		  			title: '<b>Contractee Parcels</b>',
-		  			content: 'OBJECTID: ${OBJECTID}'
+		  			content: 'OBJECTID: ${OBJECTID}<br> Parcel ID: ${PARCELID}<br> Owner: ${OWNER_NAME}'
 		  		}
 		  	},
 	  		style: {
@@ -518,10 +517,10 @@ app.factory('LayerStore', function(esriLoader) {
 		  		id:"PhotoCenters",
 		  		visible: false,
 		  		displayOnPan: false,
-		  		outFields: ['OBJECTID'],
+		  		outFields: ['OBJECTID', 'PhotoName'],
 		  		infoTemplate: {
 		  			title: '<b>Sewer Aerial Photo Centers</b>',
-		  			content: 'OBJECTID: ${OBJECTID}'
+		  			content: 'OBJECTID: ${OBJECTID}<br> Photo Name: <a href="${PhotoName}" target="_blank">${PhotoName}</a>'
 		  		}
 		  	},
 	  		style: {

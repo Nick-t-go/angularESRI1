@@ -20,7 +20,6 @@ app.factory('RelatedDocuments', function(esriLoader, $q) {
 
                                     relationshipStore[relName] = relatedRecords;
                                 }
-                                console.log(relationshipStore);
                                 resolve();
                             });
                         });

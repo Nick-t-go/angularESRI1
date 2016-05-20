@@ -37,7 +37,6 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal, $timeout) {
 						var params = {text: text, category: categories,  location: location, distance:distance};
 						locator.suggestLocations(params)
 						.then(function(suggestions, error){
-							console.log(suggestions);
 							$scope.suggestions = suggestions;
 							$timeout(function(){
 								$scope.$digest();
