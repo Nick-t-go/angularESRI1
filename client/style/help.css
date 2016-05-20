@@ -1,0 +1,36 @@
+#help img{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    box-shadow: 2.5px 2.5px 1px #888888;
+    text-
+}
+
+#help h1{
+	margin-top: 100px;
+	text-align: center;
+	text-shadow: 2.5px 2.5px 1px lightgrey;
+
+}
+#help h3{
+	text-align: center;
+	text-transform: capitalize;
+}
+
+#help .panel-heading {
+	background-color: #cdb433;
+	border-color: black;
+	height: 2em; 
+	font-size: 2em
+}
+
+#help .panel-primary{
+	margin-top: 25px;
+	border-color: black;
+	border-radius: 5px;
+	box-shadow: 5px 5px 2px #888888;
+	font-size: 1.2em;
+}

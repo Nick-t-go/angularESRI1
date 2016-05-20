@@ -2,11 +2,13 @@
     <div class="row">
         <h4 class="legend-title">Legend</h4>
     </div>
-    <div class="row">
-        <ul ng-repeat="layer in layers">
+    <a ui-sref="help({section: 'Legend'})" target="_blank" class="help-button"><span  class="glyphicon glyphicon-question-sign"></span></a>
+    <span ng-click="legendVisible = false" class="glyphicon glyphicon-remove-circle close-button"></span>
+    <div class="row all-items">
+        <ul class="legend-ul" ng-repeat="layer in layers">
             <li class="legend-list-item">
                 <label>
-                    <input type="checkbox" ng-model="layer.visible" ng-change="toggleLayer(layer)">{{layer.name}}
+                    <input type="checkbox" ng-model="layer.options.visible" ng-change="toggleLayer(layer)">{{layer.name}}
                 </label>
                 <div ng-if="layer.renderOptions.length>1" class="dropup legend-item-edit">
                     <button class=" btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -16,7 +16,7 @@ app.factory('RelatedDocuments', function(esriLoader, $q) {
                             parentLayer.queryRelatedFeatures(relatedQuery, function(relatedRecords) {
                                 if (Object.keys(relatedRecords).length) {
                                     var idx = relationship.name.indexOf('DBO.tbl');
-                                    var relName = relationship.name.slice(idx + 7);
+                                    var relName = relationship.name.slice(idx + tblIdxOptions[activeLocation]);
 
                                     relationshipStore[relName] = relatedRecords;
                                 }

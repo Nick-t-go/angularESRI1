@@ -1,51 +1,52 @@
 <div id="related-docs" ng-show="relationshipClasses.length > 0 && showRelatedDocs">
-	<div class="relatio-buttons btn-group" data-toggle="buttons">
+	<div class="relation-buttons btn-group" data-toggle="buttons">
 	  <button ng-repeat="relation in relationshipClasses track by $index" ng-class="$index == 0 ? 'active' : 'inactive'" ng-click="changeTable(relation)">
 	   	{{relation}}
 	  </button>
 	</div>
-	<div class="tableContainer checkeredTable" ng-repeat="relation in relationshipClasses track by $index">
+	<div class="tableContainer checkeredTable">
+		<span ng-click="turnOffRelatedDocs()" class="glyphicon glyphicon-remove-circle close-button"></span>
 		<table class="relationTable" >
 	      <thead>
 	      	<tr ng-if="relationShow == 'Contracts'">
 	      		<th>Contract Number</th>
 	      		<th>Contract Name</th>
+	      		<th>Municipal</th>
+	      		<th>Year Built</th>
 	      		<th>Link</th>
-	      		<th ng-click="turnOffRelatedDocs()">x</th>
 	        </tr>
 	        <tr ng-if="relationShow == 'DocumentLinks'">
 				<th>Document Type</th>
 				<th>Description</th>
 				<th>Link</th>
-				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	        <tr ng-if="relationShow == 'StructurePhotos'">
 				<th>Description</th>
+				<th>Enter Date</th>
 				<th>Link</th>
-				<th ng-click="turnOffRelatedDocs()">x</th>	
 	        </tr>
 	      </thead>
-	      
-	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
-	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractNumber}}</td>
-	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractName}}</td>
+	      <tbody class="relationBody">
+	        <tr ng-if="relationShow == 'Contracts'" class="bottom-row" ng-repeat="feature in relatedRecords['Contracts'][selectedFeatureId].features">
+	          <td data-title="Contract Number" sortable="Contract Number">{{feature.attributes.ContractNumber}}</td>
+	          <td data-title="Contract Name" sortable="Contract Name">{{feature.attributes.ContractName}}</td>
+	          <td data-title="Municipal " sortable="Municipal ">{{feature.attributes.dSMuniOrSAgency}}</td>
+	          <td data-title="Year Built" sortable="Year Built">{{feature.attributes.YearBuilt}}</td>
 	          <td data-title="Link" sortable="Link"  ><a ng-href="{{feature.attributes.WebRelativeImagePath}}" target="_blank">{{feature.attributes.WebRelativeImagePath}}</a></td>
-	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 
-	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
+	        <tr ng-if="relationShow == 'DocumentLinks'" class="bottom-row" ng-repeat="feature in relatedRecords['DocumentLinks'][selectedFeatureId].features">
 	          <td data-title="Document Type" sortable="Document Type">{{feature.attributes.fkDocumentType || 'not specified' }}</td>
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
 	          <td data-title="Link" sortable="Link"  ><a ng-href="{{feature.attributes.WebRelativeImagePath}}" target="_blank">{{feature.attributes.WebRelativeImagePath}}</a></td>
-	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
 
-	        <tr ng-if="relationShow == 'StructurePhotos'" class="bottom-row" ng-repeat="feature in relatedRecords[relation][selectedFeatureId].features">
+	        <tr ng-if="relationShow == 'StructurePhotos'" class="bottom-row" ng-repeat="feature in relatedRecords['StructurePhotos'][selectedFeatureId].features">
 	          <td data-title="Description" sortable="Description">{{feature.attributes.Description}}</td>
+	          <td data-title="Enter Date" sortable="Enter Date">{{feature.attributes.EnterDate  | date:'MM/dd/yyyy' }}</td>
 	          <td data-title="Link" sortable="Link"><a ng-href="{{feature.attributes.WebRelativeImagePath}}"  target="_blank">{{feature.attributes.WebRelativeImagePath}}</a></td>
-	          <td data-title="x" sortable="x">{{" "}}</td>
 	        </tr>
-
+	        </tbody>
 	      </table>
 	</div>
 </div>

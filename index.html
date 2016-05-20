@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sanitary Sewer GIS</title>
+    
+    <link rel="icon" href="./client/images/smallseal.jpg">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+
+    <!--    For Spinner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <!-- ESRI style -->
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/tundra/tundra.css">
+    
+    <!-- Custom Style     -->
+    <link rel="stylesheet" type="text/css" href="./client/style/style.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/legend.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/bottomsheet.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/relatedDocs.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/messenger.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/search.css" />
+    <link rel="stylesheet" type="text/css" href="./client/style/help.css" />
+
+    
+
+    <body ng-app="angularESRI">
+        
+        <div style="height:100vh; width:100vw" ui-view></div>
+
+        <!-- BOOTSTRAP jQuery -->
+        <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="./client/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        
+        <script src="https://js.arcgis.com/3.16/"></script>
+
+        <!-- ANGULAR -->
+        <script type="text/javascript" src="./node_modules/angular/angular.js"></script>
+        <script type="text/javascript" src="./node_modules/angular-esri-map/dist/angular-esri-map.js"></script>
+        <script type="text/javascript" src="./node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+        <script type="text/javascript" src="./node_modules/angular-cookies/angular-cookies.min.js"></script>
+    <!-- <script type="text/javascript" src="ng-table/dist/ng-table.js"></script> -->
+       
+         
+        <!-- App -->
+        <script type="text/javascript" src="./client/app.js"></script>
+        <script type="text/javascript" src="./client/map.controller.js"></script>
+        <script type="text/javascript" src="./client/directives/legend.directive.js"></script>
+        <script type="text/javascript" src="./client/directives/relatedDocs.directive.js"></script>
+        <script type="text/javascript" src="./client/directives/bottomSheet.directive.js"></script>
+        <script type="text/javascript" src="./client/directives/navbar.directive.js"></script>
+        <script type="text/javascript" src="./client/directives/search.directive.js"></script>
+        <script type="text/javascript" src="./client/search.controller.js"></script>
+        <script type="text/javascript" src="./client/help.controller.js"></script>
+        <script type="text/javascript" src="./client/basemapGallery.controller.js"></script>
+        <script type="text/javascript" src="./client/directives/basemapGallery.directive.js"></script>
+        <script type="text/javascript" src="./client/bookmarks.controller.js"></script>
+        <script type="text/javascript" src="./client/directives/bookmarks.directive.js"></script>
+        <script type="text/javascript" src="./client/messenger.controller.js"></script>
+        <script type="text/javascript" src="./client/directives/messenger.directive.js"></script>
+        <script type="text/javascript" src="./client/print.controller.js"></script>
+        <script type="text/javascript" src="./client/directives/print.directive.js"></script>
+        <script type="text/javascript" src="./client/factory/layerStore.factory.js"></script>
+        <script type="text/javascript" src="./client/factory/FindLocal.factory.js"></script>
+        <script type="text/javascript" src="./client/factory/customRenderer.factory.js"></script>
+        <script type="text/javascript" src="./client/factory/relatedDocuments.factory.js"></script>
+        <script type="text/javascript" src="./client/config.js"></script>
+
+    </body>
+
+</html>

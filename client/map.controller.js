@@ -1,5 +1,7 @@
 
-app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout, RelatedDocuments) {
+app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout, RelatedDocuments, LayerStore) {
+
+
 
 	$scope.map = {
 				basemap:'topo',
@@ -26,7 +28,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	$scope.test = function(test){
 		console.log((test || 'test'));
 	};
-	
+
 
 	$scope.toggleTools = function (tool) {
 	 		if( $scope.tools[tool] === false ){
@@ -34,71 +36,15 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	 		}
         };       
 
-	$scope.layers = [
-		{
-		 	name: 'Sewer Districts',
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/9',
-		  	visible: true,
-		  	renderOptions: [],
-		  	currentRender: "",	
-		  	options: {
-		  		id:"Districts",
-		  		outFields: ['OBJECTID', 'SdLocality', 'SDShortName', 'PkSewerDistrict', 'SdLongName']
-		  	},
-		  	style: {
-	  			type: "polygon",
-	  			tblField: []
-	  		}
-		 },
-		 {
-		 	name: 'Sewer Outlines',
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
-		  	//'https://fs-gdb10:6443/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/8',
-		  	visible: true,
-			renderOptions: [],
-			currentRender: "",
-		  	options: {
-		  		id:"Outlines",
-		  		outFields: ['OBJECTID', 'PkContractOutlineID', 'SDShortName', 'ContractNumber', 'ContractNumberAlt']
-		  	},
-		  	style: {
-	  			type: "polygon",
-	  			tblField: []
-	  		},
-		 },
-		  {
-		 	name: 'Manholes',
-		 	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/0',
-		 	visible: true,
-		 	renderOptions: [{label:"Investigation Status", id:'investigationStatus'},{label: "Horizontal Quality", id:'horizontalQuality'},{label: "Vertical Quality", id: 'verticalQuality'}],
-		 	currentRender: "horizontalQuality",
-		 	options: {
-		 		id:"Manholes",
-		 		outFields: ['OBJECTID', "MhYearBuilt", "FkMhHorizontalQuality", 'FkMhVerticalQuality', 'InvestigationStatus']
-		 	},
-		 	style: {
-	  			type: "point",
-	  			tblField: []
-	  		}
-		 },
-		 
-		 {
-		 	name: 'Sewer Mains',
-		  	url: 'https://portal.gayrondebruin.com/arcgis/rest/services/SuffolkCounty/SCSewers/MapServer/2',
-		  	visible: true,
-		  	renderOptions: [{label: "Pipe Sub Type", id:'PipeSubType'}],
-		  	currentRender: "PipeSubType",
-		  	options: {
-		  		id:"Mains",
-		  		outFields: ['OBJECTID', 'FkPipeSewerDistrict', 'YearBuilt', 'PipeSubType']
-		  	},
-	  		style: {
-	  			type: "polyline",
-	  			tblField: []
-	  		}
-		 }
-		
-	 ];
+	$scope.layers = LayerStore.layers;
+
+	var specialOutfields = {};
+	$scope.layers.forEach(function(layer){
+		if (layer.specialOutfields){
+			specialOutfields[layer.options.id] = layer.specialOutfields;
+		}
+	});
+
 
 	 $scope.layersOn = [];
 
@@ -107,64 +53,73 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	 });
 
 	 $scope.toggleLayer = function (layer) {
-	 		var push = true;
-            for(var j = 0; j < $scope.layersOn.length; j++){
-            	if ($scope.layersOn[j].url === layer.url){
-	                $scope.layersOn.splice(j, 1);
-	                push = false;
-	                if(layer.name === "Sewer Mains"){
-	                	$scope.graphicsLayer.clear();
-	                }
-	                break;
-	            }
-	        }
-            if(push === true){
-                $scope.layersOn.push({url:layer.url, options:layer.options});
-            }
+	 		if($scope.esriMapObject.getLayer(layer.options.id).visible === true){
+	 			$scope.esriMapObject.getLayer(layer.options.id).hide();
+	 			layer.options.visible = false;
+	 			if(layer.options.id === "Mains"){
+	 				$scope.graphicsLayer.clear();
+	 			}
+	 			if(layer.options.id === "Interceptors"){
+	 				$scope.interceptorGraphics.clear();
+	 			}
+	 		}
+	 		else{
+	 			$scope.esriMapObject.getLayer(layer.options.id).show();
+	 			layer.options.visible = true;
+	 		}
         };
-
-    
 
 	$scope.onMapLoad = function(map) {
 		esriLoader.require([
 
-		    'esri/toolbars/draw',
-                'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', "esri/symbols/SimpleFillSymbol",
-                'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
-                'esri/graphic', "esri/tasks/RelationshipQuery",
-                'esri/Color', "esri/renderers/SimpleRenderer", "esri/symbols/PictureMarkerSymbol", "esri/renderers/UniqueValueRenderer",
-                "dojo/dom", "esri/geometry/Circle",
-                "esri/dijit/Measurement", "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point",
-                "dojo/_base/lang", "esri/geometry/Geometry",  "esri/tasks/GeometryService",  "esri/tasks/AreasAndLengthsParameters", "esri/SpatialReference",
-                "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent"
+		    'esri/toolbars/draw','esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', "esri/symbols/SimpleFillSymbol",
+		    'esri/symbols/PictureFillSymbol','esri/symbols/CartographicLineSymbol','esri/graphic', 'esri/Color',
+		    "esri/symbols/PictureMarkerSymbol", "dojo/dom", "esri/geometry/Circle", "esri/dijit/Measurement",
+		    "esri/tasks/query","esri/tasks/QueryTask", "esri/geometry/Point","esri/SpatialReference",
+            "esri/config", "esri/dijit/Scalebar", "esri/layers/GraphicsLayer",  "esri/geometry/Extent",
+            "esri/layers/LabelClass", "esri/symbols/TextSymbol", "esri/IdentityManager", "esri/urlUtils",
+            "esri/config", "esri/layers/ArcGISImageServiceLayer",
+            "dojo/domReady!"
             ], function(
-                Draw,
-                SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
-                PictureFillSymbol, CartographicLineSymbol,
-                Graphic, RelationshipQuery, 
-                Color, SimpleRenderer, PictureMarkerSymbol, UniqueValueRenderer,
-                dom, Circle,
-                Measurement, Query,QueryTask, Point,
-                lang, Geometry, GeometryService, AreasAndLengthsParameters, SpatialReference,
-                config, Scalebar, GraphicsLayer,  Extent
+                Draw, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
+                PictureFillSymbol, CartographicLineSymbol,Graphic, Color, 
+                PictureMarkerSymbol, dom, Circle, Measurement, 
+                Query,QueryTask, Point, SpatialReference,
+                config, Scalebar, GraphicsLayer,  Extent,
+                LabelClass, TextSymbol, esriId, urlUtils,
+                esriConfig, ArcGISImageServiceLayer
             ) {
 
+   //          esriConfig.defaults.io.proxyUrl = "https://portal.gayrondebruin.com/DotNet/proxy.ashx?";
+   //          esriConfig.defaults.io.alwaysUseProxy = false; 
+   //          urlUtils.addProxyRule({
+			//   urlPrefix: "http://www.orthos.dhses.ny.gov/ArcGIS/rest/services",
+			//   proxyUrl: "https://portal.gayrondebruin.com/DotNet/proxy.ashx"
+			// });
+			// urlUtils.addProxyRule({
+			//   urlPrefix: "http://gis.ny.gov/gateway/orthoprogram/",
+			//   proxyUrl: "https://portal.gayrondebruin.com/DotNet/proxy.ashx"
+			// });
+			// esriConfig.defaults.io.corsEnabledServers.push("https://gisimages.suffolkcountyny.gov/arcgis/rest/services/");
+	  //       esriConfig.defaults.io.corsEnabledServers.push('http://gis.ny.gov/gateway/orthoprogram/');
 
-             
-			
+            // esriId.on("credential-create", function(e){
+            // 	console.log(esriConfig.defaults.io);
+            // });	
 
+            // var imageService = new ArcGISImageServiceLayer("https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2013/ImageServer", {id: 'NYS2013'});
+            // map.addLayer(imageService);
 		    var scalebar = new Scalebar({
 			    map: map,
 			    attachTo: "bottom-center"
 			  });
-
-
 
 	        initSelectToolbar();    
 
 	        $scope.esriMapObject = map;
 
 	        $scope.$broadcast('map-loaded', map);
+
 
 	        $scope.changeRendering = function(legendLayer, renderField){
 	        	if(renderField){	     
@@ -178,7 +133,17 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		        }
 	        };
 
-		   
+		   $scope.loading = false;
+		   map.on('update-start', (function(evt){
+		   		$scope.loading = true;
+		   }));
+		   map.on('update-end', (function(evt){
+		   		$scope.loading = false;
+		   		$timeout(function() {
+					$scope.$digest();
+				});
+		   }));
+
 		    // Measure 
 
 		    map.on('layer-add', function(evt){
@@ -215,20 +180,59 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
             map.addLayer($scope.graphicsLayer);
 
             
-
+            var renderLines = true;
 			map.on('zoom-end', function(){
 				$scope.graphicsLayer.clear();
 				$scope.currentScale = map.getScale();
+				if(renderLines === true){
+					renderLines = false;
+					renderArrowLines();
+				};
 				
 				if($scope.newSelection && $scope.newSelection.minScale > $scope.currentScale){
 					$scope.scaleMessage = false;
-					$scope.$digest();
+					$timeout(function(){
+						$scope.$digest();
+					});
 				}
 				else if($scope.newSelection && $scope.newSelection.minScale < $scope.currentScale){
 					$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
-					$scope.$digest();
+					$timeout(function(){
+						$scope.$digest();
+					});
 				}
 			});
+
+			function renderArrowLines(){
+				setLabels();
+				var lineLayers = [map.getLayer("Interceptors"), map.getLayer("Mains")];
+		   		lineLayers.forEach(function(lineLayer){
+		   			var layer = $scope.layers.filter(function(lyr){
+		    			return lyr.options.id === lineLayer.id;
+		    		});
+		    		$scope.changeRendering(layer[0], layer[0].currentRender);
+			   	});
+			}
+
+			function setLabels(){
+				$scope.layers.forEach(function(layer){
+					var singleLayer = map.getLayer(layer.options.id);
+					if(layer.labels.length>0){
+						var labelClasses = [];
+						layer.labels.forEach(function(labelSetting){
+							var labelClass = new LabelClass(labelSetting.labelInfo);
+							var labelSymbol = new TextSymbol(labelSetting.textInfo);
+							labelClass.symbol = labelSymbol;
+							if(labelSetting.where){
+								labelClass.where = labelSetting.where;
+							}
+							labelClasses.push(labelClass);
+						});
+						singleLayer.setLabelingInfo(labelClasses);
+					}
+				});
+
+			}
 
 
 
@@ -245,7 +249,7 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 				$scope.mainsMinScale = map.getLayer("Mains").minScale;
 				$scope.graphicsLayer.clear();
 				var layer = map.getLayer("Mains"); 
-				switch($scope.currentScale > $scope.mainsMinScale){
+				switch($scope.currentScale > $scope.mainsMinScale || layer.visible === false){
 					case true:
 						$scope.graphicsLayer.clear();
 						break;
@@ -279,10 +283,55 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 	            }
 	        });
 
+			$scope.interceptorGraphics = new GraphicsLayer({ id: "interceptorGraphics" }); 
+            $scope.interceptorGraphics.setMinScale(map.getLayer("Interceptors").minScale);
+            $scope.interceptorGraphics.setMaxScale(map.getLayer("Interceptors").maxScale);
+            map.addLayer($scope.interceptorGraphics);
+
+	        $scope.addIntArrows = map.on('extent-change', function(event){
+	        	var layer = map.getLayer("Interceptors");
+				$scope.currentScale = map.getScale();
+				$scope.interceptorGraphics.clear();
+				 
+				switch($scope.currentScale > layer.minScale || $scope.currentScale < layer.maxScale || layer.visible === false){
+					case true:
+						$scope.interceptorGraphics.clear();
+						break;
+					case false:	
+		                var query = new Query();
+		                query.geometry = event.extent;
+		                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+		                query.returnGeometry = true;
+		                query.outFields = ["OBJECTID"];
+
+		                featureSetQT = new QueryTask(layer.url);
+		                featureSetQT.execute(query)
+		                .then(function(featureSet) {
+		                	count = 0;
+		                    featureSet.features.forEach(function(feature, idx, array) {		                    	
+		                        for (var x in feature.geometry.paths[0]) {
+		                        	count++;
+		                        	if(count%3===0){
+			                            var pt1 = feature.geometry.paths[0][x];
+			                            var pt2 = feature.geometry.paths[0][x - 1];
+			                            if (pt2) {
+			                                var midPoint = [(pt1[0] + pt2[0]) / 2, (pt1[1] + pt2[1]) / 2];
+			                                var point = new Point(midPoint, map.spatialReference);
+			                                var dot = new SimpleMarkerSymbol({ "color": new Color([0, 0, 0]), "size": 8, "angle": setAngle(pt1, pt2), "xoffset": 0, "yoffset": 0 });
+			                                dot.setPath('M1,50l99.5,-50c0,0 -40,49.5 -40,49.5c0,0 39.5,50 39.5,50c0,0 -99,-49.5 -99,-49.5z');
+			                                var dotGraphic = new Graphic(point, dot, {}, null);
+			                                $scope.interceptorGraphics.add(dotGraphic);
+			                            	}
+			                        	}
+			                        }
+			                });
+	                	});
+	            }
+	        });
+
 			function initSelectToolbar() {
 			    selectionToolbar = new Draw(map);
 			    var selectQuery = new Query();
-
 			    selectionToolbar.on("DrawEnd", function(geometry) {
 			        selectionToolbar.deactivate();
 			        selectQuery.geometry = geometry;
@@ -292,17 +341,21 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 
 			function runQuery(query, type){
-				$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW);
-		        $scope.newSelectedFeatures = $scope.newSelection.getSelectedFeatures();	        
-		        $scope.newSelectedFeatures.length > 0 ? $scope.showSelected = true: $scope.showSelected = false
-		        if(type != 'where'){
-		        	$scope.$digest();
-		        	$scope.$broadcast('hideMenu');
-		        }
-		        else{
-		        	$scope.selectSearch = false;
-		        	$scope.$broadcast('selectionResults', {featureCount:$scope.newSelectedFeatures.length} );
-		        }
+				query.outFields = $scope.outFields || ['*']; 
+				$scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results){
+					$scope.newSelectedFeatures = results;
+					$scope.showSelected = $scope.newSelectedFeatures.length > 0 ? true : false;
+					if(type != 'where'){
+			        	$timeout(function(){
+						$scope.$digest();
+					});
+			        	$scope.$broadcast('hideMenu');
+			        }
+		        	else{
+			        	$scope.selectSearch = false;
+			        	$scope.$broadcast('selectionResults', {featureCount:$scope.newSelectedFeatures.length} );
+			        }
+				});
 			}
 
 			var fieldsSelectionSymbol = {
@@ -317,18 +370,22 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
 			$scope.$on('searchQuery', function(ev, data){
 				var searchQuery = new Query();
-				searchQuery.where = "ContractNumber LIKE '%" + data.search + "%'";
+				searchQuery.where = "ContractNumber LIKE '" + data.search + "%'";
 				$scope.newSelection = map.getLayer('Outlines');
-				$scope.outFields = $scope.newSelection._outFields;
 				$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol.polygon);
+				$scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
 				runQuery(searchQuery, 'where');
 			});
 
 			$scope.clearSelection = function(){
-				$scope.newSelection.clearSelection();
+				if ($scope.newSelection) $scope.newSelection.clearSelection();
 				$scope.newSelectedFeatures = "";
 				$scope.showSelected = false;
 				$scope.showRelatedDocs = false;
+				if ($scope.highlightOnMouseOver) $scope.highlightOnMouseOver.remove();
+				if ($scope.unhighlightOnMouseOut)  $scope.unhighlightOnMouseOut.remove(); 
+				if ($scope.selectEvent) $scope.selectEvent.remove();
+				if (map.graphics) map.graphics.clear();
 			};
 
 			$scope.change = function(){
@@ -345,13 +402,14 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     			$scope.newSelection = map.getLayer($scope.userSelectedLayer.options.id);
 
     			if($scope.newSelection.minScale < $scope.currentScale){
+
     				$scope.scaleMessage = "Layer must be visible to select features. Please zoom in.";
     			} else{
     				$scope.scaleMessage = false;
     			}
 
           		$scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
-          		$scope.outFields = $scope.newSelection._outFields;
+          		$scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
     		};
 
     		$scope.selectByExtent = function(){
@@ -409,10 +467,13 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
     		                    query.objectIds = selection.features.map(function(feature){
     		                    	return feature.attributes.OBJECTID;
     		                    });
+    		                    query.outFields = $scope.outFields;
     		                    $scope.newSelection.selectFeatures(query, $scope.newSelection.SELECTION_NEW, function(results) {
     		                        $scope.newSelectedFeatures = results;
-    		                        results.length > 0 ? $scope.showSelected = true : $scope.showSelected = false;
-    		                        $scope.$digest();
+    		                        $scope.showSelected = results.length > 0 ? true : false;
+    		                        $timeout(function(){
+											$scope.$digest();
+										});
     		                    });
     		                }
     		            });
@@ -511,6 +572,11 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 							}
 						}	
 					}
+					else if(layer.style.type === 'polyline' && singleLayer.renderer.getSymbol().style === 'solid'){
+						var layerStyle = singleLayer.renderer.getSymbol();
+						var fill = layerStyle.color.toCss();
+						layer.style.tblField.push({name:'default', fill: fill});
+					}
 					else{
 						var layerColors = singleLayer.renderer.getSymbol();
 						var fillColor = layerColors.getFill().toCss(true);
@@ -539,6 +605,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 		          map: map
 		        }, dom.byId("measurementDiv"));
 		    measurement.startup();
+
+		    $scope.clearMeasurement = function(){
+		    	measurement.clearResult();
+		    };
 
 
 			var tb; //draw Tool Bar i.e tb
@@ -598,7 +668,8 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 			map.addLayer($scope.drawGraphicsLayer);
 
 			$scope.removeLast = function(){
-				$scope.drawGraphicsLayer.remove($scope.drawGraphicsLayer[$scope.drawGraphicsLayer.graphics.length-1]);
+				var lastGraphic = $scope.drawGraphicsLayer.graphics[$scope.drawGraphicsLayer.graphics.length-1];
+				$scope.drawGraphicsLayer.remove(lastGraphic);
 				$scope.drawGraphicsLayer.refresh();
 			};
 

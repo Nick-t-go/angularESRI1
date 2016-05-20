@@ -14,8 +14,14 @@ app.config(function($urlRouterProvider, $stateProvider){
     $stateProvider
         .state('map',{
             url:'/',
-            templateUrl: 'views/map.html',
+            templateUrl: './client/views/map.html',
             controller: 'MapCtrl'
+        })
+
+        .state('help',{
+            url:'/help/:section',
+            templateUrl: './client/views/help.html',
+            controller: 'HelpCtrl'
         });
 
     $urlRouterProvider.otherwise('/');
