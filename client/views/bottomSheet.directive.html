@@ -6,7 +6,7 @@
       		<th ng-repeat="field in outFields">{{field}}</th>
         </tr>
       </thead>
-        <tr class="bottom-row" ng-repeat="item in newSelectedFeatures" ng-dblclick="esriMapObject.setExtent(item._extent)">
+        <tr class="bottom-row" ng-repeat="item in newSelectedFeatures" ng-dblclick="zoomToFeature(item._extent)">
           <td ng-repeat="field in outFields track by $index" data-title="{{field}}" sortable="{{field}}" ng-mouseover="featureTableMouseOver(item.attributes['OBJECTID'])" ng-click="checkRecords(item.attributes['OBJECTID'], item)">{{item.attributes[field]}}</td>
         </tr>
       </table>

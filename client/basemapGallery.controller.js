@@ -1,4 +1,4 @@
-app.controller('basemapGalleryCtrl', function($scope, esriLoader) {
+app.controller('basemapGalleryCtrl', function($scope, esriLoader, $timeout) {
 
 	$scope.$on('map-loaded', function(evt, esriMapObject){
 
@@ -20,10 +20,16 @@ app.controller('basemapGalleryCtrl', function($scope, esriLoader) {
 		$scope.basemapChange = function(basemap){
 			if(basemap === "NYS") {
 				$scope.map.basemap = null;
-				esriMapObject.addLayer($scope.imageService, 1000);
+				$timeout(function(){
+					esriMapObject.addLayer($scope.imageService, 1000);
+				});
 				$scope.map.basemap = basemap;
 			} else{
-				if($scope.imageService.getMap()) esriMapObject.removeLayer($scope.imageService);
+				if($scope.imageService.getMap()){
+					$timeout(function(){
+						esriMapObject.removeLayer($scope.imageService);
+					});
+				}
 				$scope.map.basemap = basemap;
 			}
 		};

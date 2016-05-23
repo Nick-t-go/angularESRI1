@@ -82,7 +82,9 @@ app.controller('searchCtrl', function($scope, esriLoader, FindLocal, $timeout) {
 						var attr = {"StAddr":firstHit.address,"City":firstHit.attributes.City, 'Zip': firstHit.attributes.ZIP};
 						var pinGraphic = new Graphic(pt,markerSymbol,attr);
 						searchResultGraphic.add(pinGraphic);
-						map.centerAndZoom(pt, 16);
+						$timeout(function(){
+							map.centerAndZoom(pt, 16);
+						});
 						searchResultGraphic.refresh();
 					});
 				};

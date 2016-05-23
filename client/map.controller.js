@@ -165,9 +165,10 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
                 ymax: 5023171.046159441,
                 spatialReference: map.spatialReference
             });
-            $scope.zoomHome = function() {
-                map.setExtent(homeExtent);
-                $scope.graphicsLayer.clear();
+            $scope.zoomHome = function() {         
+                $timeout(function() {
+                        map.setExtent(homeExtent);
+                    });
             };
 
             $scope.graphicsLayer = new GraphicsLayer({ id: "graphicsLayerA" });
@@ -402,6 +403,12 @@ app.controller('MapCtrl', function($scope, esriLoader, customRenderer, $timeout,
 
                 $scope.newSelection.setSelectionSymbol(fieldsSelectionSymbol[$scope.userSelectedLayer.style.type]);
                 $scope.outFields = specialOutfields[$scope.newSelection.id] || $scope.newSelection._outFields;
+            };
+
+            $scope.zoomToFeature = function(featureExtent){
+                $timeout(function() {
+                        map.setExtent(featureExtent);
+                    });
             };
 
             $scope.selectByExtent = function() {

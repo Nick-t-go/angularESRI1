@@ -11,7 +11,8 @@ tblIdxOptions = {
 
 utilityPathOptions = {
 	gdb: 'https://portal.gayrondebruin.com/arcgis/rest/services/Utilities/',
-	suffolk: 'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/Utilities/'
+	suffolk: 'https://gisservices2.suffolkcountyny.gov/arcgis/rest/services/Utilities/'
 };
+
 
 activeLocation = "gdb";

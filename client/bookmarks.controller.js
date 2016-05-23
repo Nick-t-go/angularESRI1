@@ -47,7 +47,9 @@ app.controller('bookmarksCtrl', function($scope, $cookies, esriLoader) {
 		    };
 
 		    $scope.zoomToExtent = function(newExtent) {
-		        map.setExtent(newExtent);
+		        $timeout(function(){
+		        	map.setExtent(newExtent);
+		        });
 		    };
 		});
 	});
