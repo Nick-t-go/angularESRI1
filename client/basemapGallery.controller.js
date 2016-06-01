@@ -7,34 +7,66 @@ app.controller('basemapGalleryCtrl', function($scope, esriLoader, $timeout) {
 			], 
 			function(
 				esriBasemaps, ArcGISImageServiceLayer, ImageServiceParameters){
+
+					var imageServiceUrls = [
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/BW_1947/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/BW_1962/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/BW_1978/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/BW_1984/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2001/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2004/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2006/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2007/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2010/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2013/ImageServer',
+						'https://gisimages.suffolkcountyny.gov/arcgis/rest/services/IR_2013/ImageServer',
+						];
 					var params = new ImageServiceParameters();
-					$scope.imageService = new ArcGISImageServiceLayer("https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2013/ImageServer", {id: 'NYS2013',imageServiceParameters: params });
+					$scope.imageServices = imageServiceUrls.map(function(url){
+						return new ArcGISImageServiceLayer(url, {imageServiceParameters: params });
+					});
 					
-					esriBasemaps.NYS = {
-			            	baseMapLayers: [{url: "https://gisimages.suffolkcountyny.gov/arcgis/rest/services/CR_2013/ImageServer"}],
-			            	title: "NYS"
-			        };
+					console.log($scope.imageServices);
+					$scope.currentImageLayer = $scope.imageServices[0];
 		});
 
+		$scope.activeBase = 'esri';
+		$scope.currentSelection = 'topo';
 
-		$scope.basemapChange = function(basemap){
-			if(basemap === "NYS") {
-				$scope.map.basemap = null;
-				$timeout(function(){
-					esriMapObject.addLayer($scope.imageService, 1000);
-				});
-				$scope.map.basemap = basemap;
-			} else{
-				if($scope.imageService.getMap()){
+		$scope.basemapChange = function(basemap, type){
+			if($scope.currentImageLayer.getMap()){
 					$timeout(function(){
-						esriMapObject.removeLayer($scope.imageService);
+						esriMapObject.removeLayer($scope.currentImageLayer);
 					});
 				}
+			$scope.currentSelection = basemap;
+			if(type === "imageService") {
+				
+
+				esriMapObject.basemapLayerIds.forEach(function(id){
+					esriMapObject.getLayer(id).setVisibility(false);
+				});
+	
+				$timeout(function(){
+					$scope.currentImageLayer = basemap;
+					esriMapObject.addLayer($scope.currentImageLayer, 1000);
+				});
+
+			} else{
 				$scope.map.basemap = basemap;
 			}
 		};
 		//{url:"http://www.orthos.dhses.ny.gov/ArcGIS/rest/services/2013/MapServer/"}
-		 
+		esriMapObject.on('update-start', (function(evt) {
+                $scope.disable = true;
+            }));
+            esriMapObject.on('update-end', (function(evt) {
+                $scope.disable = false;
+                $timeout(function() {
+                    $scope.$digest();
+                });
+            }));
+ 
 
 		$scope.hoverImage = 'none';   
 		
@@ -53,12 +85,6 @@ app.controller('basemapGalleryCtrl', function($scope, esriLoader, $timeout) {
 				name: "dark-gray",
 				displayName:"Dark-Gray",
 				imagery: "url('https://www.arcgis.com/sharing/rest/content/items/25869b8718c0419db87dad07de5b02d8/info/thumbnail/DGCanvasBase.png')"
-			},
-			{
-				name: "NYS",
-				displayName: "NYS Orthoimagery",
-				show: false,
-				imagery: "url('https://gis.ny.gov/gateway/orthoprogram/sample/images/color_half_foot_zoom.jpg')"
 			},
 			{
 				name: "topo",

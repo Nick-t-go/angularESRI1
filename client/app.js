@@ -3,10 +3,9 @@
 window.app = angular.module('angularESRI', ['ui.router', 'esri.map','ngCookies' ]);
 
 
-app.filter('noUSA', function () {
-  return function(str1){
-    var idx = str1.indexOf(", USA");
-    return str1.slice(0, idx);
+app.filter('underscoreless', function () {
+  return function (input) {
+        if(input) return input.replace(/_/g, ' ');
   };
 });
 

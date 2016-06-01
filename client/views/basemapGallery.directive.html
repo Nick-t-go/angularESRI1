@@ -1,11 +1,23 @@
 <div id="collapse2" class="panel-collapse collapse">
     <div class="panel-body">
 
-		<ul ng-mouseleave="hoverImage = 'none'">
-		    <li class="basemapOptions" ng-class="{selectedBasemap: option.name == map.basemap}" ng-repeat="option in basemapOptions" ng-mouseenter="showpreview(option.imagery)" ng-click="basemapChange(option.name)">
-		        {{option.displayName}}
+    	<ul class="nav nav-pills  nav-justified">
+		  <li ng-class="{active: activeBase === 'esri'}" ng-click="activeBase='esri'"><a>ESRI</a></li>
+		  <li ng-class="{active: activeBase === 'dpw'}"" ng-click="activeBase='dpw'"><a>DPW</a></li>
+		</ul>
+
+		<ul ng-show="activeBase === 'esri'" ng-mouseleave="hoverImage = 'none'">
+		    <li class="basemapOptions" ng-class="{selectedBasemap: option.name === currentSelection}" ng-repeat="option in basemapOptions" ng-mouseenter="showpreview(option.imagery)" ng-click="basemapChange(option.name, 'basemap')">
+		        {{option.displayName }}
 		    </li>
 		</ul>
+		<ul ng-show="activeBase === 'dpw'" ng-mouseleave="hoverImage = 'none'">
+		    <li class="basemapOptions" ng-class="{selectedBasemap: option.name === currentSelection.name}" ng-repeat="option in imageServices" ng-mouseenter="showpreview('url('+option.url+'/info/thumbnail)')" ng-click="disable || basemapChange(option, 'imageService')" >
+		        {{option.name | underscoreless}}
+		    </li>
+		</ul>
+
+
 		<div ng-hide="hoverImage==='none'" class="imagePreview" ng-style="{'background': hoverImage}"></div>
 
 	</div>
