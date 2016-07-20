@@ -1,4 +1,4 @@
-app.controller('bookmarksCtrl', function($scope, $cookies, esriLoader) {
+app.controller('bookmarksCtrl', function($scope, $cookies, esriLoader, $timeout) {
 
 	$scope.$on('map-loaded', function(evt, map){
 		esriLoader.require(["esri/geometry/Extent"], function(Extent){

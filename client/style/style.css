@@ -11,7 +11,7 @@
     background: linear-gradient(-270deg, yellowgreen,   #4ccd33); /* Standard syntax */
     right: 47px;
 	margin: 15px;
-	min-height: 64px
+	min-height: 64px;
 	border-top: none;
 	border-bottom: none;
 	top: 0;
@@ -268,7 +268,7 @@ input.dijitReset.dijitInputField.dijitValidationIcon.dijitValidationInner {
 
 .nav-elements{
     display: flex;
-    flex-direction: row
+    flex-direction: row;
     justify-content: flex-end;
     align-items: center;
 }
